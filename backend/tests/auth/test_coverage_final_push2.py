@@ -217,10 +217,10 @@ async def test_enforce_ip_rate_limit_endpoint_api():
     redis_dict = {}
     ip = "192.168.1.200"
     
-    # Fill to limit using default limit
-    from app.auth.middleware.rate_limit import check_rate_limit as check_generic_rate_limit
-    for _ in range(LOGIN_IP_LIMIT):
-        await check_generic_rate_limit(redis_dict, f"api:192.168.1.200", LOGIN_IP_LIMIT, 60)
+    # Fill to limit using ANONYMOUS_IP_LIMIT for non-login/register endpoints
+    from app.auth.middleware.rate_limit import check_rate_limit as check_generic_rate_limit, ANONYMOUS_IP_LIMIT
+    for _ in range(ANONYMOUS_IP_LIMIT):
+        await check_generic_rate_limit(redis_dict, f"api:192.168.1.200", ANONYMOUS_IP_LIMIT, 60)
     
     req = MagicMock()
     req.client = MagicMock()

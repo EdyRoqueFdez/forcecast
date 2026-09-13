@@ -122,15 +122,16 @@ def is_strict_mode(user: Any) -> bool:
 def get_effective_rate_limit(user: Any) -> int:
     """Get effective rate limit considering reputation strict mode.
 
-    Base: 300 for user, 1000 for admin. Halved when <3.0.
+    Base: 60 for user, 1000 for admin. Halved when <3.0.
+    HU-A10: 60 req/min per user, 30 votes/min per user.
     """
     # Import here to avoid circular
     try:
-        from app.core.config import settings as cfg
-        user_limit = getattr(cfg, "RATE_LIMIT_USER_PER_MINUTE", 300)
-        admin_limit = getattr(cfg, "RATE_LIMIT_ADMIN_PER_MINUTE", 1000)
+        from app.auth.middleware.rate_limit import USER_RATE_LIMIT, ADMIN_RATE_LIMIT
+        user_limit = USER_RATE_LIMIT  # 60
+        admin_limit = ADMIN_RATE_LIMIT  # 1000
     except Exception:
-        user_limit = 300
+        user_limit = 60
         admin_limit = 1000
 
     # Determine role

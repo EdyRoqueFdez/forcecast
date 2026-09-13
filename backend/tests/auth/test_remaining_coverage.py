@@ -137,10 +137,11 @@ async def test_enforce_ip_rate_limit_endpoint_other():
     req.client.host = ip
     req.headers = {}
     
-    # Should use LOGIN_IP_LIMIT as default for unknown endpoints
-    for _ in range(LOGIN_IP_LIMIT):
+    # Should use ANONYMOUS_IP_LIMIT for non-login/register endpoints
+    from app.auth.middleware.rate_limit import ANONYMOUS_IP_LIMIT
+    for _ in range(ANONYMOUS_IP_LIMIT):
         from app.auth.middleware.rate_limit import check_rate_limit as check_generic_rate_limit
-        await check_generic_rate_limit(redis_dict, f"api:{ip}", LOGIN_IP_LIMIT, 60)
+        await check_generic_rate_limit(redis_dict, f"api:{ip}", ANONYMOUS_IP_LIMIT, 60)
     
     req = MagicMock()
     req.client = MagicMock()

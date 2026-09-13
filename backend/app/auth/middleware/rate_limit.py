@@ -10,11 +10,13 @@ from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
-# Tier limits from config with fallbacks
-LOGIN_IP_LIMIT: int = getattr(settings, "RATE_LIMIT_LOGIN_PER_MINUTE", 10)
-REGISTER_IP_LIMIT: int = getattr(settings, "RATE_LIMIT_REGISTER_PER_MINUTE", 5)
-USER_RATE_LIMIT: int = getattr(settings, "RATE_LIMIT_USER_PER_MINUTE", 300)
-ADMIN_RATE_LIMIT: int = getattr(settings, "RATE_LIMIT_ADMIN_PER_MINUTE", 1000)
+# Tier limits from config with fallbacks (HU-A10)
+LOGIN_IP_LIMIT: int = getattr(settings, "RATE_LIMIT_LOGIN_PER_MINUTE", 5)  # 5 login attempts/min per IP
+REGISTER_IP_LIMIT: int = getattr(settings, "RATE_LIMIT_REGISTER_PER_MINUTE", 5)  # 5 register attempts/min per IP
+ANONYMOUS_IP_LIMIT: int = getattr(settings, "RATE_LIMIT_ANONYMOUS_PER_MINUTE", 20)  # 20 req/min per IP anonymous
+USER_RATE_LIMIT: int = getattr(settings, "RATE_LIMIT_USER_PER_MINUTE", 60)  # 60 req/min per user
+VOTE_RATE_LIMIT: int = getattr(settings, "RATE_LIMIT_VOTE_PER_MINUTE", 30)  # 30 votes/min per user
+ADMIN_RATE_LIMIT: int = getattr(settings, "RATE_LIMIT_ADMIN_PER_MINUTE", 1000)  # 1000 req/min per admin
 
 # In-memory fallback for tests (when redis is dict, we use redis dict directly)
 # But also keep global for real redis fallback
@@ -197,13 +199,13 @@ async def enforce_ip_rate_limit(request: Request, redis: Any, endpoint: str = "l
         ip = getattr(request.client, "host", "unknown") if hasattr(request, "client") and request.client else "unknown"
 
     if endpoint == "login":
-        limit = LOGIN_IP_LIMIT
+        limit = LOGIN_IP_LIMIT  # 5 login attempts/min per IP
         key = f"login:{ip}"
     elif endpoint == "register":
-        limit = REGISTER_IP_LIMIT
+        limit = REGISTER_IP_LIMIT  # 5 register attempts/min per IP
         key = f"register:{ip}"
     else:
-        limit = LOGIN_IP_LIMIT
+        limit = ANONYMOUS_IP_LIMIT  # 20 req/min per IP anonymous
         key = f"{endpoint}:{ip}"
 
     is_limited, remaining, retry_after = await check_rate_limit(redis, key, limit, window=60)
@@ -227,29 +229,44 @@ async def enforce_ip_rate_limit(request: Request, redis: Any, endpoint: str = "l
         pass
 
 
-async def enforce_user_rate_limit(request: Request, redis: Any, user: Any) -> None:
-    """Enforce per-user rate limit (300 user / 1000 admin, halved if <3.0). Raises 429."""
+async def enforce_user_rate_limit(request: Request, redis: Any, user: Any, endpoint: str = "general") -> None:
+    """Enforce per-user rate limit (60 user / 1000 admin, 30 for votes). Raises 429."""
     from app.auth.services.anti_bot import get_effective_rate_limit
 
+    # Select limit based on endpoint
+    if endpoint == "vote":
+        base_limit = VOTE_RATE_LIMIT  # 30 votes/min
+    else:
+        base_limit = USER_RATE_LIMIT  # 60 req/min for general user endpoints
+
+    # Admin gets higher limit
+    role_val = user.role.value if hasattr(user, "role") and hasattr(user.role, "value") else str(getattr(user, "role", "user"))
+    if role_val == "admin":
+        base_limit = ADMIN_RATE_LIMIT
+
+    # Apply reputation modifier (halved if < 3.0)
     effective = get_effective_rate_limit(user)
+    if effective < base_limit:
+        base_limit = effective
+
     uid = str(getattr(user, "id", "unknown"))
     key = f"user:{uid}"
-    is_limited, remaining, retry_after = await check_rate_limit(redis, key, effective, window=60)
+    is_limited, remaining, retry_after = await check_rate_limit(redis, key, base_limit, window=60)
     if is_limited:
         raise HTTPException(
             status_code=429,
             detail="Rate limit exceeded",
             headers={
                 "Retry-After": str(retry_after),
-                "X-RateLimit-Limit": str(effective),
+                "X-RateLimit-Limit": str(base_limit),
                 "X-RateLimit-Remaining": str(remaining),
-                "X-Rate-Limit-Limit": str(effective),
+                "X-Rate-Limit-Limit": str(base_limit),
                 "X-Rate-Limit-Remaining": str(remaining),
             },
         )
     try:
         request.state.rate_limit_remaining = remaining
-        request.state.rate_limit_limit = effective
+        request.state.rate_limit_limit = base_limit
     except:
         pass
 
