@@ -16,6 +16,7 @@ from app.auth.api.oauth import router as oauth_router
 from app.auth.api.tokens import router as tokens_router
 from app.auth.api.api_keys import router as api_keys_router
 from app.auth.api.profile import router as profile_router
+from app.auth.api.verification import router as verification_router
 from app.api.admin import router as admin_router
 from app.voting.api.votes import router as votes_router
 
@@ -60,6 +61,7 @@ app.include_router(oauth_router)
 app.include_router(tokens_router)
 app.include_router(api_keys_router)
 app.include_router(profile_router)
+app.include_router(verification_router)
 app.include_router(admin_router)
 app.include_router(votes_router)
 

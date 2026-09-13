@@ -38,6 +38,12 @@ class Settings(BaseSettings):
     TURNSTILE_SECRET_KEY: str = ""
     TURNSTILE_SITE_KEY: str = ""
     RESEND_API_KEY: str = ""
+    EMAIL_FROM: str = "noreply@forcecast.app"
+    FRONTEND_URL: str = "http://localhost:5173"
+
+    # Email Verification
+    EMAIL_VERIFICATION_EXPIRY_HOURS: int = 24
+    EMAIL_VERIFICATION_MAX_RESEND: int = 3
 
     # PostHog (Feature Flags)
     POSTHOG_API_KEY: str = ""
