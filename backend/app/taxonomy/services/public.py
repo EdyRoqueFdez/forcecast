@@ -718,6 +718,119 @@ class PublicService:
 
         return result_tuple
 
+    async def get_orchestrator(
+        self,
+        slug: str,
+        locale: str = "en",
+        use_cache: bool = True,
+    ) -> dict | None:
+        """Get orchestrator details by slug with i18n."""
+        from app.taxonomy.models.entities import (
+            Orchestrator,
+            OrchestratorTranslation,
+            OrchestratorProvider,
+            Provider,
+            ProviderTranslation,
+        )
+
+        locale = str(locale).lower()
+
+        # Cache key
+        filters = {"slug": slug}
+        tv = await _get_current_version(self.session)
+        engine_id = str(id(self.session.bind) if self.session.bind is not None else "no-bind")
+        key = "taxonomy:orchestrator:" + cache_key(filters, locale, tv) + f":{engine_id}"
+
+        if use_cache:
+            cached = _cache_get(key)
+            if cached is not None:
+                return cached
+
+        # Get orchestrator
+        stmt = select(Orchestrator).where(
+            Orchestrator.slug == slug,
+            Orchestrator.status == "approved",
+        )
+        result = await self.session.execute(stmt)
+        orch = result.scalars().first()
+
+        if not orch:
+            return None
+
+        # Get translations
+        trans_result = await self.session.execute(
+            select(OrchestratorTranslation).where(
+                OrchestratorTranslation.orchestrator_id == orch.id
+            )
+        )
+        translations = list(trans_result.scalars().all())
+
+        # Get translation
+        chosen = next((t for t in translations if t.locale == locale), None)
+        en_fallback = next((t for t in translations if t.locale == "en"), None)
+        fallback = translations[0] if translations else None
+
+        if chosen:
+            name = chosen.name
+            desc = chosen.description
+            locale_used = locale
+        elif en_fallback:
+            name = en_fallback.name
+            desc = en_fallback.description
+            locale_used = "en"
+        elif fallback:
+            name = fallback.name
+            desc = fallback.description
+            locale_used = fallback.locale
+        else:
+            name = orch.name
+            desc = None
+            locale_used = locale
+
+        # Get providers
+        providers_result = await self.session.execute(
+            select(OrchestratorProvider, Provider, ProviderTranslation)
+            .join(Provider, OrchestratorProvider.provider_id == Provider.id)
+            .outerjoin(
+                ProviderTranslation,
+                (ProviderTranslation.provider_id == Provider.id)
+                & (ProviderTranslation.locale == "en")
+            )
+            .where(OrchestratorProvider.orchestrator_id == orch.id)
+        )
+        provider_rows = providers_result.all()
+
+        providers = []
+        for op, provider, ptranslation in provider_rows:
+            providers.append({
+                "slug": provider.slug,
+                "name": ptranslation.name if ptranslation else provider.name,
+                "website": provider.website,
+                "api_docs_url": provider.api_docs_url,
+            })
+
+        # Build response
+        item = {
+            "id": orch.id,
+            "slug": orch.slug,
+            "name": name,
+            "version": orch.version,
+            "maintainer": orch.maintainer,
+            "website": orch.website,
+            "repo_url": orch.repo_url,
+            "license": orch.license,
+            "status": orch.status,
+            "description": desc,
+            "locale_used": locale_used,
+            "providers": providers,
+        }
+
+        # Cache result
+        if use_cache:
+            _cache_set(key, item)
+
+        return item
+
     async def list_locales(self) -> list[dict]:
         result = await self.session.execute(select(LocaleMeta))
         locales = list(result.scalars().all())

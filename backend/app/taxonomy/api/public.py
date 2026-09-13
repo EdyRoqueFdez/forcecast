@@ -291,3 +291,38 @@ async def list_orchestrators(
     _cache_headers(response)
     response.headers["Content-Language"] = norm_lang
     return {"data": items, "meta": meta, "links": links}
+
+
+@router.get("/orchestrators/{slug}")
+async def get_orchestrator(
+    slug: str,
+    request: Request,
+    response: Response,
+    lang: str = Query("en"),
+    db: AsyncSession = Depends(get_session),
+):
+    """HU-T09 — Get orchestrator details by slug."""
+    # Locale validation
+    norm_lang = str(lang).strip().lower()
+    if norm_lang not in SUPPORTED_LOCALES:
+        return _unsupported_locale_response(lang)
+
+    svc = PublicService(db)
+    detail = await svc.get_orchestrator(slug, locale=norm_lang)
+
+    if not detail:
+        return JSONResponse(
+            status_code=404,
+            content={
+                "error": {
+                    "code": "NOT_FOUND",
+                    "message": f"Orchestrator {slug} not found",
+                    "details": [],
+                    "trace_id": str(uuid.uuid4()),
+                }
+            },
+        )
+
+    _cache_headers(response)
+    response.headers["Content-Language"] = norm_lang
+    return JSONResponse(content=detail, headers=dict(response.headers))
