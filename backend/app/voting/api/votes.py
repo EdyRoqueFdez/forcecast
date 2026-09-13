@@ -316,7 +316,11 @@ async def get_reports(
     db: AsyncSession = Depends(get_session),
 ) -> AdminReportsResponse:
     """HU-V08 — Get reports for admin review (admin only)."""
-    # TODO: Check if user is admin
+    # Check if user is admin
+    from app.auth.models.user import RoleEnum
+    if user.role != RoleEnum.ADMIN:
+        raise HTTPException(status_code=403, detail="Admin access required")
+
     from app.voting.models.report import Report
     from sqlalchemy import select, func
 
@@ -357,7 +361,11 @@ async def review_report(
     db: AsyncSession = Depends(get_session),
 ) -> dict:
     """HU-V08 — Approve or reject a report (admin only)."""
-    # TODO: Check if user is admin
+    # Check if user is admin
+    from app.auth.models.user import RoleEnum
+    if user.role != RoleEnum.ADMIN:
+        raise HTTPException(status_code=403, detail="Admin access required")
+
     from app.voting.models.report import Report
     from datetime import datetime
 
@@ -655,8 +663,8 @@ async def get_public_votes(
     - No private data exposed (email, IP, device)
     - Respects privacy settings
     """
-    from app.users.models.user import User
-    from app.voting.models.vote_event import UserVote
+    from app.auth.models.user import User, VisibilityMode
+    from app.voting.models.user_vote import UserVote
     from sqlalchemy import select, func
 
     # Get user by username
@@ -668,7 +676,7 @@ async def get_public_votes(
         raise HTTPException(status_code=404, detail="User not found")
 
     # Check if profile is public
-    if hasattr(target_user, "profile_visibility") and target_user.profile_visibility != "public":
+    if target_user.visibility_mode != VisibilityMode.PUBLIC:
         return PublicVotesResponse(
             username=username,
             votes=[],
@@ -678,7 +686,6 @@ async def get_public_votes(
     # Get public votes
     query = select(UserVote).where(
         UserVote.user_id == target_user.id,
-        UserVote.is_active == True,
     ).order_by(UserVote.created_at.desc())
 
     # Get total count
