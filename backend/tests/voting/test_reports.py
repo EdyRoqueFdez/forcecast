@@ -152,3 +152,36 @@ class TestVoteHistory:
         assert response.status_code == 200
         data = response.json()
         assert len(data["events"]) <= 10
+
+
+class TestPublicVotes:
+    """Test GET /api/v1/users/{username}/votes endpoint."""
+
+    @pytest.mark.asyncio
+    async def test_public_votes_returns_200(self, client):
+        """Endpoint should return 200 OK."""
+        response = await client.get("/api/v1/users/testuser/votes")
+        assert response.status_code == 200
+
+    @pytest.mark.asyncio
+    async def test_public_votes_has_votes_key(self, client):
+        """Response should have votes key."""
+        response = await client.get("/api/v1/users/testuser/votes")
+        data = response.json()
+        assert "votes" in data
+        assert "total" in data
+        assert "username" in data
+
+    @pytest.mark.asyncio
+    async def test_public_votes_user_not_found(self, client):
+        """Should return 404 for non-existent user."""
+        response = await client.get("/api/v1/users/nonexistent/votes")
+        assert response.status_code == 404
+
+    @pytest.mark.asyncio
+    async def test_public_votes_with_limit(self, client):
+        """Should support limit parameter."""
+        response = await client.get("/api/v1/users/testuser/votes?limit=10")
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data["votes"]) <= 10

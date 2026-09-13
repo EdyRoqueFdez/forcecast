@@ -484,3 +484,93 @@ async def get_vote_history(
         has_more=has_more,
         next_cursor=next_cursor,
     )
+
+
+# --- HU-V11: Public votes of other users ---
+
+
+class PublicVoteItem(BaseModel):
+    """Single public vote item."""
+
+    category_id: str
+    target_type: str
+    target_id: str
+    comment: str | None
+    created_at: str
+
+
+class PublicVotesResponse(BaseModel):
+    """Response for public votes."""
+
+    username: str
+    votes: list[PublicVoteItem]
+    total: int
+
+
+@router.get("/users/{username}/votes", response_model=PublicVotesResponse)
+async def get_public_votes(
+    username: str,
+    response: Response,
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
+    db: AsyncSession = Depends(get_session),
+) -> PublicVotesResponse:
+    """HU-V11 — Get public votes for another user.
+
+    - Only shows votes if target profile is public
+    - No private data exposed (email, IP, device)
+    - Respects privacy settings
+    """
+    from app.users.models.user import User
+    from app.voting.models.vote_event import UserVote
+    from sqlalchemy import select, func
+
+    # Get user by username
+    user_result = await db.execute(
+        select(User).where(User.username == username)
+    )
+    target_user = user_result.scalars().first()
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Check if profile is public
+    if hasattr(target_user, "profile_visibility") and target_user.profile_visibility != "public":
+        return PublicVotesResponse(
+            username=username,
+            votes=[],
+            total=0,
+        )
+
+    # Get public votes
+    query = select(UserVote).where(
+        UserVote.user_id == target_user.id,
+        UserVote.is_active == True,
+    ).order_by(UserVote.created_at.desc())
+
+    # Get total count
+    count_query = select(func.count(UserVote.id)).where(
+        UserVote.user_id == target_user.id,
+        UserVote.is_active == True,
+    )
+    total_result = await db.execute(count_query)
+    total = total_result.scalar() or 0
+
+    # Apply pagination
+    query = query.offset(offset).limit(limit)
+    result = await db.execute(query)
+    votes = result.scalars().all()
+
+    return PublicVotesResponse(
+        username=username,
+        votes=[
+            PublicVoteItem(
+                category_id=v.category_id,
+                target_type=v.target_type,
+                target_id=v.target_id,
+                comment=v.comment,
+                created_at=v.created_at.isoformat(),
+            )
+            for v in votes
+        ],
+        total=total,
+    )
