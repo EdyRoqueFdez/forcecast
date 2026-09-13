@@ -381,3 +381,106 @@ async def review_report(
 
 # Need to import select for admin endpoints
 from sqlalchemy import select
+
+
+# --- HU-V10: Vote history ---
+
+
+class VoteHistoryItem(BaseModel):
+    """Single vote history item."""
+
+    event_id: str
+    event_type: str  # "cast", "change", "revoke"
+    target_id: str
+    previous_target_id: str | None
+    category_id: str
+    target_type: str
+    comment: str | None
+    created_at: str
+
+
+class VoteHistoryResponse(BaseModel):
+    """Response for vote history."""
+
+    events: list[VoteHistoryItem]
+    total: int
+    has_more: bool
+    next_cursor: str | None
+
+
+@router.get("/me/votes/history", response_model=VoteHistoryResponse)
+async def get_vote_history(
+    request: Request,
+    response: Response,
+    category_id: str | None = Query(None, description="Filter by category"),
+    target_type: str | None = Query(None, description="Filter by target type"),
+    event_type: str | None = Query(None, description="Filter by event type"),
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_session),
+) -> VoteHistoryResponse:
+    """HU-V10 — Get vote history for the authenticated user.
+
+    - Returns VoteEvent with timestamp, type, previous target, new target, category, comment
+    - Filter by category, target, date, type
+    - Paginated results
+    """
+    from app.voting.models.vote_event import VoteEvent
+    from sqlalchemy import select, func
+
+    # Build query
+    query = select(VoteEvent).where(VoteEvent.user_id == user.id)
+
+    # Apply filters
+    if category_id:
+        query = query.where(VoteEvent.category_id == category_id)
+    if target_type:
+        query = query.where(VoteEvent.target_type == target_type)
+    if event_type:
+        query = query.where(VoteEvent.event_type == event_type)
+
+    # Order by created_at descending
+    query = query.order_by(VoteEvent.created_at.desc())
+
+    # Get total count
+    count_query = select(func.count(VoteEvent.id)).where(VoteEvent.user_id == user.id)
+    if category_id:
+        count_query = count_query.where(VoteEvent.category_id == category_id)
+    if target_type:
+        count_query = count_query.where(VoteEvent.target_type == target_type)
+    if event_type:
+        count_query = count_query.where(VoteEvent.event_type == event_type)
+
+    total_result = await db.execute(count_query)
+    total = total_result.scalar() or 0
+
+    # Apply pagination
+    query = query.offset(offset).limit(limit)
+    result = await db.execute(query)
+    events = result.scalars().all()
+
+    # Build response
+    has_more = offset + limit < total
+    next_cursor = None
+    if has_more and events:
+        next_cursor = str(offset + limit)
+
+    return VoteHistoryResponse(
+        events=[
+            VoteHistoryItem(
+                event_id=e.id,
+                event_type=e.event_type,
+                target_id=e.target_id,
+                previous_target_id=e.previous_target_id,
+                category_id=e.category_id,
+                target_type=e.target_type,
+                comment=e.comment,
+                created_at=e.created_at.isoformat(),
+            )
+            for e in events
+        ],
+        total=total,
+        has_more=has_more,
+        next_cursor=next_cursor,
+    )

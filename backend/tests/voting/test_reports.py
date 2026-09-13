@@ -101,3 +101,54 @@ class TestReviewReport:
             json={"action": "invalid"},
         )
         assert response.status_code == 422
+
+
+class TestVoteHistory:
+    """Test GET /api/v1/me/votes/history endpoint."""
+
+    @pytest.mark.asyncio
+    async def test_history_requires_auth(self, client):
+        """Endpoint should require authentication."""
+        response = await client.get("/api/v1/me/votes/history")
+        assert response.status_code == 401
+
+    @pytest.mark.asyncio
+    async def test_history_returns_200(self, client):
+        """Endpoint should return 200 OK."""
+        response = await client.get(
+            "/api/v1/me/votes/history",
+            headers={"Authorization": "Bearer fake-token"},
+        )
+        assert response.status_code == 200
+
+    @pytest.mark.asyncio
+    async def test_history_has_events_key(self, client):
+        """Response should have events key."""
+        response = await client.get(
+            "/api/v1/me/votes/history",
+            headers={"Authorization": "Bearer fake-token"},
+        )
+        data = response.json()
+        assert "events" in data
+        assert "total" in data
+        assert "has_more" in data
+
+    @pytest.mark.asyncio
+    async def test_history_with_category_filter(self, client):
+        """Should support category filter."""
+        response = await client.get(
+            "/api/v1/me/votes/history?category_id=coding",
+            headers={"Authorization": "Bearer fake-token"},
+        )
+        assert response.status_code == 200
+
+    @pytest.mark.asyncio
+    async def test_history_with_limit(self, client):
+        """Should support limit parameter."""
+        response = await client.get(
+            "/api/v1/me/votes/history?limit=10",
+            headers={"Authorization": "Bearer fake-token"},
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data["events"]) <= 10
