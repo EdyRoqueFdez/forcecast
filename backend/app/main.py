@@ -19,6 +19,7 @@ from app.auth.api.profile import router as profile_router
 from app.auth.api.verification import router as verification_router
 from app.api.admin import router as admin_router
 from app.voting.api.votes import router as votes_router
+from app.voting.api.rankings import router as rankings_router
 
 # Load models from JSON at startup
 DATA_PATH = Path(__file__).parent / "data" / "models.json"
@@ -64,6 +65,7 @@ app.include_router(profile_router)
 app.include_router(verification_router)
 app.include_router(admin_router)
 app.include_router(votes_router)
+app.include_router(rankings_router)
 
 
 class SortField(str, Enum):
