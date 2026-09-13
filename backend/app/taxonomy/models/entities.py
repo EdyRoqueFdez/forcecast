@@ -278,6 +278,21 @@ class OrchestratorProvider(Base):
 
 
 # ---------------------------------------------------------------------------
+# OrchestratorCategory (HU-T11 — Filter orchestrators by category)
+# ---------------------------------------------------------------------------
+class OrchestratorCategory(Base):
+    __tablename__ = "orchestrator_categories"
+    __table_args__ = (
+        UniqueConstraint("orchestrator_id", "category_id", name="uq_orchestrator_categories_orchestrator_category"),
+    )
+
+    orchestrator_id: Mapped[str] = mapped_column(String(36), ForeignKey("orchestrators.id", ondelete="CASCADE"), primary_key=True)
+    category_id: Mapped[str] = mapped_column(String(36), ForeignKey("categories.id", ondelete="RESTRICT"), primary_key=True)
+    taxonomy_version: Mapped[str] = mapped_column(String(50), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=_now)
+
+
+# ---------------------------------------------------------------------------
 # Domain + DomainTranslation (HU-T05 — Problem Domains)
 # ---------------------------------------------------------------------------
 class Domain(Base):

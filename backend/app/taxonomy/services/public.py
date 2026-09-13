@@ -581,11 +581,13 @@ class PublicService:
         category: str | None = None,
         use_cache: bool = True,
     ) -> tuple[list[dict], int]:
-        """List approved orchestrators with pagination, i18n, and caching."""
+        """HU-T08/HU-T11 — List approved orchestrators with pagination, i18n, caching, and category filtering."""
         from app.taxonomy.models.entities import (
             Orchestrator,
             OrchestratorTranslation,
             OrchestratorProvider,
+            OrchestratorCategory,
+            Category,
             Provider,
             ProviderTranslation,
         )
@@ -611,6 +613,40 @@ class PublicService:
 
         # Build base query
         stmt = select(Orchestrator).where(Orchestrator.status == "approved")
+
+        # Apply category filter (HU-T11)
+        if category:
+            # First, find the category
+            cat_result = await self.session.execute(
+                select(Category).where(
+                    Category.slug == category,
+                    Category.taxonomy_version == "orchestrators-v1",
+                )
+            )
+            cat = cat_result.scalars().first()
+            if not cat:
+                # Category doesn't exist, return empty
+                result_empty: tuple[list[dict], int] = ([], 0)
+                if use_cache:
+                    _cache_set(key, result_empty)
+                return result_empty
+
+            # Get orchestrator IDs for this category
+            orch_cat_result = await self.session.execute(
+                select(OrchestratorCategory.orchestrator_id).where(
+                    OrchestratorCategory.category_id == cat.id
+                )
+            )
+            orch_ids = [r[0] for r in orch_cat_result.all()]
+            if not orch_ids:
+                # No orchestrators in this category
+                result_empty = ([], 0)
+                if use_cache:
+                    _cache_set(key, result_empty)
+                return result_empty
+
+            # Filter by these orchestrator IDs
+            stmt = stmt.where(Orchestrator.id.in_(orch_ids))
 
         # Get total count
         count_stmt = select(func.count()).select_from(stmt.subquery())
