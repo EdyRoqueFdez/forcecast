@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from sqlalchemy import Column, String, DateTime, Text, Enum as SAEnum
-from app.db.base_class import Base
+from app.db.session import Base
 
 
 class Report(Base):

@@ -19,6 +19,7 @@ from app.voting.models.enums import TargetType, VoteAction
 from app.voting.models.user_vote import UserVote
 from app.voting.repositories.user_vote import UserVoteRepository
 from app.voting.repositories.vote_event import VoteEventRepository
+from app.voting.services.anomaly import AnomalyDetectionService
 from app.voting.services.audit_service import AuditService
 
 
@@ -31,6 +32,7 @@ class VoteService:
         self.user_vote_repo = UserVoteRepository(session)
         self.audit_service = AuditService(session)
         self.reputation_service = ReputationService(session)
+        self.anomaly_service = AnomalyDetectionService(session)
 
     async def cast_vote(
         self,
@@ -142,6 +144,23 @@ class VoteService:
             ip_address=ip_address,
         )
 
+        # HU-V09: Check for anomalous voting patterns
+        anomaly_result = await self.anomaly_service.detect_anomalies(user.id)
+        if anomaly_result["is_anomalous"]:
+            # Log anomaly detection
+            await self.audit_service.log(
+                actor_id=user.id,
+                action="vote.anomaly_detected",
+                entity_type="user",
+                entity_id=user.id,
+                details={
+                    "anomalies": anomaly_result["anomalies"],
+                    "risk_score": await self.anomaly_service.get_user_risk_score(user.id),
+                },
+                request_id=request_id,
+                ip_address=ip_address,
+            )
+
         await self.session.commit()
         return self._event_to_dict(event)
 
@@ -207,10 +226,8 @@ class VoteService:
 
         # Check not changing to same target
         if existing_vote.target_id == target_id:
-            raise DomainError(
-                "Already voting for this target.",
-                status_code=409,
-            )
+            # HU-V04: Same target is idempotent, return 204 No Content
+            return None  # Signal to API layer to return 204
 
         # Get current taxonomy version (RG-35)
         taxonomy_version = await self._get_current_taxonomy_version()
@@ -260,6 +277,23 @@ class VoteService:
             request_id=request_id,
             ip_address=ip_address,
         )
+
+        # HU-V09: Check for anomalous voting patterns
+        anomaly_result = await self.anomaly_service.detect_anomalies(user.id)
+        if anomaly_result["is_anomalous"]:
+            # Log anomaly detection
+            await self.audit_service.log(
+                actor_id=user.id,
+                action="vote.anomaly_detected",
+                entity_type="user",
+                entity_id=user.id,
+                details={
+                    "anomalies": anomaly_result["anomalies"],
+                    "risk_score": await self.anomaly_service.get_user_risk_score(user.id),
+                },
+                request_id=request_id,
+                ip_address=ip_address,
+            )
 
         await self.session.commit()
         return self._event_to_dict(event)

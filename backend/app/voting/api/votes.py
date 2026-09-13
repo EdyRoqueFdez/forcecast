@@ -111,6 +111,9 @@ async def cast_or_change_vote(
                 ip_address=ip_address,
                 device_fingerprint=device_fingerprint,
             )
+            # HU-V04: Same target returns 204 No Content
+            if result is None:
+                return Response(status_code=204)
         else:
             # Cast new vote
             result = await service.cast_vote(
@@ -367,6 +370,7 @@ async def review_report(
         raise HTTPException(status_code=403, detail="Admin access required")
 
     from app.voting.models.report import Report
+    from app.reputation.services.reputation import ReputationService
     from datetime import datetime
 
     # Validate action
@@ -383,6 +387,21 @@ async def review_report(
     report.status = body.action + "d"  # "approved" or "rejected"
     report.reviewed_by = user.id
     report.reviewed_at = datetime.utcnow()
+
+    # HU-V08: If approved, adjust reporter's reputation
+    if body.action == "approve":
+        reputation_service = ReputationService(db)
+        # Get the reported user (target_id is the user_id in this context)
+        from app.auth.models.user import User as UserModel
+        reported_user_result = await db.execute(
+            select(UserModel).where(UserModel.id == report.target_id)
+        )
+        reported_user = reported_user_result.scalars().first()
+        if reported_user:
+            # Reduce reputation by 0.1 for each confirmed report
+            from decimal import Decimal
+            reported_user.reputation_score = max(0.0, reported_user.reputation_score - 0.1)
+
     await db.commit()
 
     return {"status": report.status, "message": f"Report {report.status}"}
@@ -612,8 +631,8 @@ async def edit_vote_comment(
         raise HTTPException(status_code=404, detail="Vote not found")
 
     # Validate comment length
-    if body.comment and len(body.comment) > 500:
-        raise HTTPException(status_code=422, detail="Comment must be 500 characters or less")
+    if body.comment and len(body.comment) > 1000:
+        raise HTTPException(status_code=422, detail="Comment must be 1000 characters or less")
 
     # Update the comment (append-only, so we create a new event)
     # For simplicity, we'll update the existing event's comment field
@@ -689,9 +708,8 @@ async def get_public_votes(
     ).order_by(UserVote.created_at.desc())
 
     # Get total count
-    count_query = select(func.count(UserVote.id)).where(
+    count_query = select(func.count(UserVote.user_id)).where(
         UserVote.user_id == target_user.id,
-        UserVote.is_active == True,
     )
     total_result = await db.execute(count_query)
     total = total_result.scalar() or 0
