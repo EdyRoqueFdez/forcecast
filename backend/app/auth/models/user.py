@@ -33,8 +33,8 @@ class User(Base):
     display_name: Mapped[str] = mapped_column(String(100), nullable=False)
     avatar_url: Mapped[str | None] = mapped_column(String(500), nullable=True, default=None)
     role: Mapped[RoleEnum] = mapped_column(SAEnum(RoleEnum, name="role_enum"), default=RoleEnum.USER, nullable=False)
-    # Spec says default 0.0 but anti-bot & design use 5.0 as initial healthy score
-    reputation_score: Mapped[float] = mapped_column(Float, default=5.0, nullable=False)
+    # HU-A07: Base reputation starts at 1.0
+    reputation_score: Mapped[float] = mapped_column(Float, default=1.0, nullable=False)
     email_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     email_verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, default=None)
 

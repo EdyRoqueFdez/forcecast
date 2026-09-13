@@ -15,7 +15,8 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
-STRICT_THRESHOLD: float = 3.0
+# HU-A07: Bot threshold at 0.5 (was 3.0 for strict mode)
+STRICT_THRESHOLD: float = 0.5  # Below this = bot-like behavior
 REPUTATION_PENALTY: float = 0.1
 REPUTATION_MAX: float = 10.0
 REPUTATION_MIN: float = 0.0
