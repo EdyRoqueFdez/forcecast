@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.models.user import User
 from app.auth.services.anti_bot import is_strict_mode
+from app.reputation.services.reputation import ReputationService
 from app.taxonomy.models.entities import AIModel, Category, TaxonomyVersion
 from app.taxonomy.services.core import DomainError
 from app.voting.models.enums import TargetType, VoteAction
@@ -29,6 +30,7 @@ class VoteService:
         self.vote_event_repo = VoteEventRepository(session)
         self.user_vote_repo = UserVoteRepository(session)
         self.audit_service = AuditService(session)
+        self.reputation_service = ReputationService(session)
 
     async def cast_vote(
         self,
@@ -93,6 +95,9 @@ class VoteService:
         # Get current taxonomy version (RG-35)
         taxonomy_version = await self._get_current_taxonomy_version()
 
+        # Get vote weight based on reputation (HU-V12)
+        vote_weight = await self.reputation_service.get_vote_weight(user)
+
         # Create vote event (append-only)
         event = await self.vote_event_repo.create(
             {
@@ -102,7 +107,7 @@ class VoteService:
                 "category_id": category_id,
                 "taxonomy_version": taxonomy_version,
                 "action": VoteAction.VOTE,
-                "weight": Decimal("1.0"),
+                "weight": vote_weight,
                 "idempotency_key": idempotency_key,
                 "device_fingerprint": device_fingerprint,
                 "ip_address": ip_address,
@@ -117,7 +122,7 @@ class VoteService:
                 "category_id": category_id,
                 "target_type": target_type,
                 "target_id": target_id,
-                "weight": Decimal("1.0"),
+                "weight": vote_weight,
                 "vote_event_id": event.id,
             }
         )
@@ -210,6 +215,9 @@ class VoteService:
         # Get current taxonomy version (RG-35)
         taxonomy_version = await self._get_current_taxonomy_version()
 
+        # Get vote weight based on reputation (HU-V12)
+        vote_weight = await self.reputation_service.get_vote_weight(user)
+
         # Create vote event (append-only)
         event = await self.vote_event_repo.create(
             {
@@ -219,7 +227,7 @@ class VoteService:
                 "category_id": category_id,
                 "taxonomy_version": taxonomy_version,
                 "action": VoteAction.CHANGE,
-                "weight": Decimal("1.0"),
+                "weight": vote_weight,
                 "idempotency_key": idempotency_key,
                 "device_fingerprint": device_fingerprint,
                 "ip_address": ip_address,
@@ -232,6 +240,7 @@ class VoteService:
             existing_vote,
             {
                 "target_id": target_id,
+                "weight": vote_weight,
                 "vote_event_id": event.id,
             },
         )
