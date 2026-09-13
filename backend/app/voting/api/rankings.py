@@ -91,3 +91,54 @@ async def get_model_ranking(
     _cache_headers(response)
     response.headers["Content-Language"] = norm_lang
     return {"data": items, "meta": meta}
+
+
+@router.get("/rankings/orchestrators")
+async def get_orchestrator_ranking(
+    request: Request,
+    response: Response,
+    category: str = Query(..., description="Category slug"),
+    lang: str = Query("en"),
+    min_votes: int = Query(5, ge=1, description="Minimum votes required"),
+    limit: int = Query(20, ge=1, le=100),
+    cursor: str | None = Query(None),
+    db: AsyncSession = Depends(get_session),
+):
+    """HU-V07 — Get orchestrator ranking for a category."""
+    # Locale validation
+    norm_lang = str(lang).strip().lower()
+    if norm_lang not in SUPPORTED_LOCALES:
+        return _unsupported_locale_response(lang)
+
+    svc = RankingService(db)
+    items, total = await svc.get_orchestrator_ranking(
+        category_slug=category,
+        locale=norm_lang,
+        min_votes=min_votes,
+        limit=limit,
+        cursor=cursor,
+    )
+
+    # Build pagination metadata
+    has_more = len(items) == limit and total > len(items)
+    next_cursor = None
+    if has_more and items:
+        import base64
+        import json
+        last_item = items[-1]
+        cursor_data = {"orchestrator_id": last_item["orchestrator_id"]}
+        next_cursor = base64.urlsafe_b64encode(
+            json.dumps(cursor_data).encode()
+        ).decode().rstrip("=")
+
+    meta = {
+        "category": category,
+        "total": total,
+        "has_more": has_more,
+        "next_cursor": next_cursor,
+        "min_votes": min_votes,
+    }
+
+    _cache_headers(response)
+    response.headers["Content-Language"] = norm_lang
+    return {"data": items, "meta": meta}

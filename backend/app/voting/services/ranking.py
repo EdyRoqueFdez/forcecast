@@ -213,3 +213,188 @@ class RankingService:
             _cache_set(cache_key, result)
 
         return result
+
+    async def get_orchestrator_ranking(
+        self,
+        category_slug: str,
+        locale: str = "en",
+        min_votes: int = 5,
+        limit: int = 20,
+        cursor: str | None = None,
+        use_cache: bool = True,
+    ) -> tuple[list[dict], int]:
+        """Get orchestrator ranking for a category.
+
+        Args:
+            category_slug: Category slug to rank by
+            locale: Locale for translations
+            min_votes: Minimum votes required to appear
+            limit: Number of results per page
+            cursor: Cursor for pagination
+            use_cache: Whether to use cache
+
+        Returns:
+            Tuple of (ranking items, total count)
+        """
+        from app.taxonomy.models.entities import (
+            Orchestrator,
+            OrchestratorTranslation,
+            Category,
+        )
+
+        # Cache key
+        cache_key = f"ranking:orchestrators:{category_slug}:{locale}:{min_votes}:{limit}:{cursor}"
+        if use_cache:
+            cached = _cache_get(cache_key)
+            if cached is not None:
+                return cached
+
+        # Get category (orchestrator categories have taxonomy_version = 'orchestrators-v1')
+        cat_result = await self.session.execute(
+            select(Category).where(
+                Category.slug == category_slug,
+                Category.taxonomy_version == "orchestrators-v1",
+            )
+        )
+        category = cat_result.scalars().first()
+        if not category:
+            return ([], 0)
+
+        # Get all user votes for this category
+        votes_result = await self.session.execute(
+            select(UserVote).where(
+                UserVote.category_id == category.id,
+                UserVote.target_type == "orchestrator",
+            )
+        )
+        votes = list(votes_result.scalars().all())
+
+        # Aggregate votes by orchestrator
+        orch_votes: dict[str, dict] = {}
+        for vote in votes:
+            orch_id = vote.target_id
+            if orch_id not in orch_votes:
+                orch_votes[orch_id] = {
+                    "orchestrator_id": orch_id,
+                    "raw_votes": 0,
+                    "weighted_score": Decimal("0"),
+                }
+            orch_votes[orch_id]["raw_votes"] += 1
+            orch_votes[orch_id]["weighted_score"] += vote.weight
+
+        # Filter by minimum votes
+        filtered_orchestrators = [
+            data for data in orch_votes.values()
+            if data["raw_votes"] >= min_votes
+        ]
+
+        # Sort by weighted score descending
+        filtered_orchestrators.sort(key=lambda x: x["weighted_score"], reverse=True)
+
+        # Calculate total for percentage
+        total_votes = sum(data["raw_votes"] for data in filtered_orchestrators)
+
+        # Get orchestrator details and translations
+        orch_ids = [data["orchestrator_id"] for data in filtered_orchestrators]
+        if not orch_ids:
+            return ([], 0)
+
+        # Get orchestrators
+        orch_result = await self.session.execute(
+            select(Orchestrator).where(Orchestrator.id.in_(orch_ids))
+        )
+        orchestrators = {o.id: o for o in orch_result.scalars().all()}
+
+        # Get translations
+        trans_result = await self.session.execute(
+            select(OrchestratorTranslation).where(
+                OrchestratorTranslation.orchestrator_id.in_(orch_ids),
+                OrchestratorTranslation.locale == locale,
+            )
+        )
+        translations = {t.orchestrator_id: t for t in trans_result.scalars().all()}
+
+        # Get English fallback translations
+        en_trans_result = await self.session.execute(
+            select(OrchestratorTranslation).where(
+                OrchestratorTranslation.orchestrator_id.in_(orch_ids),
+                OrchestratorTranslation.locale == "en",
+            )
+        )
+        en_translations = {t.orchestrator_id: t for t in en_trans_result.scalars().all()}
+
+        # Build ranking items
+        items: list[dict] = []
+        for data in filtered_orchestrators:
+            orch_id = data["orchestrator_id"]
+            orch = orchestrators.get(orch_id)
+            if not orch:
+                continue
+
+            # Get translation
+            trans = translations.get(orch_id)
+            en_trans = en_translations.get(orch_id)
+
+            if trans:
+                name = trans.name
+                locale_used = locale
+            elif en_trans:
+                name = en_trans.name
+                locale_used = "en"
+            else:
+                name = orch.name
+                locale_used = "en"
+
+            # Calculate percentage
+            percentage = (
+                (data["raw_votes"] / total_votes * 100)
+                if total_votes > 0
+                else 0
+            )
+
+            # Calculate confidence (simplified: based on sample size)
+            confidence = min(1.0, data["raw_votes"] / 100)
+
+            items.append({
+                "orchestrator_id": orch_id,
+                "slug": orch.slug,
+                "name": name,
+                "maintainer": orch.maintainer,
+                "raw_votes": data["raw_votes"],
+                "weighted_score": float(data["weighted_score"]),
+                "percentage": round(percentage, 2),
+                "confidence": round(confidence, 2),
+                "sample_size": data["raw_votes"],
+                "locale_used": locale_used,
+            })
+
+        # Apply cursor pagination
+        if cursor:
+            try:
+                import base64
+                import json
+                cursor_data = json.loads(base64.urlsafe_b64decode(cursor + "=="))
+                cursor_orch_id = cursor_data.get("orchestrator_id")
+                if cursor_orch_id:
+                    start_idx = next(
+                        (i for i, item in enumerate(items) if item["orchestrator_id"] == cursor_orch_id),
+                        len(items),
+                    )
+                    items = items[start_idx + 1:]
+            except Exception:
+                pass
+
+        # Apply limit
+        has_more = len(items) > limit
+        if has_more:
+            items = items[:limit]
+
+        # Calculate total count
+        total = len(filtered_orchestrators)
+
+        # Cache result
+        result = (items, total)
+        if use_cache:
+            _cache_set(cache_key, result)
+
+        return result
