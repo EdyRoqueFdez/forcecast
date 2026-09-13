@@ -1,0 +1,22 @@
+# Independent project repositories
+/backend/
+/frontend/
+/mobile/
+
+# Root-level dependencies and generated files
+node_modules/
+.venv/
+.env
+.env.*
+!.env.example
+*.log
+coverage/
+coverage.json
+
+# Local tooling
+.atl/
+.engram/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
