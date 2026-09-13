@@ -209,3 +209,175 @@ async def get_my_votes(
             for v in votes
         ]
     )
+
+
+# --- HU-V08: Report abusive vote/comment ---
+
+
+class ReportRequest(BaseModel):
+    """Request body for reporting a vote or comment."""
+
+    target_id: str
+    target_type: str  # "vote" or "comment"
+    reason: str  # "spam", "offensive", "false", "duplicate", "other"
+    details: str | None = None
+
+
+class ReportResponse(BaseModel):
+    """Response for report submission."""
+
+    report_id: str
+    status: str
+    message: str
+
+
+from pydantic import BaseModel
+
+
+@router.post("/votes/report", response_model=ReportResponse, status_code=201)
+async def report_vote_or_comment(
+    body: ReportRequest,
+    request: Request,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_session),
+) -> ReportResponse:
+    """HU-V08 — Report an abusive vote or comment.
+
+    - target_type: "vote" or "comment"
+    - reason: "spam", "offensive", "false", "duplicate", "other"
+    - Creates Report with status `pending`
+    """
+    import uuid
+
+    # Validate reason
+    valid_reasons = {"spam", "offensive", "false", "duplicate", "other"}
+    if body.reason not in valid_reasons:
+        raise HTTPException(status_code=422, detail=f"Invalid reason. Must be one of: {', '.join(valid_reasons)}")
+
+    # Create report
+    report_id = str(uuid.uuid4())
+    from app.voting.models.report import Report
+    from datetime import datetime
+
+    report = Report(
+        id=report_id,
+        target_id=body.target_id,
+        target_type=body.target_type,
+        reporter_id=user.id,
+        reason=body.reason,
+        details=body.details,
+        status="pending",
+        created_at=datetime.utcnow(),
+    )
+    db.add(report)
+    await db.commit()
+
+    return ReportResponse(
+        report_id=report_id,
+        status="pending",
+        message="Report submitted. An administrator will review it.",
+    )
+
+
+class ReportItem(BaseModel):
+    """Single report item for admin review."""
+
+    report_id: str
+    target_id: str
+    target_type: str
+    reporter_id: str
+    reason: str
+    details: str | None
+    status: str
+    created_at: str
+
+
+class AdminReportsResponse(BaseModel):
+    """Response for admin reports list."""
+
+    reports: list[ReportItem]
+    total: int
+
+
+class ReportActionRequest(BaseModel):
+    """Request body for approving/rejecting a report."""
+
+    action: str  # "approve" or "reject"
+    admin_notes: str | None = None
+
+
+@router.get("/admin/votes/reports", response_model=AdminReportsResponse)
+async def get_reports(
+    status: str = Query("pending", description="Filter by status"),
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_session),
+) -> AdminReportsResponse:
+    """HU-V08 — Get reports for admin review (admin only)."""
+    # TODO: Check if user is admin
+    from app.voting.models.report import Report
+    from sqlalchemy import select, func
+
+    # Get reports
+    query = select(Report).where(Report.status == status).order_by(Report.created_at.desc()).offset(offset).limit(limit)
+    result = await db.execute(query)
+    reports = result.scalars().all()
+
+    # Get total count
+    count_query = select(func.count(Report.id)).where(Report.status == status)
+    total_result = await db.execute(count_query)
+    total = total_result.scalar() or 0
+
+    return AdminReportsResponse(
+        reports=[
+            ReportItem(
+                report_id=r.id,
+                target_id=r.target_id,
+                target_type=r.target_type,
+                reporter_id=r.reporter_id,
+                reason=r.reason,
+                details=r.details,
+                status=r.status,
+                created_at=r.created_at.isoformat(),
+            )
+            for r in reports
+        ],
+        total=total,
+    )
+
+
+@router.put("/admin/votes/reports/{report_id}")
+async def review_report(
+    report_id: str,
+    body: ReportActionRequest,
+    request: Request,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_session),
+) -> dict:
+    """HU-V08 — Approve or reject a report (admin only)."""
+    # TODO: Check if user is admin
+    from app.voting.models.report import Report
+    from datetime import datetime
+
+    # Validate action
+    if body.action not in {"approve", "reject"}:
+        raise HTTPException(status_code=422, detail="Action must be 'approve' or 'reject'")
+
+    # Get report
+    result = await db.execute(select(Report).where(Report.id == report_id))
+    report = result.scalars().first()
+    if not report:
+        raise HTTPException(status_code=404, detail="Report not found")
+
+    # Update report
+    report.status = body.action + "d"  # "approved" or "rejected"
+    report.reviewed_by = user.id
+    report.reviewed_at = datetime.utcnow()
+    await db.commit()
+
+    return {"status": report.status, "message": f"Report {report.status}"}
+
+
+# Need to import select for admin endpoints
+from sqlalchemy import select
