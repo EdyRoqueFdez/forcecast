@@ -210,3 +210,84 @@ async def list_locales(
     locales = await svc.list_locales()
     _cache_headers(response)
     return {"data": locales, "total": len(locales)}
+
+
+@router.get("/orchestrators")
+async def list_orchestrators(
+    request: Request,
+    response: Response,
+    lang: str = Query("en"),
+    category: str | None = Query(None),
+    cursor: str | None = Query(None),
+    limit: int = Query(20, ge=1, le=100),
+    sort: str = Query("name", pattern="^(name|version|created_at)$"),
+    order: str = Query("asc", pattern="^(asc|desc)$"),
+    page: int | None = Query(None, ge=1),
+    db: AsyncSession = Depends(get_session),
+):
+    """HU-T08 — List approved orchestrators with pagination, i18n, caching."""
+    # Locale validation
+    norm_lang = str(lang).strip().lower()
+    if norm_lang not in SUPPORTED_LOCALES:
+        return _unsupported_locale_response(lang)
+
+    # page >10 => 422 use cursor
+    if page is not None and page > 10:
+        return JSONResponse(
+            status_code=422,
+            content={
+                "error": {
+                    "code": "VALIDATION_ERROR",
+                    "message": "page >10 requires cursor pagination",
+                    "details": [{"field": "page", "issue": "use cursor for page >10"}],
+                    "trace_id": str(uuid.uuid4()),
+                }
+            },
+        )
+
+    svc = PublicService(db)
+    items, total = await svc.list_orchestrators(
+        locale=norm_lang,
+        limit=limit,
+        cursor=cursor,
+        sort=sort,
+        order=order,
+        category=category,
+    )
+
+    # Build pagination metadata
+    if not items:
+        has_more = False
+        next_cursor = None
+    elif len(items) == limit and total > len(items) or len(items) == limit and cursor is not None:
+        has_more = True
+        next_cursor = encode_cursor(items[-1])
+    else:
+        has_more = total > len(items)
+        next_cursor = encode_cursor(items[-1]) if has_more and items else None
+
+    # Build links
+    base = str(request.url.path)
+    first = f"{base}?limit={limit}"
+    last = f"{base}?limit={limit}"
+    nxt = f"{base}?limit={limit}&cursor={next_cursor}" if next_cursor else None
+
+    try:
+        from app.taxonomy.services.public import _get_current_version
+        tv = await _get_current_version(db)
+    except Exception:
+        tv = "v1"
+
+    meta = {
+        "page": page or 1,
+        "limit": limit,
+        "total": total,
+        "has_more": has_more,
+        "next_cursor": next_cursor,
+        "taxonomy_version": tv,
+    }
+
+    links = {"first": first, "prev": None, "next": nxt, "last": last}
+    _cache_headers(response)
+    response.headers["Content-Language"] = norm_lang
+    return {"data": items, "meta": meta, "links": links}

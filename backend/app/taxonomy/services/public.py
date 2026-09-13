@@ -558,6 +558,166 @@ class PublicService:
             items.append({"slug": p.slug, "name": name, "description": desc, "website": p.website, "status": p.status, "locale_used": locale_used})
         return items
 
+    async def list_orchestrators(
+        self,
+        locale: str = "en",
+        limit: int = 20,
+        cursor: str | None = None,
+        sort: str = "name",
+        order: str = "asc",
+        category: str | None = None,
+        use_cache: bool = True,
+    ) -> tuple[list[dict], int]:
+        """List approved orchestrators with pagination, i18n, and caching."""
+        from app.taxonomy.models.entities import (
+            Orchestrator,
+            OrchestratorTranslation,
+            OrchestratorProvider,
+            Provider,
+            ProviderTranslation,
+        )
+
+        locale = str(locale).lower()
+
+        # Cache key
+        filters = {
+            "limit": limit,
+            "cursor": cursor,
+            "sort": sort,
+            "order": order,
+            "category": category,
+        }
+        tv = await _get_current_version(self.session)
+        engine_id = str(id(self.session.bind) if self.session.bind is not None else "no-bind")
+        key = "taxonomy:orchestrators:" + cache_key(filters, locale, tv) + f":{engine_id}"
+
+        if use_cache:
+            cached = _cache_get(key)
+            if cached is not None:
+                return cached
+
+        # Build base query
+        stmt = select(Orchestrator).where(Orchestrator.status == "approved")
+
+        # Get total count
+        count_stmt = select(func.count()).select_from(stmt.subquery())
+        count_result = await self.session.execute(count_stmt)
+        total = count_result.scalar() or 0
+
+        # Apply sorting
+        sort_column = getattr(Orchestrator, sort, Orchestrator.name)
+        if order == "desc":
+            sort_column = sort_column.desc()
+        else:
+            sort_column = sort_column.asc()
+
+        # Apply cursor pagination
+        if cursor:
+            cursor_data = decode_cursor(cursor)
+            cursor_id = cursor_data.get("id")
+            if cursor_id:
+                stmt = stmt.where(Orchestrator.id > cursor_id)
+
+        # Apply pagination
+        stmt = stmt.order_by(sort_column).limit(limit + 1)  # +1 to detect has_more
+
+        result = await self.session.execute(stmt)
+        orchestrators = list(result.scalars().all())
+
+        # Check if there are more results
+        has_more = len(orchestrators) > limit
+        if has_more:
+            orchestrators = orchestrators[:limit]
+
+        # Get translations for all orchestrators
+        orch_ids = [o.id for o in orchestrators]
+        translations_result = await self.session.execute(
+            select(OrchestratorTranslation).where(
+                OrchestratorTranslation.orchestrator_id.in_(orch_ids)
+            )
+        )
+        translations = list(translations_result.scalars().all())
+
+        # Group translations by orchestrator_id
+        trans_map: dict[str, list[OrchestratorTranslation]] = {}
+        for t in translations:
+            if t.orchestrator_id not in trans_map:
+                trans_map[t.orchestrator_id] = []
+            trans_map[t.orchestrator_id].append(t)
+
+        # Get providers for all orchestrators
+        providers_result = await self.session.execute(
+            select(OrchestratorProvider, Provider, ProviderTranslation)
+            .join(Provider, OrchestratorProvider.provider_id == Provider.id)
+            .outerjoin(
+                ProviderTranslation,
+                (ProviderTranslation.provider_id == Provider.id)
+                & (ProviderTranslation.locale == "en")
+            )
+            .where(OrchestratorProvider.orchestrator_id.in_(orch_ids))
+        )
+        provider_rows = providers_result.all()
+
+        # Group providers by orchestrator_id
+        providers_map: dict[str, list[dict]] = {}
+        for op, provider, ptranslation in provider_rows:
+            if op.orchestrator_id not in providers_map:
+                providers_map[op.orchestrator_id] = []
+            providers_map[op.orchestrator_id].append({
+                "slug": provider.slug,
+                "name": ptranslation.name if ptranslation else provider.name,
+            })
+
+        # Build response items
+        items: list[dict] = []
+        for orch in orchestrators:
+            # Get translation
+            orch_translations = trans_map.get(orch.id, [])
+            chosen = next((t for t in orch_translations if t.locale == locale), None)
+            en_fallback = next((t for t in orch_translations if t.locale == "en"), None)
+            fallback = orch_translations[0] if orch_translations else None
+
+            if chosen:
+                name = chosen.name
+                desc = chosen.description
+                locale_used = locale
+            elif en_fallback:
+                name = en_fallback.name
+                desc = en_fallback.description
+                locale_used = "en"
+            elif fallback:
+                name = fallback.name
+                desc = fallback.description
+                locale_used = fallback.locale
+            else:
+                name = orch.name
+                desc = None
+                locale_used = locale
+
+            # Get providers
+            orch_providers = providers_map.get(orch.id, [])
+
+            items.append({
+                "id": orch.id,
+                "slug": orch.slug,
+                "name": name,
+                "version": orch.version,
+                "maintainer": orch.maintainer,
+                "website": orch.website,
+                "repo_url": orch.repo_url,
+                "status": orch.status,
+                "description": desc,
+                "locale_used": locale_used,
+                "providers": orch_providers,
+            })
+
+        # Cache result
+        result_tuple = (items, total)
+        if use_cache:
+            _cache_set(key, result_tuple)
+
+        return result_tuple
+
     async def list_locales(self) -> list[dict]:
         result = await self.session.execute(select(LocaleMeta))
         locales = list(result.scalars().all())
