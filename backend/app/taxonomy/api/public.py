@@ -171,16 +171,18 @@ async def list_categories(
     request: Request,
     response: Response,
     lang: str = Query("en"),
+    scope: str = Query("models", pattern="^(models|orchestrators)$"),
     db: AsyncSession = Depends(get_session),
 ):
+    """HU-T04/HU-T10 — List categories with scope support."""
     norm_lang = str(lang).strip().lower()
     if norm_lang not in SUPPORTED_LOCALES:
         return _unsupported_locale_response(lang)
     svc = PublicService(db)
-    cats, tv = await svc.list_categories(locale=norm_lang)
+    cats, tv = await svc.list_categories(locale=norm_lang, scope=scope)
     _cache_headers(response)
     response.headers["Content-Language"] = norm_lang
-    return {"data": cats, "meta": {"taxonomy_version": tv, "total": len(cats)}}
+    return {"data": cats, "meta": {"taxonomy_version": tv, "total": len(cats), "scope": scope}}
 
 
 @router.get("/providers")

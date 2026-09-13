@@ -500,9 +500,22 @@ class PublicService:
             item["output_price_per_mtok"] = str(m.output_price_per_mtok) if isinstance(m.output_price_per_mtok, Decimal) else m.output_price_per_mtok
         return item
 
-    async def list_categories(self, locale: str = "en") -> tuple[list[dict], str]:
+    async def list_categories(self, locale: str = "en", scope: str = "models") -> tuple[list[dict], str]:
+        """HU-T04/HU-T10 — List categories with scope support.
+
+        Args:
+            locale: Locale for translations
+            scope: 'models' or 'orchestrators'
+        """
         locale = str(locale).lower()
-        tv = await _get_current_version(self.session)
+
+        # Get taxonomy version based on scope
+        if scope == "orchestrators":
+            # Orchestrators use independent taxonomy version
+            tv = "orchestrators-v1"
+        else:
+            tv = await _get_current_version(self.session)
+
         result = await self.session.execute(select(Category).where(Category.status == "active", Category.taxonomy_version == tv))
         cats = list(result.scalars().all())
         # fallback: if no cats for current version, try any active
