@@ -278,6 +278,40 @@ class OrchestratorProvider(Base):
 
 
 # ---------------------------------------------------------------------------
+# Domain + DomainTranslation (HU-T05 — Problem Domains)
+# ---------------------------------------------------------------------------
+class Domain(Base):
+    __tablename__ = "domains"
+    __table_args__ = (
+        UniqueConstraint("slug", name="uq_domains_slug"),
+        Index("idx_domains_slug", "slug"),
+        Index("idx_domains_status", "status"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    slug: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
+    parent_id: Mapped[str | None] = mapped_column(String(36), ForeignKey("domains.id", ondelete="RESTRICT"), nullable=True)
+    taxonomy_version: Mapped[str] = mapped_column(String(50), nullable=False)
+    status: Mapped[str] = mapped_column(String(50), nullable=False, default="active")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=_now)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=_now, onupdate=_now)
+
+
+class DomainTranslation(Base):
+    __tablename__ = "domain_translations"
+    __table_args__ = (
+        UniqueConstraint("domain_id", "locale", name="uq_domain_translations_domain_locale"),
+        Index("idx_domain_translations_domain", "domain_id"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    domain_id: Mapped[str] = mapped_column(String(36), ForeignKey("domains.id", ondelete="CASCADE"), nullable=False)
+    locale: Mapped[str] = mapped_column(String(10), nullable=False)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+
+# ---------------------------------------------------------------------------
 # IngestionSource + IngestionRun
 # ---------------------------------------------------------------------------
 class IngestionSource(Base):

@@ -326,3 +326,24 @@ async def get_orchestrator(
     _cache_headers(response)
     response.headers["Content-Language"] = norm_lang
     return JSONResponse(content=detail, headers=dict(response.headers))
+
+
+@router.get("/domains")
+async def list_domains(
+    request: Request,
+    response: Response,
+    lang: str = Query("en"),
+    db: AsyncSession = Depends(get_session),
+):
+    """HU-T05 — List active problem domains with i18n."""
+    # Locale validation
+    norm_lang = str(lang).strip().lower()
+    if norm_lang not in SUPPORTED_LOCALES:
+        return _unsupported_locale_response(lang)
+
+    svc = PublicService(db)
+    items = await svc.list_domains(locale=norm_lang)
+
+    _cache_headers(response)
+    response.headers["Content-Language"] = norm_lang
+    return {"data": items, "total": len(items)}

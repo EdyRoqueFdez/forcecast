@@ -831,6 +831,91 @@ class PublicService:
 
         return item
 
+    async def list_domains(
+        self,
+        locale: str = "en",
+        use_cache: bool = True,
+    ) -> list[dict]:
+        """HU-T05 — List active problem domains with i18n."""
+        from app.taxonomy.models.entities import Domain, DomainTranslation
+
+        locale = str(locale).lower()
+
+        # Cache key
+        filters = {"type": "domains"}
+        tv = "v1"  # Domains use independent version
+        engine_id = str(id(self.session.bind) if self.session.bind is not None else "no-bind")
+        key = "taxonomy:domains:" + cache_key(filters, locale, tv) + f":{engine_id}"
+
+        if use_cache:
+            cached = _cache_get(key)
+            if cached is not None:
+                return cached
+
+        # Get active domains
+        stmt = select(Domain).where(Domain.status == "active")
+        result = await self.session.execute(stmt)
+        domains = list(result.scalars().all())
+
+        # Get translations
+        domain_ids = [d.id for d in domains]
+        if not domain_ids:
+            return []
+
+        trans_result = await self.session.execute(
+            select(DomainTranslation).where(
+                DomainTranslation.domain_id.in_(domain_ids)
+            )
+        )
+        translations = list(trans_result.scalars().all())
+
+        # Group translations by domain_id
+        trans_map: dict[str, list[DomainTranslation]] = {}
+        for t in translations:
+            if t.domain_id not in trans_map:
+                trans_map[t.domain_id] = []
+            trans_map[t.domain_id].append(t)
+
+        # Build response items
+        items: list[dict] = []
+        for domain in domains:
+            domain_translations = trans_map.get(domain.id, [])
+            chosen = next((t for t in domain_translations if t.locale == locale), None)
+            en_fallback = next((t for t in domain_translations if t.locale == "en"), None)
+            fallback = domain_translations[0] if domain_translations else None
+
+            if chosen:
+                name = chosen.name
+                desc = chosen.description
+                locale_used = locale
+            elif en_fallback:
+                name = en_fallback.name
+                desc = en_fallback.description
+                locale_used = "en"
+            elif fallback:
+                name = fallback.name
+                desc = fallback.description
+                locale_used = fallback.locale
+            else:
+                name = domain.slug
+                desc = None
+                locale_used = locale
+
+            items.append({
+                "id": domain.id,
+                "slug": domain.slug,
+                "name": name,
+                "description": desc,
+                "parent_id": domain.parent_id,
+                "locale_used": locale_used,
+            })
+
+        # Cache result
+        if use_cache:
+            _cache_set(key, items)
+
+        return items
+
     async def list_locales(self) -> list[dict]:
         result = await self.session.execute(select(LocaleMeta))
         locales = list(result.scalars().all())
