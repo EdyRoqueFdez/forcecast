@@ -190,10 +190,14 @@ export const api = {
     return fetchJson(`${API_BASE}/../voting/events?${searchParams.toString()}`);
   },
 
-  async createVote(eventId: string, modelSlug: string, voteType: "upvote" | "downvote"): Promise<unknown> {
+  async createVote(eventId: string, modelSlug: string, voteType: "upvote" | "downvote", turnstileToken?: string): Promise<unknown> {
+    const body: Record<string, unknown> = { event_id: eventId, model_slug: modelSlug, vote_type: voteType };
+    if (turnstileToken) {
+      body.turnstile_token = turnstileToken;
+    }
     return fetchJson(`${API_BASE}/../voting/votes`, {
       method: "POST",
-      body: JSON.stringify({ event_id: eventId, model_slug: modelSlug, vote_type: voteType }),
+      body: JSON.stringify(body),
     });
   },
 

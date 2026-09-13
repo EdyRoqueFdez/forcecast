@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { Github } from "lucide-react";
+import { TurnstileWidget } from "./TurnstileWidget";
 
 const API_BASE = import.meta.env.VITE_API_BASE || "https://forcecast-mvp.fly.dev";
 
@@ -8,9 +10,26 @@ interface OAuthButtonProps {
 }
 
 export function OAuthButton({ provider }: OAuthButtonProps) {
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [showTurnstile, setShowTurnstile] = useState(false);
+
   const handleLogin = () => {
-    // Redirect to backend OAuth endpoint
-    window.location.href = `${API_BASE}/../auth/login/${provider}`;
+    // If Turnstile is enabled and token not yet obtained, show it
+    if (import.meta.env.VITE_TURNSTILE_SITE_KEY && !turnstileToken) {
+      setShowTurnstile(true);
+      return;
+    }
+
+    // Redirect to backend OAuth endpoint with optional turnstile token
+    const params = turnstileToken ? `?turnstile_token=${turnstileToken}` : "";
+    window.location.href = `${API_BASE}/../auth/login/${provider}${params}`;
+  };
+
+  const handleTurnstileSuccess = (token: string) => {
+    setTurnstileToken(token);
+    // Auto-redirect after successful verification
+    const params = `?turnstile_token=${token}`;
+    window.location.href = `${API_BASE}/../auth/login/${provider}${params}`;
   };
 
   const icons = {
@@ -43,12 +62,22 @@ export function OAuthButton({ provider }: OAuthButtonProps) {
   };
 
   return (
-    <button
-      onClick={handleLogin}
-      className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--bg)] hover:bg-[var(--border)]/50 transition-colors font-medium"
-    >
-      {icons[provider]}
-      {labels[provider]}
-    </button>
+    <div className="w-full space-y-3">
+      {showTurnstile && !turnstileToken && (
+        <div className="p-4 border border-[var(--border)] rounded-lg bg-[var(--bg)]">
+          <p className="text-sm text-[var(--text-secondary)] mb-3">
+            Please verify you're human
+          </p>
+          <TurnstileWidget onSuccess={handleTurnstileSuccess} />
+        </div>
+      )}
+      <button
+        onClick={handleLogin}
+        className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--bg)] hover:bg-[var(--border)]/50 transition-colors font-medium"
+      >
+        {icons[provider]}
+        {labels[provider]}
+      </button>
+    </div>
   );
 }

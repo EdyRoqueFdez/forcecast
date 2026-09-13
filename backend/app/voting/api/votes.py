@@ -6,7 +6,9 @@ from fastapi import APIRouter, Depends, Request, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.middleware.auth import get_current_user
+from app.auth.middleware.turnstile import require_turnstile_vote, verify_turnstile_token
 from app.auth.models.user import User
+from app.core.feature_flags import get_feature_flags
 from app.db.session import get_session
 from app.taxonomy.services.core import DomainError
 from app.voting.schemas.vote import (
@@ -15,9 +17,22 @@ from app.voting.schemas.vote import (
     VoteRequest,
     VoteResponse,
 )
+from app.voting.services.burst_detection import BurstDetector
 from app.voting.services.vote_service import VoteService
 
 router = APIRouter(prefix="/api/v1", tags=["votes"])
+
+# Burst detector singleton
+_burst_detector: BurstDetector | None = None
+
+
+def get_burst_detector() -> BurstDetector:
+    """Get or create BurstDetector singleton."""
+    global _burst_detector
+    if _burst_detector is None:
+        # Use dict fallback for now; inject Redis in production
+        _burst_detector = BurstDetector(redis_client={})
+    return _burst_detector
 
 
 @router.post("/votes", response_model=VoteResponse, status_code=201)
@@ -27,11 +42,17 @@ async def cast_or_change_vote(
     response: Response,
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
+    turnstile_token: str | None = Depends(require_turnstile_vote),
 ) -> VoteResponse:
     """Cast a new vote or change an existing vote.
 
     - If no active vote exists in the category: casts new vote
     - If active vote exists: changes to new target
+
+    CAPTCHA is triggered when:
+    - Feature flag is enabled AND
+    - User is voting for the first time OR
+    - User is voting in burst mode (rapid succession)
     """
     # Get client info
     ip_address = request.client.host if request.client else None
@@ -44,6 +65,26 @@ async def cast_or_change_vote(
         existing = await service.user_vote_repo.get(
             user.id, body.category_id, body.target_type
         )
+
+        # Check if CAPTCHA should be enforced
+        feature_flags = get_feature_flags()
+        captcha_enabled = await feature_flags.is_enabled("FEATURE_CAPTCHA_VOTE")
+
+        if captcha_enabled:
+            # Check if this is first vote or burst
+            is_first_vote = await service.is_first_vote(user.id)
+            burst_detector = get_burst_detector()
+            is_burst = await burst_detector.is_burst(user.id)
+
+            if is_first_vote or is_burst:
+                # Token must have been verified by middleware
+                if not turnstile_token:
+                    from fastapi import HTTPException
+
+                    raise HTTPException(
+                        status_code=403,
+                        detail="CAPTCHA required for this vote",
+                    )
 
         if existing:
             # Change vote
@@ -69,6 +110,10 @@ async def cast_or_change_vote(
                 ip_address=ip_address,
                 device_fingerprint=device_fingerprint,
             )
+
+        # Record vote for burst detection
+        burst_detector = get_burst_detector()
+        await burst_detector.record_vote(user.id)
 
         return VoteResponse(**result)
 

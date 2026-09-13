@@ -66,6 +66,30 @@ async def callback(
     if code_verifier is None:
         raise HTTPException(status_code=403, detail="Invalid state")
 
+    # Verify Turnstile if enabled for registration
+    from app.core.feature_flags import get_feature_flags
+
+    feature_flags = get_feature_flags()
+    captcha_enabled = await feature_flags.is_enabled("FEATURE_CAPTCHA_REGISTRATION")
+
+    if captcha_enabled:
+        turnstile_token = query.get("turnstile_token")
+        if not turnstile_token:
+            raise HTTPException(
+                status_code=403,
+                detail="CAPTCHA token required for registration",
+            )
+
+        from app.auth.middleware.turnstile import verify_turnstile_token, _get_client_ip
+
+        ip_address = _get_client_ip(request)
+        is_valid = await verify_turnstile_token(turnstile_token, ip_address)
+        if not is_valid:
+            raise HTTPException(
+                status_code=403,
+                detail="CAPTCHA verification failed",
+            )
+
     # Exchange code for tokens
     try:
         token_data = await exchange_code_for_tokens(provider, code, code_verifier)

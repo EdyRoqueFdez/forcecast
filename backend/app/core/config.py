@@ -36,7 +36,17 @@ class Settings(BaseSettings):
 
     # External APIs
     TURNSTILE_SECRET_KEY: str = ""
+    TURNSTILE_SITE_KEY: str = ""
     RESEND_API_KEY: str = ""
+
+    # PostHog (Feature Flags)
+    POSTHOG_API_KEY: str = ""
+    POSTHOG_HOST: str = "https://app.posthog.com"
+
+    # Feature Flags
+    FEATURE_CAPTCHA_REGISTRATION: bool = False
+    FEATURE_CAPTCHA_FIRST_VOTE: bool = False
+    FEATURE_CAPTCHA_BURST_VOTE: bool = False
 
     # OAuth — Google
     GOOGLE_CLIENT_ID: str = ""

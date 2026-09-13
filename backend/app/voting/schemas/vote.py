@@ -18,6 +18,9 @@ class VoteRequest(BaseModel):
     idempotency_key: str = Field(
         ..., max_length=255, description="Unique key for idempotency"
     )
+    turnstile_token: str | None = Field(
+        None, max_length=1000, description="Cloudflare Turnstile token (required when CAPTCHA triggered)"
+    )
 
     @field_validator("target_id", "category_id")
     @classmethod

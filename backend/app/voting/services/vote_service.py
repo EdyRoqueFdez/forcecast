@@ -344,6 +344,18 @@ class VoteService:
         votes = await self.user_vote_repo.list_by_user(user.id)
         return [self._vote_to_dict(v) for v in votes]
 
+    async def is_first_vote(self, user_id: str) -> bool:
+        """Check if user has never voted before.
+
+        Args:
+            user_id: The user ID to check
+
+        Returns:
+            True if user has no votes, False otherwise
+        """
+        votes = await self.user_vote_repo.list_by_user(user_id)
+        return len(votes) == 0
+
     async def get_target_votes(
         self, target_type: str, target_id: str
     ) -> dict:
