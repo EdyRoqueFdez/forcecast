@@ -14,6 +14,7 @@ import { Toast } from "./components/Toast";
 import { AuthModal } from "./components/auth/AuthModal";
 import { UserMenu } from "./components/auth/UserMenu";
 import { AuthCallback } from "./components/auth/AuthCallback";
+import { ProfilePage } from "./components/profile/ProfilePage";
 
 function AppContent() {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
@@ -256,6 +257,7 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/profile" element={<ProfilePage />} />
           <Route path="/" element={<AppContent />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

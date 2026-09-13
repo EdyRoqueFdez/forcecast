@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { User, LogOut, Settings, ChevronDown } from "lucide-react";
 
 export function UserMenu() {
   const { user, logout, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
   if (!isAuthenticated || !user) return null;
@@ -44,7 +46,7 @@ export function UserMenu() {
             <button
               onClick={() => {
                 setIsOpen(false);
-                // TODO: Open settings modal
+                navigate("/profile");
               }}
               className="w-full px-3 py-2 text-left text-sm flex items-center gap-2 hover:bg-[var(--border)]/50"
             >

@@ -2,7 +2,7 @@ import enum
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import Boolean, DateTime, Float, String
+from sqlalchemy import Boolean, DateTime, Float, String, Text
 from sqlalchemy import Enum as SAEnum
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -20,6 +20,11 @@ class ProviderEnum(str, enum.Enum):
     EMAIL = "email"
 
 
+class VisibilityMode(str, enum.Enum):
+    PSEUDONYM = "pseudonym"  # Default: show display_name
+    PUBLIC = "public"         # Show real identity
+
+
 class User(Base):
     __tablename__ = "users"
 
@@ -31,6 +36,16 @@ class User(Base):
     # Spec says default 0.0 but anti-bot & design use 5.0 as initial healthy score
     reputation_score: Mapped[float] = mapped_column(Float, default=5.0, nullable=False)
     email_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+
+    # HU-A06: Profile fields
+    bio: Mapped[str | None] = mapped_column(Text, nullable=True, default=None)
+    preferred_locale: Mapped[str] = mapped_column(String(10), default="en", nullable=False)
+    visibility_mode: Mapped[VisibilityMode] = mapped_column(
+        SAEnum(VisibilityMode, name="visibility_mode_enum"),
+        default=VisibilityMode.PSEUDONYM,
+        nullable=False,
+    )
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
     )
