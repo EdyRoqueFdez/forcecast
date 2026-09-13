@@ -18,6 +18,9 @@ class VoteRequest(BaseModel):
     idempotency_key: str = Field(
         ..., max_length=255, description="Unique key for idempotency"
     )
+    comment: str | None = Field(
+        None, max_length=1000, description="Optional comment (0-1000 chars)"
+    )
     turnstile_token: str | None = Field(
         None, max_length=1000, description="Cloudflare Turnstile token (required when CAPTCHA triggered)"
     )
@@ -39,6 +42,14 @@ class VoteRequest(BaseModel):
         except (ValueError, IndexError) as e:
             raise ValueError(f"Invalid UUID format: {v}") from e
 
+    @field_validator("comment")
+    @classmethod
+    def validate_comment(cls, v: str | None) -> str | None:
+        """Validate comment length."""
+        if v is not None and len(v) > 1000:
+            raise ValueError("Comment must be 1000 characters or less")
+        return v
+
 
 class VoteResponse(BaseModel):
     """Response body for vote operations."""
@@ -50,6 +61,7 @@ class VoteResponse(BaseModel):
     category_id: str
     action: str
     weight: Decimal
+    comment: str | None = None
     created_at: datetime | None = None
 
 

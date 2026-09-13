@@ -37,6 +37,7 @@ class VoteService:
         target_id: str,
         category_id: str,
         idempotency_key: str,
+        comment: str | None = None,
         request_id: str | None = None,
         ip_address: str | None = None,
         device_fingerprint: str | None = None,
@@ -49,6 +50,7 @@ class VoteService:
             target_id: ID of the target to vote for.
             category_id: ID of the category.
             idempotency_key: Unique key for idempotency.
+            comment: Optional comment (0-1000 chars).
             request_id: Request ID for tracing.
             ip_address: Client IP.
             device_fingerprint: Client device fingerprint.
@@ -104,6 +106,7 @@ class VoteService:
                 "idempotency_key": idempotency_key,
                 "device_fingerprint": device_fingerprint,
                 "ip_address": ip_address,
+                "comment": comment,
             }
         )
 
@@ -144,6 +147,7 @@ class VoteService:
         target_id: str,
         category_id: str,
         idempotency_key: str,
+        comment: str | None = None,
         request_id: str | None = None,
         ip_address: str | None = None,
         device_fingerprint: str | None = None,
@@ -156,6 +160,7 @@ class VoteService:
             target_id: New target ID.
             category_id: Category ID.
             idempotency_key: Unique key for idempotency.
+            comment: Optional comment (0-1000 chars).
             request_id: Request ID for tracing.
             ip_address: Client IP.
             device_fingerprint: Client device fingerprint.
@@ -218,6 +223,7 @@ class VoteService:
                 "idempotency_key": idempotency_key,
                 "device_fingerprint": device_fingerprint,
                 "ip_address": ip_address,
+                "comment": comment,
             }
         )
 
@@ -463,6 +469,7 @@ class VoteService:
             "category_id": event.category_id,
             "action": event.action,
             "weight": float(event.weight),
+            "comment": getattr(event, "comment", None),
             "created_at": event.created_at.isoformat()
             if event.created_at
             else None,

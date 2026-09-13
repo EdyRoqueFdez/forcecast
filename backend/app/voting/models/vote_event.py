@@ -87,6 +87,7 @@ class VoteEvent(Base):
         String(64), nullable=True
     )
     ip_address: Mapped[str | None] = mapped_column(String(45), nullable=True)
+    comment: Mapped[str | None] = mapped_column(String(1000), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=_now
     )
