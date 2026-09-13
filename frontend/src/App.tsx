@@ -1,7 +1,9 @@
 import { useEffect, useState, useCallback } from "react";
-import { Globe, Search, Github } from "lucide-react";
-import { cn, getBrowserLocale } from "./lib/utils";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Globe, Search, Github, LogIn } from "lucide-react";
+import { getBrowserLocale } from "./lib/utils";
 import { api } from "./api";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import type { Model, FilterState, MetaResponse, CompareResponse, Locale } from "./types";
 import { LocaleSelector } from "./components/LocaleSelector";
 import { Filters } from "./components/Filters";
@@ -9,9 +11,14 @@ import { ModelCard } from "./components/ModelCard";
 import { CompareBar } from "./components/CompareBar";
 import { CompareModal } from "./components/CompareModal";
 import { Toast } from "./components/Toast";
+import { AuthModal } from "./components/auth/AuthModal";
+import { UserMenu } from "./components/auth/UserMenu";
+import { AuthCallback } from "./components/auth/AuthCallback";
 
-function App() {
-  console.log("🔥 Forcecast App renderizado"); // DEBUG
+function AppContent() {
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  console.log("Forcecast App renderizado"); // DEBUG
+
   // State
   const [models, setModels] = useState<Model[]>([]);
   const [meta, setMeta] = useState<MetaResponse | null>(null);
@@ -30,6 +37,7 @@ function App() {
   const [showCompare, setShowCompare] = useState(false);
   const [locale, setLocale] = useState<Locale>(() => getBrowserLocale() as Locale);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   // Fetch meta on mount
   useEffect(() => {
@@ -117,6 +125,21 @@ function App() {
             </div>
             <div className="flex items-center gap-3">
               <LocaleSelector currentLocale={locale} onChange={setLocale} />
+
+              {authLoading ? (
+                <div className="w-20 h-9 bg-[var(--border)] rounded-lg animate-pulse" />
+              ) : isAuthenticated ? (
+                <UserMenu />
+              ) : (
+                <button
+                  onClick={() => setShowAuthModal(true)}
+                  className="btn btn-primary gap-2"
+                >
+                  <LogIn className="w-4 h-4" />
+                  Sign In
+                </button>
+              )}
+
               <a
                 href="https://github.com/forcecast"
                 target="_blank"
@@ -212,6 +235,11 @@ function App() {
         locale={locale}
       />
 
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+      />
+
       <Toast
         message={toast?.message ?? ""}
         type={toast?.type ?? "success"}
@@ -219,6 +247,20 @@ function App() {
         visible={!!toast}
       />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/" element={<AppContent />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

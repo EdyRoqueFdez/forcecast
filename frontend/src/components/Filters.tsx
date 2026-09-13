@@ -1,4 +1,3 @@
-import { cn } from "../lib/utils";
 import type { FilterState, Locale, SortField, SortOrder } from "../types";
 import { tCategory } from "../types";
 

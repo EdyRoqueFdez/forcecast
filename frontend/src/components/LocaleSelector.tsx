@@ -1,4 +1,3 @@
-import { cn } from "../lib/utils";
 import type { Locale } from "../types";
 
 interface LocaleSelectorProps {

@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { X } from "lucide-react";
-import { cn, formatNumber, formatPrice } from "../lib/utils";
+import { formatNumber, formatPrice } from "../lib/utils";
 import { tCategory } from "../types";
 import type { Model, Locale, CompareResponse } from "../types";
 
