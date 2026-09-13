@@ -15,6 +15,7 @@ class APIKeyCreate(BaseModel):
     name: str = Field(min_length=1, max_length=100, description="Human-readable key name")
     scopes: list[str] = Field(default_factory=lambda: ["read:models"])
     rate_limit_rpm: int = Field(default=60, ge=1, le=500)
+    expires_at: datetime | None = Field(default=None, description="Optional expiration date")
 
     @field_validator("scopes")
     @classmethod
@@ -38,6 +39,8 @@ class APIKeyRead(BaseModel):
     scopes: list[str]
     rate_limit_rpm: int
     created_at: datetime
+    last_used_at: datetime | None = None
+    expires_at: datetime | None = None
     revoked_at: datetime | None = None
 
 

@@ -53,7 +53,18 @@ async def cast_or_change_vote(
     - Feature flag is enabled AND
     - User is voting for the first time OR
     - User is voting in burst mode (rapid succession)
+
+    API keys are read-only and cannot vote (403).
     """
+    # Block API keys from voting (HU-A09)
+    api_key_header = request.headers.get("x-forcecast-api-key") or request.headers.get("X-Forcecast-Api-Key")
+    if api_key_header:
+        from fastapi import HTTPException
+        raise HTTPException(
+            status_code=403,
+            detail="API keys are read-only and cannot vote",
+        )
+
     # Get client info
     ip_address = request.client.host if request.client else None
     device_fingerprint = None  # TODO: extract from request headers
@@ -135,7 +146,19 @@ async def revoke_vote(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
 ) -> VoteResponse:
-    """Revoke an active vote in a category."""
+    """Revoke an active vote in a category.
+
+    API keys are read-only and cannot revoke votes (403).
+    """
+    # Block API keys from voting (HU-A09)
+    api_key_header = request.headers.get("x-forcecast-api-key") or request.headers.get("X-Forcecast-Api-Key")
+    if api_key_header:
+        from fastapi import HTTPException
+        raise HTTPException(
+            status_code=403,
+            detail="API keys are read-only and cannot vote",
+        )
+
     import uuid
 
     ip_address = request.client.host if request.client else None

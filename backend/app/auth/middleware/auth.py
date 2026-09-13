@@ -134,6 +134,12 @@ async def require_api_key(
     if getattr(api_key_row, "revoked_at", None) is not None:
         raise HTTPException(status_code=401, detail="API key revoked")
 
+    # Check expiration
+    from datetime import datetime, timezone
+    if getattr(api_key_row, "expires_at", None) is not None:
+        if api_key_row.expires_at < datetime.now(timezone.utc):
+            raise HTTPException(status_code=401, detail="API key expired")
+
     # fetch associated user
     user = await _fetch_user_by_id(db, str(api_key_row.user_id))
     if not user:
@@ -179,11 +185,19 @@ async def require_api_key(
             headers={
                 "Retry-After": str(retry_after),
                 "X-RateLimit-Limit": str(limit),
+                "X-RateLimit-Limit": str(limit),
                 "X-RateLimit-Remaining": str(remaining),
                 "X-Rate-Limit-Limit": str(limit),
                 "X-Rate-Limit-Remaining": str(remaining),
             },
         )
+
+    # Update last_used_at
+    api_key_row.last_used_at = datetime.now(timezone.utc)
+    try:
+        await db.commit()
+    except Exception:
+        await db.rollback()
 
     # Also set headers on successful path via exception-free: we can't directly set response headers without response obj,
     # so we attach to request.state and rely on caller to copy to response. However for httpx tests, headers must be on response.

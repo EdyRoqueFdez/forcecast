@@ -41,6 +41,8 @@ def _to_read(row: APIKey) -> APIKeyRead:
         scopes=list(row.scopes) if row.scopes else [],
         rate_limit_rpm=row.rate_limit_rpm,
         created_at=row.created_at,
+        last_used_at=row.last_used_at,
+        expires_at=row.expires_at,
         revoked_at=row.revoked_at,
     )
 
@@ -76,6 +78,8 @@ async def create_api_key(
         scopes=payload.scopes,
         rate_limit_rpm=payload.rate_limit_rpm,
         created_at=now,
+        last_used_at=None,
+        expires_at=payload.expires_at,
         revoked_at=None,
     )
     db.add(row)
