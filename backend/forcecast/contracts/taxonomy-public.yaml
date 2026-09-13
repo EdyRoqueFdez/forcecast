@@ -1,0 +1,490 @@
+openapi: 3.1.0
+info:
+  title: Forcecast Taxonomy — Public API
+  version: 1.0.0
+  description: 'Public read API — 5 endpoints exposing approved models, categories,
+    providers, and locale metadata. Responses use standardized envelope, keyset pagination,
+    Redis caching (public, max-age=60, stale-while-revalidate=300), and full-text
+    search with GIN indexes. Only approved models and active categories are returned.
+    Price fields (input_price_per_mtok, output_price_per_mtok) are reference-only
+    and omitted when null. Cache tags: taxonomy:v1, models:approved, categories:active.
+    Cache-Control and CDN caching documented.'
+paths:
+  /api/v1/models:
+    get:
+      tags:
+      - taxonomy-public
+      summary: List Models
+      operationId: list_models_api_v1_models_get
+      parameters:
+      - name: category_slug
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Category Slug
+      - name: provider_slug
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Provider Slug
+      - name: modalities
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Modalities
+      - name: lang
+        in: query
+        required: false
+        schema:
+          type: string
+          default: en
+          title: Lang
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cursor
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 20
+          title: Limit
+      - name: sort
+        in: query
+        required: false
+        schema:
+          type: string
+          pattern: ^(release_date|input_price|output_price|name|display_name|input_price_per_mtok|output_price_per_mtok)$
+          default: release_date
+          title: Sort
+      - name: order
+        in: query
+        required: false
+        schema:
+          type: string
+          pattern: ^(asc|desc)$
+          default: desc
+          title: Order
+      - name: page
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+            minimum: 1
+          - type: 'null'
+          title: Page
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+          headers:
+            Cache-Control:
+              description: public, max-age=60, stale-while-revalidate=300
+              schema:
+                type: string
+            X-Cache:
+              description: HIT or MISS from Redis
+              schema:
+                type: string
+            ETag:
+              schema:
+                type: string
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '406':
+          description: Unsupported locale — returns 406 with supported locales and
+            Link headers
+          headers:
+            Link:
+              description: 'Link: <v>; rel="alternate"; hreflang="v" for each supported
+                locale'
+              schema:
+                type: string
+            Content-Language:
+              schema:
+                type: string
+            Vary:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/models/{slug}:
+    get:
+      tags:
+      - taxonomy-public
+      summary: Get Model
+      operationId: get_model_api_v1_models__slug__get
+      parameters:
+      - name: slug
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Slug
+      - name: lang
+        in: query
+        required: false
+        schema:
+          type: string
+          default: en
+          title: Lang
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+          headers:
+            Cache-Control:
+              description: public, max-age=60, stale-while-revalidate=300
+              schema:
+                type: string
+            X-Cache:
+              description: HIT or MISS from Redis
+              schema:
+                type: string
+            ETag:
+              schema:
+                type: string
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '406':
+          description: Unsupported locale — returns 406 with supported locales and
+            Link headers
+          headers:
+            Link:
+              description: 'Link: <v>; rel="alternate"; hreflang="v" for each supported
+                locale'
+              schema:
+                type: string
+            Content-Language:
+              schema:
+                type: string
+            Vary:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/categories:
+    get:
+      tags:
+      - taxonomy-public
+      summary: List Categories
+      operationId: list_categories_api_v1_categories_get
+      parameters:
+      - name: lang
+        in: query
+        required: false
+        schema:
+          type: string
+          default: en
+          title: Lang
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+          headers:
+            Cache-Control:
+              description: public, max-age=60, stale-while-revalidate=300
+              schema:
+                type: string
+            X-Cache:
+              description: HIT or MISS from Redis
+              schema:
+                type: string
+            ETag:
+              schema:
+                type: string
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '406':
+          description: Unsupported locale — returns 406 with supported locales and
+            Link headers
+          headers:
+            Link:
+              description: 'Link: <v>; rel="alternate"; hreflang="v" for each supported
+                locale'
+              schema:
+                type: string
+            Content-Language:
+              schema:
+                type: string
+            Vary:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/providers:
+    get:
+      tags:
+      - taxonomy-public
+      summary: List Providers
+      operationId: list_providers_api_v1_providers_get
+      parameters:
+      - name: lang
+        in: query
+        required: false
+        schema:
+          type: string
+          default: en
+          title: Lang
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+          headers:
+            Cache-Control:
+              description: public, max-age=60, stale-while-revalidate=300
+              schema:
+                type: string
+            X-Cache:
+              description: HIT or MISS from Redis
+              schema:
+                type: string
+            ETag:
+              schema:
+                type: string
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '406':
+          description: Unsupported locale — returns 406 with supported locales and
+            Link headers
+          headers:
+            Link:
+              description: 'Link: <v>; rel="alternate"; hreflang="v" for each supported
+                locale'
+              schema:
+                type: string
+            Content-Language:
+              schema:
+                type: string
+            Vary:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/locales:
+    get:
+      tags:
+      - taxonomy-public
+      summary: List Locales
+      operationId: list_locales_api_v1_locales_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+          headers:
+            Cache-Control:
+              description: public, max-age=60, stale-while-revalidate=300
+              schema:
+                type: string
+            X-Cache:
+              description: HIT or MISS from Redis
+              schema:
+                type: string
+            ETag:
+              schema:
+                type: string
+        '406':
+          description: Unsupported locale — returns 406 with supported locales and
+            Link headers
+          headers:
+            Link:
+              description: 'Link: <v>; rel="alternate"; hreflang="v" for each supported
+                locale'
+              schema:
+                type: string
+            Content-Language:
+              schema:
+                type: string
+            Vary:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error — e.g., page >10 requires cursor, invalid
+            limit, or unsupported sort/order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      parameters: []
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    PaginatedResponse:
+      title: PaginatedResponse
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+        meta:
+          $ref: '#/components/schemas/Meta'
+        links:
+          $ref: '#/components/schemas/Links'
+    Meta:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        has_more:
+          type: boolean
+        next_cursor:
+          type: string
+          nullable: true
+          description: Opaque base64 cursor for keyset pagination
+        taxonomy_version:
+          type: string
+          nullable: true
+    Links:
+      type: object
+      properties:
+        first:
+          type: string
+        prev:
+          type: string
+          nullable: true
+        next:
+          type: string
+          nullable: true
+        last:
+          type: string
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              type: array
+              items:
+                type: object
+            trace_id:
+              type: string
+    ProviderSummary:
+      title: ProviderSummary
+      type: object
+      properties:
+        slug:
+          type: string
+        name:
+          type: string
+      required:
+      - slug
+      - name
+    ModelHostingResponse:
+      title: ModelHostingResponse
+      description: Hosting without price fields — only provider + is_primary
+      type: object
+      properties:
+        provider:
+          $ref: '#/components/schemas/ProviderSummary'
+        is_primary:
+          type: boolean
+      required:
+      - provider
+      - is_primary

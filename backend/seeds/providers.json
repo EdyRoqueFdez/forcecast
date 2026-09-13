@@ -1,0 +1,12 @@
+[
+  { "slug": "openai", "name": "OpenAI", "website": "https://openai.com", "api_docs_url": "https://platform.openai.com/docs", "logo_url": "https://openai.com/favicon.ico", "status": "active" },
+  { "slug": "anthropic", "name": "Anthropic", "website": "https://anthropic.com", "api_docs_url": "https://docs.anthropic.com", "logo_url": "https://anthropic.com/favicon.ico", "status": "active" },
+  { "slug": "deepseek", "name": "DeepSeek", "website": "https://deepseek.com", "api_docs_url": "https://api-docs.deepseek.com", "logo_url": "https://deepseek.com/favicon.ico", "status": "active" },
+  { "slug": "meta", "name": "Meta", "website": "https://ai.meta.com", "api_docs_url": "https://llama.meta.com", "logo_url": "https://meta.com/favicon.ico", "status": "active" },
+  { "slug": "google", "name": "Google", "website": "https://ai.google", "api_docs_url": "https://ai.google.dev/gemini-api/docs", "logo_url": "https://google.com/favicon.ico", "status": "active" },
+  { "slug": "alibaba", "name": "Alibaba", "website": "https://alibabacloud.com", "api_docs_url": "https://help.aliyun.com", "logo_url": "https://alibabacloud.com/favicon.ico", "status": "active" },
+  { "slug": "mistral", "name": "Mistral AI", "website": "https://mistral.ai", "api_docs_url": "https://docs.mistral.ai", "logo_url": "https://mistral.ai/favicon.ico", "status": "active" },
+  { "slug": "cohere", "name": "Cohere", "website": "https://cohere.com", "api_docs_url": "https://docs.cohere.com", "logo_url": "https://cohere.com/favicon.ico", "status": "active" },
+  { "slug": "xai", "name": "xAI", "website": "https://x.ai", "api_docs_url": "https://docs.x.ai", "logo_url": "https://x.ai/favicon.ico", "status": "active" },
+  { "slug": "qwen", "name": "Qwen", "website": "https://qwen.ai", "api_docs_url": "https://github.com/QwenLM/Qwen", "logo_url": "https://qwen.ai/favicon.ico", "status": "active" }
+]

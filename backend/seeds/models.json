@@ -1,0 +1,673 @@
+[
+  {
+    "slug": "gpt-4o",
+    "provider_slug": "openai",
+    "display_name": "GPT-4o",
+    "version": "2024-05-13",
+    "family": "gpt-4o",
+    "modality": [
+      "text",
+      "vision",
+      "reasoning"
+    ],
+    "context_window": 128000,
+    "max_output_tokens": 16384,
+    "input_price_per_mtok": 5.0,
+    "output_price_per_mtok": 15.0,
+    "release_date": "2024-05-13",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/openai/gpt-4o",
+    "categories": [
+      "coding",
+      "debugging"
+    ]
+  },
+  {
+    "slug": "claude-3-5-sonnet",
+    "provider_slug": "anthropic",
+    "display_name": "Claude 3.5 Sonnet",
+    "version": "2024-10-22",
+    "family": "claude-3-5",
+    "modality": [
+      "text",
+      "vision",
+      "reasoning"
+    ],
+    "context_window": 200000,
+    "max_output_tokens": 8192,
+    "input_price_per_mtok": 3.0,
+    "output_price_per_mtok": 15.0,
+    "release_date": "2024-10-22",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/anthropic/claude-3.5-sonnet",
+    "categories": [
+      "coding",
+      "architecture"
+    ]
+  },
+  {
+    "slug": "deepseek-v3",
+    "provider_slug": "deepseek",
+    "display_name": "DeepSeek V3",
+    "version": "2024-12-26",
+    "family": "deepseek-v3",
+    "modality": [
+      "text",
+      "reasoning"
+    ],
+    "context_window": 64000,
+    "max_output_tokens": 8192,
+    "input_price_per_mtok": 0.14,
+    "output_price_per_mtok": 0.28,
+    "release_date": "2024-12-26",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/deepseek/deepseek-v3",
+    "categories": [
+      "coding"
+    ]
+  },
+  {
+    "slug": "llama-3-1-70b",
+    "provider_slug": "meta",
+    "display_name": "Llama 3.1 70B",
+    "version": "70b",
+    "family": "llama-3-1",
+    "modality": [
+      "text"
+    ],
+    "context_window": 131072,
+    "max_output_tokens": 8192,
+    "input_price_per_mtok": 0.88,
+    "output_price_per_mtok": 0.88,
+    "release_date": "2024-07-23",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/meta-llama/llama-3.1-70b-instruct",
+    "categories": [
+      "coding",
+      "debugging"
+    ]
+  },
+  {
+    "slug": "gemini-1-5-pro",
+    "provider_slug": "google",
+    "display_name": "Gemini 1.5 Pro",
+    "version": "pro",
+    "family": "gemini-1-5",
+    "modality": [
+      "text",
+      "vision",
+      "audio"
+    ],
+    "context_window": 2000000,
+    "max_output_tokens": 8192,
+    "input_price_per_mtok": 3.5,
+    "output_price_per_mtok": 10.5,
+    "release_date": "2024-05-14",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/google/gemini-1.5-pro",
+    "categories": [
+      "coding",
+      "architecture"
+    ]
+  },
+  {
+    "slug": "gpt-4o-mini",
+    "provider_slug": "openai",
+    "display_name": "GPT-4o mini",
+    "version": "mini-2024-07-18",
+    "family": "gpt-4o",
+    "modality": [
+      "text",
+      "vision"
+    ],
+    "context_window": 128000,
+    "max_output_tokens": 16384,
+    "input_price_per_mtok": 0.15,
+    "output_price_per_mtok": 0.6,
+    "release_date": "2024-07-18",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/openai/gpt-4o-mini",
+    "categories": [
+      "debugging"
+    ]
+  },
+  {
+    "slug": "qwen-2-5-72b",
+    "provider_slug": "alibaba",
+    "display_name": "Qwen 2.5 72B",
+    "version": "72b",
+    "family": "qwen-2-5",
+    "modality": [
+      "text"
+    ],
+    "context_window": 131072,
+    "max_output_tokens": 8192,
+    "input_price_per_mtok": 0.35,
+    "output_price_per_mtok": 0.4,
+    "release_date": "2024-09-19",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/qwen/qwen-2.5-72b-instruct",
+    "categories": [
+      "coding"
+    ]
+  },
+  {
+    "slug": "mistral-large",
+    "provider_slug": "mistral",
+    "display_name": "Mistral Large",
+    "version": "2024-07",
+    "family": "mistral-large",
+    "modality": [
+      "text",
+      "vision",
+      "reasoning"
+    ],
+    "context_window": 128000,
+    "max_output_tokens": 8192,
+    "input_price_per_mtok": 2.0,
+    "output_price_per_mtok": 6.0,
+    "release_date": "2024-07-24",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/mistralai/mistral-large",
+    "categories": [
+      "coding",
+      "reasoning"
+    ]
+  },
+  {
+    "slug": "command-r-plus",
+    "provider_slug": "cohere",
+    "display_name": "Command R+",
+    "version": "2024-08",
+    "family": "command-r",
+    "modality": [
+      "text",
+      "reasoning"
+    ],
+    "context_window": 128000,
+    "max_output_tokens": 4096,
+    "input_price_per_mtok": 2.5,
+    "output_price_per_mtok": 10.0,
+    "release_date": "2024-08-29",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/cohere/command-r-plus",
+    "categories": [
+      "coding",
+      "rag"
+    ]
+  },
+  {
+    "slug": "grok-2",
+    "provider_slug": "xai",
+    "display_name": "Grok 2",
+    "version": "2024-08",
+    "family": "grok-2",
+    "modality": [
+      "text",
+      "reasoning"
+    ],
+    "context_window": 131072,
+    "max_output_tokens": 8192,
+    "input_price_per_mtok": 2.0,
+    "output_price_per_mtok": 10.0,
+    "release_date": "2024-08-14",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/x-ai/grok-2",
+    "categories": [
+      "coding",
+      "reasoning"
+    ]
+  },
+  {
+    "slug": "o1",
+    "provider_slug": "openai",
+    "display_name": "o1",
+    "version": "2024-09-12",
+    "family": "o1",
+    "modality": [
+      "text",
+      "reasoning"
+    ],
+    "context_window": 200000,
+    "max_output_tokens": 100000,
+    "input_price_per_mtok": 15.0,
+    "output_price_per_mtok": 60.0,
+    "release_date": "2024-09-12",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/openai/o1",
+    "categories": [
+      "logical_reasoning",
+      "math"
+    ]
+  },
+  {
+    "slug": "gpt-3-5-turbo",
+    "provider_slug": "openai",
+    "display_name": "GPT-3.5 Turbo",
+    "version": "0613",
+    "family": "gpt-3-5",
+    "modality": [
+      "text"
+    ],
+    "context_window": 16385,
+    "max_output_tokens": 4096,
+    "input_price_per_mtok": 0.5,
+    "output_price_per_mtok": 1.5,
+    "release_date": "2023-06-13",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/openai/gpt-3.5-turbo",
+    "categories": [
+      "coding"
+    ]
+  },
+  {
+    "slug": "claude-3-opus",
+    "provider_slug": "anthropic",
+    "display_name": "Claude 3 Opus",
+    "version": "2024-02-29",
+    "family": "claude-3",
+    "modality": [
+      "text",
+      "vision",
+      "reasoning"
+    ],
+    "context_window": 200000,
+    "max_output_tokens": 4096,
+    "input_price_per_mtok": 15.0,
+    "output_price_per_mtok": 75.0,
+    "release_date": "2024-02-29",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/anthropic/claude-3-opus",
+    "categories": [
+      "creative_writing"
+    ]
+  },
+  {
+    "slug": "claude-3-haiku",
+    "provider_slug": "anthropic",
+    "display_name": "Claude 3 Haiku",
+    "version": "2024-03-07",
+    "family": "claude-3",
+    "modality": [
+      "text",
+      "vision"
+    ],
+    "context_window": 200000,
+    "max_output_tokens": 4096,
+    "input_price_per_mtok": 0.25,
+    "output_price_per_mtok": 1.25,
+    "release_date": "2024-03-07",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/anthropic/claude-3-haiku",
+    "categories": [
+      "translation"
+    ]
+  },
+  {
+    "slug": "deepseek-r1",
+    "provider_slug": "deepseek",
+    "display_name": "DeepSeek R1",
+    "version": "2025-01-20",
+    "family": "deepseek-r1",
+    "modality": [
+      "text",
+      "reasoning",
+      "code"
+    ],
+    "context_window": 64000,
+    "max_output_tokens": 8192,
+    "input_price_per_mtok": 0.55,
+    "output_price_per_mtok": 2.19,
+    "release_date": "2025-01-20",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/deepseek/deepseek-r1",
+    "categories": [
+      "logical_reasoning",
+      "coding"
+    ]
+  },
+  {
+    "slug": "deepseek-coder",
+    "provider_slug": "deepseek",
+    "display_name": "DeepSeek Coder",
+    "version": "33b",
+    "family": "deepseek-coder",
+    "modality": [
+      "code",
+      "text"
+    ],
+    "context_window": 16384,
+    "max_output_tokens": 4096,
+    "input_price_per_mtok": 0.14,
+    "output_price_per_mtok": 0.28,
+    "release_date": "2024-02-05",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/deepseek/deepseek-coder",
+    "categories": [
+      "coding",
+      "debugging"
+    ]
+  },
+  {
+    "slug": "llama-3-3-70b",
+    "provider_slug": "meta",
+    "display_name": "Llama 3.3 70B",
+    "version": "70b",
+    "family": "llama-3-3",
+    "modality": [
+      "text"
+    ],
+    "context_window": 131072,
+    "max_output_tokens": 8192,
+    "input_price_per_mtok": 0.88,
+    "output_price_per_mtok": 0.88,
+    "release_date": "2024-12-06",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/meta-llama/llama-3.3-70b-instruct",
+    "categories": [
+      "coding"
+    ]
+  },
+  {
+    "slug": "llama-3-2-90b",
+    "provider_slug": "meta",
+    "display_name": "Llama 3.2 90B Vision",
+    "version": "90b",
+    "family": "llama-3-2",
+    "modality": [
+      "text",
+      "vision"
+    ],
+    "context_window": 131072,
+    "max_output_tokens": 8192,
+    "input_price_per_mtok": 0.9,
+    "output_price_per_mtok": 0.9,
+    "release_date": "2024-09-25",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/meta-llama/llama-3.2-90b-vision-instruct",
+    "categories": [
+      "multimodal"
+    ]
+  },
+  {
+    "slug": "gemini-2-0-flash",
+    "provider_slug": "google",
+    "display_name": "Gemini 2.0 Flash",
+    "version": "002",
+    "family": "gemini-2-0",
+    "modality": [
+      "text",
+      "vision",
+      "audio"
+    ],
+    "context_window": 1000000,
+    "max_output_tokens": 8192,
+    "input_price_per_mtok": 0.1,
+    "output_price_per_mtok": 0.4,
+    "release_date": "2024-12-11",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/google/gemini-2.0-flash-001",
+    "categories": [
+      "multimodal",
+      "coding"
+    ]
+  },
+  {
+    "slug": "gemini-1-5-flash",
+    "provider_slug": "google",
+    "display_name": "Gemini 1.5 Flash",
+    "version": "flash",
+    "family": "gemini-1-5",
+    "modality": [
+      "text",
+      "vision",
+      "audio"
+    ],
+    "context_window": 1000000,
+    "max_output_tokens": 8192,
+    "input_price_per_mtok": 0.075,
+    "output_price_per_mtok": 0.3,
+    "release_date": "2024-05-14",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/google/gemini-1.5-flash",
+    "categories": [
+      "translation"
+    ]
+  },
+  {
+    "slug": "gemma-2-27b",
+    "provider_slug": "google",
+    "display_name": "Gemma 2 27B",
+    "version": "27b",
+    "family": "gemma-2",
+    "modality": [
+      "text"
+    ],
+    "context_window": 8192,
+    "max_output_tokens": 8192,
+    "input_price_per_mtok": 0.27,
+    "output_price_per_mtok": 0.27,
+    "release_date": "2024-06-27",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/google/gemma-2-27b-it",
+    "categories": [
+      "research"
+    ]
+  },
+  {
+    "slug": "qwen-2-5-32b",
+    "provider_slug": "qwen",
+    "display_name": "Qwen 2.5 32B",
+    "version": "32b",
+    "family": "qwen-2-5",
+    "modality": [
+      "text",
+      "code"
+    ],
+    "context_window": 131072,
+    "max_output_tokens": 8192,
+    "input_price_per_mtok": 0.3,
+    "output_price_per_mtok": 0.35,
+    "release_date": "2024-09-19",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/qwen/qwen-2.5-32b-instruct",
+    "categories": [
+      "coding",
+      "math"
+    ]
+  },
+  {
+    "slug": "qwen-2-5-7b",
+    "provider_slug": "qwen",
+    "display_name": "Qwen 2.5 7B",
+    "version": "7b",
+    "family": "qwen-2-5",
+    "modality": [
+      "text"
+    ],
+    "context_window": 131072,
+    "max_output_tokens": 8192,
+    "input_price_per_mtok": 0.15,
+    "output_price_per_mtok": 0.2,
+    "release_date": "2024-09-19",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/qwen/qwen-2.5-7b-instruct",
+    "categories": [
+      "translation"
+    ]
+  },
+  {
+    "slug": "mistral-nemo",
+    "provider_slug": "mistral",
+    "display_name": "Mistral Nemo",
+    "version": "2024-07",
+    "family": "mistral-nemo",
+    "modality": [
+      "text"
+    ],
+    "context_window": 128000,
+    "max_output_tokens": 8192,
+    "input_price_per_mtok": 0.15,
+    "output_price_per_mtok": 0.15,
+    "release_date": "2024-07-18",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/mistralai/mistral-nemo",
+    "categories": [
+      "translation"
+    ]
+  },
+  {
+    "slug": "codestral",
+    "provider_slug": "mistral",
+    "display_name": "Codestral",
+    "version": "2405",
+    "family": "codestral",
+    "modality": [
+      "code",
+      "text"
+    ],
+    "context_window": 32000,
+    "max_output_tokens": 8192,
+    "input_price_per_mtok": 0.25,
+    "output_price_per_mtok": 0.25,
+    "release_date": "2024-05-29",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/mistralai/codestral-2405",
+    "categories": [
+      "coding",
+      "refactoring"
+    ]
+  },
+  {
+    "slug": "mistral-small",
+    "provider_slug": "mistral",
+    "display_name": "Mistral Small",
+    "version": "2024-09",
+    "family": "mistral-small",
+    "modality": [
+      "text"
+    ],
+    "context_window": 32000,
+    "max_output_tokens": 8192,
+    "input_price_per_mtok": 0.2,
+    "output_price_per_mtok": 0.6,
+    "release_date": "2024-09-17",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/mistralai/mistral-small",
+    "categories": [
+      "coding"
+    ]
+  },
+  {
+    "slug": "command-r",
+    "provider_slug": "cohere",
+    "display_name": "Command R",
+    "version": "2024-03",
+    "family": "command-r",
+    "modality": [
+      "text"
+    ],
+    "context_window": 128000,
+    "max_output_tokens": 4096,
+    "input_price_per_mtok": 0.5,
+    "output_price_per_mtok": 1.5,
+    "release_date": "2024-03-04",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/cohere/command-r",
+    "categories": [
+      "research"
+    ]
+  },
+  {
+    "slug": "aya-expanse-32b",
+    "provider_slug": "cohere",
+    "display_name": "Aya Expanse 32B",
+    "version": "32b",
+    "family": "aya-expanse",
+    "modality": [
+      "text"
+    ],
+    "context_window": 8192,
+    "max_output_tokens": 4096,
+    "input_price_per_mtok": 0.5,
+    "output_price_per_mtok": 1.5,
+    "release_date": "2024-12-06",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/cohere/aya-expanse-32b",
+    "categories": [
+      "translation",
+      "multimodal"
+    ]
+  },
+  {
+    "slug": "grok-beta",
+    "provider_slug": "xai",
+    "display_name": "Grok Beta",
+    "version": "beta",
+    "family": "grok-beta",
+    "modality": [
+      "text",
+      "reasoning"
+    ],
+    "context_window": 131072,
+    "max_output_tokens": 8192,
+    "input_price_per_mtok": 5.0,
+    "output_price_per_mtok": 15.0,
+    "release_date": "2024-11-01",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/x-ai/grok-beta",
+    "categories": [
+      "logical_reasoning"
+    ]
+  },
+  {
+    "slug": "grok-2-mini",
+    "provider_slug": "xai",
+    "display_name": "Grok 2 Mini",
+    "version": "mini",
+    "family": "grok-2",
+    "modality": [
+      "text"
+    ],
+    "context_window": 131072,
+    "max_output_tokens": 8192,
+    "input_price_per_mtok": 2.0,
+    "output_price_per_mtok": 10.0,
+    "release_date": "2024-08-14",
+    "status": "approved",
+    "source": "openrouter",
+    "source_url": "https://openrouter.ai/models/x-ai/grok-2-mini",
+    "categories": [
+      "coding"
+    ]
+  }
+]

@@ -1,0 +1,1 @@
+"""Voting API — FastAPI routes."""

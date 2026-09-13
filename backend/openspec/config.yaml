@@ -1,0 +1,31 @@
+schema: spec-driven
+
+context: |
+  Tech stack: FastAPI + SQLAlchemy 2.0 + Alembic + Pydantic v2 + PostgreSQL + Redis
+  Architecture: FastAPI hexagonal architecture with SQLAlchemy async ORM
+  Testing: pytest + pytest-asyncio + pytest-cov
+  Style: Clean architecture with dependency injection via structlog
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+  specs:
+    - Use Given/When/Then for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+  design:
+    - Include sequence diagrams for complex flows
+    - Document architecture decisions with rationale
+  tasks:
+    - Group by phase, use hierarchical numbering
+    - Keep tasks completable in one session
+  apply:
+    guidelines:
+      - Follow existing code patterns
+    tdd: true           # Set to true to enable RED-GREEN-REFACTOR
+    test_command: "pytest"
+  verify:
+    test_command: "pytest"
+    build_command: "pytest"
+    coverage_threshold: 80
+  archive:
+    - Warn before merging destructive deltas

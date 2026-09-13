@@ -1,0 +1,78 @@
+[project]
+name = "forcecast-backend"
+version = "0.1.0+mvp"
+description = "Forcecast MVP - AI Model Catalog & Comparator (validation)"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.110.0",
+    "uvicorn[standard]>=0.29.0",
+    "pydantic>=2.7.0",
+    "httpx>=0.27.0",
+    "structlog>=24.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=5.0.0",
+    "httpx>=0.27.0",
+    "ruff>=0.5.0",
+    "mypy>=1.10.0",
+    "pre-commit>=3.7.0",
+    "hypothesis>=6.0.0",
+    "pypinyin>=0.50.0",
+    "mutmut>=2.0.0",
+]
+full = [
+    "sqlalchemy>=2.0.0",
+    "alembic>=1.13.0",
+    "pydantic-settings>=2.3.0",
+    "asyncpg>=0.29.0",
+    "python-jose[cryptography]>=3.3.0",
+    "passlib[bcrypt]>=1.7.4",
+    "python-multipart>=0.0.9",
+    "redis>=5.0.0",
+]
+taxonomy = [
+    "pypinyin>=0.50.0",
+    "hypothesis>=6.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+select = ["E", "F", "I", "UP", "B", "C4", "PTH", "SIM", "T20", "W", "N", "PL"]
+ignore = ["S101", "T201"]
+fixable = ["ALL"]
+unfixable = ["T201"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+strict = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests", "app/tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+
+[tool.mutmut]
+paths_to_mutate = ["app/taxonomy/services/core.py"]
+backup = false
+runner = "python -m pytest app/tests/taxonomy/unit -v -q"
+tests_dir = "app/tests/taxonomy/unit"
+dict_synonyms = []
+covered_lines_are_relevant = true

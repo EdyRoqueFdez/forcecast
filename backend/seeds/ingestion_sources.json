@@ -1,0 +1,5 @@
+[
+  { "code": "openrouter", "name": "OpenRouter", "parser_class": "OpenRouterParser", "rate_limit_rpm": 60, "base_url": "https://openrouter.ai/api/v1" },
+  { "code": "huggingface", "name": "Hugging Face", "parser_class": "HuggingFaceParser", "rate_limit_rpm": 30, "base_url": "https://huggingface.co/api" },
+  { "code": "lmsys", "name": "LMSYS Chatbot Arena", "parser_class": "LMSYSParser", "rate_limit_rpm": 20, "base_url": "https://arena.lmsys.org/api" }
+]

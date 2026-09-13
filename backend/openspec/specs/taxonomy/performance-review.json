@@ -1,0 +1,216 @@
+{
+  "spec": "forcecast/taxonomy/v1",
+  "reviewed_at": "2026-09-10",
+  "overall_assessment": "Design is sound for v1 scope but has significant gaps for the <200ms p95 NFR at 10k models. Current spec omits critical performance infrastructure (indexes, caching, pagination strategy, connection pool sizing). Achievable with targeted additions.",
+  "findings": {
+    "1_nfr_200ms_p95_10k_models": {
+      "achievable": "conditionally",
+      "current_design_issues": [
+        "No explicit indexes defined in spec for query patterns (category, provider, modality, status, slug)",
+        "Offset-based pagination (page/page_size) will degrade linearly beyond page ~50",
+        "No caching layer specified for read-heavy public endpoints",
+        "N+1 risk: model response includes provider + categories + translations = 3+ joins per item",
+        "Full-text search using PostgreSQL ILIKE on unindexed columns will scan entire table",
+        "No materialized views or denormalization for common query shapes"
+      ],
+      "required_changes": [
+        "Add composite indexes: (status, category_id), (status, provider_id), (status, modality), (slug)",
+        "Implement keyset pagination for list endpoints",
+        "Add Redis cache layer with TTL for public read endpoints",
+        "Use SELECT ... JOIN with subqueries or lateral joins to fetch provider + categories + translations in single query",
+        "Implement PostgreSQL tsvector + GIN index for full-text search",
+        "Consider materialized view for 'approved models with translations' refreshed on approval"
+      ],
+      "estimated_latency_with_fixes": "50-150ms p95 at 10k models on modest hardware (2 vCPU, 4GB RAM)"
+    },
+    "2_query_patterns_indexing_strategy": {
+      "current_state": "No indexes specified in spec. Only PKs and unique constraints implied.",
+      "query_patterns_from_spec": [
+        "GET /models?category=X&status=approved → filter by category + status",
+        "GET /models?provider=Y&status=approved → filter by provider + status",
+        "GET /models?modality=text,code&status=approved → filter by modality array + status",
+        "GET /models?q=search → full-text on slug, display_name, family",
+        "GET /models/{slug} → PK lookup + translations + categories + provider",
+        "GET /categories?taxonomy_version=current&status=active → filter by version + status",
+        "Admin: GET /models?status=pending_review → filter by status (non-approved)"
+      ],
+      "recommended_indexes": [
+        "CREATE INDEX idx_aimodel_status_category ON ai_model (status, category_id) WHERE status = 'approved'",
+        "CREATE INDEX idx_aimodel_status_provider ON ai_model (status, provider_id) WHERE status = 'approved'",
+        "CREATE INDEX idx_aimodel_status_modality ON ai_model (status, modality) WHERE status = 'approved' USING GIN",
+        "CREATE INDEX idx_aimodel_slug ON ai_model (slug)",
+        "CREATE INDEX idx_aimodel_search_tsv ON ai_model USING GIN (to_tsvector('simple', coalesce(slug,'') || ' ' || coalesce(display_name,'') || ' ' || coalesce(family,''))) WHERE status = 'approved'",
+        "CREATE INDEX idx_category_version_status ON category (taxonomy_version, status) WHERE status = 'active'",
+        "CREATE INDEX idx_category_translation_lookup ON category_translation (category_id, locale)",
+        "CREATE INDEX idx_model_translation_lookup ON model_translation (model_id, locale)"
+      ],
+      "partial_index_rationale": "Public API only queries approved models. Partial indexes reduce size ~80% and speed up writes."
+    },
+    "3_pagination_offset_vs_keyset": {
+      "current_spec": "Uses page (int, default 1) + page_size (int, default 20, max 100) — OFFSET pagination",
+      "problem": "OFFSET requires scanning and discarding N rows. At 10k models with page_size=20, page 500 = 10k rows scanned. Latency grows O(N). Unacceptable for p95 <200ms.",
+      "recommendation": "Switch to keyset (cursor) pagination for public list endpoints",
+      "implementation": {
+        "cursor_format": "base64url(last_sort_value, last_id)",
+        "sort_columns": ["display_name", "id"] or ["release_date DESC", "id"],
+        "query_pattern": "WHERE (display_name, id) > (?, ?) ORDER BY display_name, id LIMIT 21",
+        "response_change": "Replace page/page_size with cursor + limit. Return next_cursor or null.",
+        "backward_compatibility": "Support both for transition; deprecate offset after v1"
+      },
+      "tradeoff": "Keyset prevents random page access but provides consistent <10ms latency at any depth. Acceptable for infinite scroll / next-page UX."
+    },
+    "4_full_text_search_implementation": {
+      "current_spec": "GET /models?q=claude — 'Full-text search on slug, display_name, family' using ILIKE implied",
+      "problem": "ILIKE '%query%' cannot use standard B-tree indexes. Sequential scan on 10k rows = 50-200ms. No ranking, no stemming, no typo tolerance.",
+      "recommendation": "PostgreSQL built-in full-text search with tsvector + GIN index",
+      "implementation": {
+        "add_column": "search_vector tsvector GENERATED ALWAYS AS (to_tsvector('simple', coalesce(slug,'') || ' ' || coalesce(display_name,'') || ' ' || coalesce(family,''))) STORED",
+        "index": "CREATE INDEX idx_aimodel_search ON ai_model USING GIN (search_vector) WHERE status = 'approved'",
+        "query": "SELECT * FROM ai_model WHERE search_vector @@ plainto_tsquery('simple', $1) AND status = 'approved' ORDER BY ts_rank_cd(search_vector, plainto_tsquery('simple', $1)) DESC LIMIT 20",
+        "benefits": "Sub-10ms at 100k rows, ranking, stemming, prefix matching via to_tsquery",
+        "alternative_for_v2": "Meilisearch/Typesense if fuzzy search, faceting, or analytics needed"
+      }
+    },
+    "5_caching_strategy_redis": {
+      "current_spec": "Redis URL configured but no caching strategy documented",
+      "gaps": [
+        "No cache keys defined",
+        "No TTL strategy",
+        "No invalidation on model approval/category changes",
+        "No cache-aside vs read-through decision",
+        "No handling of i18n variations (5 locales × query params = cache explosion risk)"
+      ],
+      "recommendation": "Cache public read endpoints with structured keys and targeted invalidation",
+      "cache_design": {
+        "key_pattern": "taxonomy:v1:models:list:{hash(category,provider,modality,lang,limit,cursor)}",
+        "key_pattern_detail": "taxonomy:v1:models:detail:{slug}:{lang}",
+        "key_pattern_categories": "taxonomy:v1:categories:list:{version}:{lang}",
+        "key_pattern_providers": "taxonomy:v1:providers:list",
+        "ttl": "300s (5 min) for lists, 3600s (1h) for detail, 86400s (24h) for categories/providers",
+        "invalidation": "On model approve/reject: DEL taxonomy:v1:models:* (pattern). On category change: DEL taxonomy:v1:categories:*. On taxonomy version activate: FLUSHDB taxonomy:v1:*",
+        "i18n_optimization": "Cache translated responses per locale. 5 locales × ~20 common filter combos = ~100 keys. Acceptable.",
+        "cache_stampede": "Use SETNX + short TTL lock for rebuild, or probabilistic early expiration"
+      },
+      "redis_sizing": "10k models × ~2KB serialized × 5 locales × 2 (list+detail) ≈ 200MB. Well within single Redis instance."
+    },
+    "6_n1_risks_in_api_responses": {
+      "current_spec": "Model list response includes provider object, categories array, translations — implies N+1 if implemented naively",
+      "risk_level": "HIGH",
+      "naive_orm_pattern": "for model in models: model.provider, model.categories, model.translations → 1 + 3N queries",
+      "recommended_patterns": [
+        "Single query with JOINs + lateral subqueries for translations/categories",
+        "Or: fetch models → collect IDs → batch fetch providers + categories + translations in 3 queries",
+        "Or: SQLAlchemy selectinload for provider, categories; joinedload for translations",
+        "Response shape must match spec — denormalize provider slug/name into model row to avoid join"
+      ],
+      "optimal_query": "SELECT m.*, p.slug as provider_slug, p.name as provider_name, json_agg(DISTINCT ct.*) as translations, json_agg(DISTINCT c.slug) as category_slugs FROM ai_model m JOIN provider p ON m.provider_id = p.id LEFT JOIN LATERAL (SELECT * FROM model_translation WHERE model_id = m.id AND locale = $lang UNION ALL SELECT * FROM model_translation WHERE model_id = m.id AND locale = 'en' LIMIT 1) ct ON true LEFT JOIN model_category mc ON m.id = mc.model_id LEFT JOIN category c ON mc.category_id = c.id WHERE m.status = 'approved' AND (...) GROUP BY m.id, p.id ORDER BY ... LIMIT 21",
+      "verification": "Add integration test asserting query count = 1 for list endpoint"
+    },
+    "7_database_connection_pooling": {
+      "current_config": "pool_size=10, max_overflow=20 (from config.py)",
+      "assessment": "Adequate for low-concurrency v1. Risky for production burst traffic.",
+      "calculation": "Assume 100 RPS peak, avg query 10ms → 1 concurrent connection per 100 RPS. pool=10 handles ~1000 RPS. But with asyncpg + FastAPI, each request holds connection for full request duration (~50-100ms). pool=10 supports ~100-200 concurrent requests.",
+      "recommendations": [
+        "Increase pool_size to 20, max_overflow to 30 for production",
+        "Add PgBouncer in transaction mode for connection multiplexing (reduces backend connections 10x)",
+        "Monitor pool usage: log pool.checkedout() / pool.size() periodically",
+        "Set statement_timeout=5000 and idle_in_transaction_session_timeout=30000 on PostgreSQL"
+      ],
+      "pgbouncer_config": "pool_mode=transaction, max_client_conn=1000, default_pool_size=25"
+    },
+    "8_ingestion_performance_batch_upserts": {
+      "current_spec": "Idempotent ingestion from OpenRouter/HF/LMSYS. Per-model errors don't abort. Creates IngestionRun record.",
+      "performance_concerns": [
+        "No batch size specified — row-by-row upsert = 1000s of round trips",
+        "Deduplication checks (3 strategies) require SELECT before INSERT/UPDATE",
+        "source_payload_hash comparison adds overhead",
+        "No transaction batching — each model in own transaction = slow",
+        "No COPY / bulk insert strategy for initial seed / large imports"
+      ],
+      "recommendations": [
+        "Use PostgreSQL INSERT ... ON CONFLICT (provider_id, slug) DO UPDATE for single-statement upsert",
+        "Batch size: 500-1000 rows per transaction",
+        "Stage raw source data in temp table → single MERGE/upsert into ai_model",
+        "Compute source_payload_hash in Python, pass as column",
+        "For 10k models: expect <30s with batched upserts vs >10min row-by-row",
+        "Add ingestion_metrics table for observability (rows/sec, errors/sec)"
+      ],
+      "sample_upsert": "INSERT INTO ai_model (id, slug, provider_id, display_name, version, family, modality, context_window, max_output_tokens, input_price_per_mtok, output_price_per_mtok, release_date, deprecation_date, status, source, source_url, source_payload_hash) VALUES ... ON CONFLICT (provider_id, slug) DO UPDATE SET display_name=EXCLUDED.display_name, version=EXCLUDED.version, family=EXCLUDED.family, modality=EXCLUDED.modality, context_window=EXCLUDED.context_window, max_output_tokens=EXCLUDED.max_output_tokens, input_price_per_mtok=EXCLUDED.input_price_per_mtok, output_price_per_mtok=EXCLUDED.output_price_per_mtok, release_date=EXCLUDED.release_date, deprecation_date=EXCLUDED.deprecation_date, status=EXCLUDED.status, source=EXCLUDED.source, source_url=EXCLUDED.source_url, source_payload_hash=EXCLUDED.source_payload_hash, updated_at=now()"
+    },
+    "9_taxonomy_version_query_patterns": {
+      "current_spec": "Categories have taxonomy_version. Only one is_current. Public API uses current version.",
+      "query_patterns": [
+        "Public: categories for current version → WHERE taxonomy_version = (SELECT version FROM taxonomy_version WHERE is_current)",
+        "Admin: list all versions → SELECT * FROM taxonomy_version",
+        "Historical: votes/comparisons reference version at creation time"
+      ],
+      "performance_issues": [
+        "Subquery for current version on every category query",
+        "No index on taxonomy_version.is_current",
+        "Category queries don't filter by version in spec (UC3 shows ?lang=zh only)"
+      ],
+      "recommendations": [
+        "Add UNIQUE INDEX ON taxonomy_version (is_current) WHERE is_current = true (enforces single current)",
+        "Add index: CREATE INDEX idx_category_version ON category (taxonomy_version, status)",
+        "Cache current version ID in Redis (key: taxonomy:v1:current_version, TTL 1h, invalidate on activate)",
+        "Public category query: JOIN taxonomy_version tv ON c.taxonomy_version = tv.version WHERE tv.is_current AND c.status = 'active'",
+        "Denormalize is_current into category table (generated column or trigger) for partition pruning"
+      ]
+    },
+    "10_cdn_edge_caching_public_endpoints": {
+      "current_spec": "No CDN/edge strategy documented. Public endpoints are read-only.",
+      "opportunity": "Public endpoints (models list, detail, categories, providers) are ideal for edge caching — immutable for approved data, vary by locale and filters",
+      "recommendations": [
+        "Add Cache-Control headers: public, max-age=60, stale-while-revalidate=300 for list endpoints",
+        "Detail endpoints: public, max-age=300, stale-while-revalidate=3600",
+        "Categories/Providers: public, max-age=3600, stale-while-revalidate=86400",
+        "Vary header: Accept-Language, Accept (for JSON), or use query params in cache key",
+        "Use Cloudflare Workers / CloudFront Functions to serve from edge with cache tags",
+        "Cache tag invalidation: tag responses with 'taxonomy:models', 'taxonomy:categories'. On model approve: purge 'taxonomy:models'. On category change: purge 'taxonomy:categories'",
+        "Edge caching reduces origin load 90%+ for read-heavy workloads"
+      ],
+      "caveats": [
+        "Admin endpoints must bypass CDN (auth + Cache-Control: private, no-store)",
+        "Search endpoint (q=) should not be edge-cached (high cardinality)",
+        "Cursor pagination: each cursor is unique → cache per cursor or use page-based at edge"
+      ]
+    }
+  },
+  "concrete_recommendations": {
+    "priority_1_blockers_for_nfr": [
+      "Add partial indexes for approved models on (status, category_id), (status, provider_id), (status, modality), (slug), and tsvector GIN",
+      "Implement keyset pagination for GET /models and GET /categories",
+      "Add Redis cache layer with defined keys, TTLs, and invalidation on approval/category change",
+      "Fix N+1: implement single-query fetch with lateral joins or batch loading for provider/categories/translations",
+      "Implement PostgreSQL full-text search with tsvector + GIN index"
+    ],
+    "priority_2_before_production": [
+      "Increase DB pool to 20/30, add PgBouncer in transaction mode",
+      "Add statement_timeout and idle_in_transaction_session_timeout on PostgreSQL",
+      "Implement batched upsert with ON CONFLICT for ingestion (500-1000 rows/batch)",
+      "Add Cache-Control headers + CDN cache tags for public endpoints",
+      "Cache current taxonomy version in Redis with invalidation on activate"
+    ],
+    "priority_3_v2_enhancements": [
+      "Materialized view for 'approved models with translations' refreshed via trigger on approval",
+      "Meilisearch/Typesense for advanced search (facets, typo tolerance, analytics)",
+      "Partition ai_model by status (approved vs pending) for query isolation",
+      "Read replicas for public read endpoints",
+      "Async ingestion with background worker + progress polling"
+    ]
+  },
+  "estimated_effort": {
+    "priority_1": "2-3 days (indexes, pagination, cache, N+1 fix, FTS)",
+    "priority_2": "1-2 days (pool, PgBouncer, batched upsert, CDN headers, version cache)",
+    "priority_3": "1-2 weeks (materialized view, search engine, partitioning, read replicas)"
+  },
+  "verification_checklist": [
+    "Load test GET /models?category=coding&lang=es at 10k models: p95 < 200ms",
+    "Load test GET /models?q=claude at 10k models: p95 < 100ms",
+    "Verify query count = 1 for list endpoint (EXPLAIN ANALYZE)",
+    "Verify keyset pagination latency constant at page 500",
+    "Verify cache hit rate > 90% on public endpoints under load",
+    "Verify ingestion of 10k models completes < 60s",
+    "Verify CDN cache purge on model approval < 5s globally"
+  ]
+}

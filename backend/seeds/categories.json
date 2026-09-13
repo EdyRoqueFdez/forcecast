@@ -1,0 +1,19 @@
+[
+  { "slug": "architecture", "parent_slug": null },
+  { "slug": "system_design", "parent_slug": "architecture" },
+  { "slug": "coding", "parent_slug": null },
+  { "slug": "debugging", "parent_slug": "coding" },
+  { "slug": "refactoring", "parent_slug": "coding" },
+  { "slug": "testing", "parent_slug": null },
+  { "slug": "documentation", "parent_slug": null },
+  { "slug": "research", "parent_slug": null },
+  { "slug": "math", "parent_slug": null },
+  { "slug": "logical_reasoning", "parent_slug": null },
+  { "slug": "creative_writing", "parent_slug": null },
+  { "slug": "translation", "parent_slug": null },
+  { "slug": "multimodal", "parent_slug": null },
+  { "slug": "security", "parent_slug": null },
+  { "slug": "devops", "parent_slug": null },
+  { "slug": "ux_product", "parent_slug": null },
+  { "slug": "data_analysis", "parent_slug": null }
+]

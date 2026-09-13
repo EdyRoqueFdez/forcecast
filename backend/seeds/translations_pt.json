@@ -1,0 +1,236 @@
+{
+  "categories": {
+    "architecture": {
+      "name": "Arquitetura",
+      "description": "Arquitetura de sistemas e princípios de design"
+    },
+    "system_design": {
+      "name": "Design de Sistemas",
+      "description": "Design de sistemas escaláveis e mantíveis"
+    },
+    "coding": {
+      "name": "Programação",
+      "description": "Escrita, revisão e geração de código"
+    },
+    "debugging": {
+      "name": "Depuração",
+      "description": "Encontrar e corrigir defeitos de software"
+    },
+    "refactoring": {
+      "name": "Refatoração",
+      "description": "Melhorar estrutura do código sem mudar comportamento"
+    },
+    "testing": {
+      "name": "Testes",
+      "description": "Escrita e execução de testes para correção"
+    },
+    "documentation": {
+      "name": "Documentação",
+      "description": "Criação e manutenção de documentação técnica"
+    },
+    "research": {
+      "name": "Pesquisa",
+      "description": "Exploração de novas abordagens e tecnologias"
+    },
+    "math": {
+      "name": "Matemática",
+      "description": "Raciocínio matemático e computação"
+    },
+    "logical_reasoning": {
+      "name": "Raciocínio Lógico",
+      "description": "Pensamento lógico estruturado e resolução de problemas"
+    },
+    "creative_writing": {
+      "name": "Escrita Criativa",
+      "description": "Geração de texto criativo e narrativo"
+    },
+    "translation": {
+      "name": "Tradução",
+      "description": "Tradução entre idiomas naturais"
+    },
+    "multimodal": {
+      "name": "Multimodal",
+      "description": "Tarefas combinando texto, imagem, áudio ou vídeo"
+    },
+    "security": {
+      "name": "Segurança",
+      "description": "Análise de segurança, vulnerabilidades e hardening"
+    },
+    "devops": {
+      "name": "DevOps",
+      "description": "CI/CD, infraestrutura e automação de deploy"
+    },
+    "ux_product": {
+      "name": "UX e Produto",
+      "description": "Design de experiência do usuário e estratégia de produto"
+    },
+    "data_analysis": {
+      "name": "Análise de Dados",
+      "description": "Análise e visualização de dados"
+    }
+  },
+  "providers": {
+    "openai": {
+      "name": "OpenAI",
+      "description": "Empresa de pesquisa e implantação de IA"
+    },
+    "anthropic": {
+      "name": "Anthropic",
+      "description": "Empresa de pesquisa e segurança de IA"
+    },
+    "deepseek": {
+      "name": "DeepSeek",
+      "description": "Modelos de IA open-source da DeepSeek"
+    },
+    "meta": {
+      "name": "Meta",
+      "description": "Pesquisa e modelos de IA da Meta"
+    },
+    "google": {
+      "name": "Google",
+      "description": "Modelos de IA do Google e DeepMind"
+    },
+    "alibaba": {
+      "name": "Alibaba",
+      "description": "Modelos de IA do Alibaba Cloud"
+    },
+    "mistral": {
+      "name": "Mistral AI",
+      "description": "Modelos de IA da Mistral"
+    },
+    "cohere": {
+      "name": "Cohere",
+      "description": "Modelos de linguagem da Cohere"
+    },
+    "xai": {
+      "name": "xAI",
+      "description": "Modelos Grok da xAI"
+    },
+    "qwen": {
+      "name": "Qwen",
+      "description": "Modelos de linguagem Qwen"
+    }
+  },
+  "models": {
+    "gpt-4o": {
+      "display_name": "GPT-4o",
+      "description": "Modelo multimodal principal da OpenAI"
+    },
+    "claude-3-5-sonnet": {
+      "display_name": "Claude 3.5 Sonnet",
+      "description": "Modelo mais capaz da Anthropic"
+    },
+    "deepseek-v3": {
+      "display_name": "DeepSeek V3",
+      "description": "Último modelo MoE da DeepSeek"
+    },
+    "llama-3-1-70b": {
+      "display_name": "Llama 3.1 70B",
+      "description": "Modelo open-weight de 70B da Meta"
+    },
+    "gemini-1-5-pro": {
+      "display_name": "Gemini 1.5 Pro",
+      "description": "Modelo multimodal de contexto longo do Google"
+    },
+    "gpt-4o-mini": {
+      "display_name": "GPT-4o mini",
+      "description": "Modelo pequeno e eficiente da OpenAI"
+    },
+    "qwen-2-5-72b": {
+      "display_name": "Qwen 2.5 72B",
+      "description": "Modelo de 72B parâmetros da Alibaba"
+    },
+    "mistral-large": {
+      "display_name": "Mistral Large",
+      "description": "Mistral Large modelo"
+    },
+    "command-r-plus": {
+      "display_name": "Command R+",
+      "description": "Command R+ modelo"
+    },
+    "grok-2": {
+      "display_name": "Grok 2",
+      "description": "Grok 2 modelo"
+    },
+    "o1": {
+      "display_name": "o1",
+      "description": "OpenAI reasoning modelo"
+    },
+    "gpt-3-5-turbo": {
+      "display_name": "GPT-3.5 Turbo",
+      "description": "OpenAI efficient chat modelo"
+    },
+    "claude-3-opus": {
+      "display_name": "Claude 3 Opus",
+      "description": "Anthropic most powerful modelo"
+    },
+    "claude-3-haiku": {
+      "display_name": "Claude 3 Haiku",
+      "description": "Anthropic fast modelo"
+    },
+    "deepseek-r1": {
+      "display_name": "DeepSeek R1",
+      "description": "DeepSeek reasoning modelo"
+    },
+    "deepseek-coder": {
+      "display_name": "DeepSeek Coder",
+      "description": "DeepSeek code modelo"
+    },
+    "llama-3-3-70b": {
+      "display_name": "Llama 3.3 70B",
+      "description": "Meta 70B modelo"
+    },
+    "llama-3-2-90b": {
+      "display_name": "Llama 3.2 90B Vision",
+      "description": "Meta vision modelo"
+    },
+    "gemini-2-0-flash": {
+      "display_name": "Gemini 2.0 Flash",
+      "description": "Google fast modelo"
+    },
+    "gemini-1-5-flash": {
+      "display_name": "Gemini 1.5 Flash",
+      "description": "Google flash modelo"
+    },
+    "gemma-2-27b": {
+      "display_name": "Gemma 2 27B",
+      "description": "Google open modelo"
+    },
+    "qwen-2-5-32b": {
+      "display_name": "Qwen 2.5 32B",
+      "description": "Qwen 32B modelo"
+    },
+    "qwen-2-5-7b": {
+      "display_name": "Qwen 2.5 7B",
+      "description": "Qwen 7B modelo"
+    },
+    "mistral-nemo": {
+      "display_name": "Mistral Nemo",
+      "description": "Mistral efficient modelo"
+    },
+    "codestral": {
+      "display_name": "Codestral",
+      "description": "Mistral code modelo"
+    },
+    "mistral-small": {
+      "display_name": "Mistral Small",
+      "description": "Mistral small modelo"
+    },
+    "command-r": {
+      "display_name": "Command R",
+      "description": "Cohere retrieval modelo"
+    },
+    "aya-expanse-32b": {
+      "display_name": "Aya Expanse 32B",
+      "description": "Cohere multilingual modelo"
+    },
+    "grok-beta": {
+      "display_name": "Grok Beta",
+      "description": "xAI reasoning modelo"
+    },
+    "grok-2-mini": {
+      "display_name": "Grok 2 Mini",
+      "description": "xAI mini modelo"
+    }
+  }
+}

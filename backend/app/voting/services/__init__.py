@@ -1,0 +1,1 @@
+"""Voting services — business logic."""

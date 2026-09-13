@@ -31,10 +31,9 @@ pip-wheel-metadata/
 .env
 .env.*
 !.env.example
-secrets/
-*.key
-*.pem
-*.crt
+secrets/*.key
+secrets/*.pem
+secrets/*.crt
 
 # Local databases and runtime files
 *.db
@@ -43,12 +42,7 @@ secrets/
 *.pid
 *.log
 
-# Node.js
-node_modules/
-
-# Local tooling
-.atl/
-.engram/
+# IDE and OS files
 .vscode/
 .idea/
 .DS_Store

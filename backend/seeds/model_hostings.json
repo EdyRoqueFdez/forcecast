@@ -1,0 +1,212 @@
+[
+  {
+    "model_slug": "gpt-4o",
+    "provider_slug": "openai",
+    "endpoint_url": "https://api.openai.com/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "claude-3-5-sonnet",
+    "provider_slug": "anthropic",
+    "endpoint_url": "https://api.anthropic.com/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "deepseek-v3",
+    "provider_slug": "deepseek",
+    "endpoint_url": "https://api.deepseek.com/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "llama-3-1-70b",
+    "provider_slug": "meta",
+    "endpoint_url": "https://api.together.xyz/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "gemini-1-5-pro",
+    "provider_slug": "google",
+    "endpoint_url": "https://generativelanguage.googleapis.com/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "gpt-4o-mini",
+    "provider_slug": "openai",
+    "endpoint_url": "https://api.openai.com/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "qwen-2-5-72b",
+    "provider_slug": "alibaba",
+    "endpoint_url": "https://dashscope.aliyuncs.com/api/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "mistral-large",
+    "provider_slug": "mistral",
+    "endpoint_url": "https://api.mistral.ai/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "command-r-plus",
+    "provider_slug": "cohere",
+    "endpoint_url": "https://api.cohere.ai/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "grok-2",
+    "provider_slug": "xai",
+    "endpoint_url": "https://api.x.ai/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "o1",
+    "provider_slug": "openai",
+    "endpoint_url": "https://api.openai.com/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "gpt-3-5-turbo",
+    "provider_slug": "openai",
+    "endpoint_url": "https://api.openai.com/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "claude-3-opus",
+    "provider_slug": "anthropic",
+    "endpoint_url": "https://api.anthropic.com/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "claude-3-haiku",
+    "provider_slug": "anthropic",
+    "endpoint_url": "https://api.anthropic.com/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "deepseek-r1",
+    "provider_slug": "deepseek",
+    "endpoint_url": "https://api.deepseek.com/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "deepseek-coder",
+    "provider_slug": "deepseek",
+    "endpoint_url": "https://api.deepseek.com/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "llama-3-3-70b",
+    "provider_slug": "meta",
+    "endpoint_url": "https://api.together.xyz/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "llama-3-2-90b",
+    "provider_slug": "meta",
+    "endpoint_url": "https://api.together.xyz/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "gemini-2-0-flash",
+    "provider_slug": "google",
+    "endpoint_url": "https://generativelanguage.googleapis.com/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "gemini-1-5-flash",
+    "provider_slug": "google",
+    "endpoint_url": "https://generativelanguage.googleapis.com/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "gemma-2-27b",
+    "provider_slug": "google",
+    "endpoint_url": "https://generativelanguage.googleapis.com/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "qwen-2-5-32b",
+    "provider_slug": "qwen",
+    "endpoint_url": "https://dashscope.aliyuncs.com/api/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "qwen-2-5-7b",
+    "provider_slug": "qwen",
+    "endpoint_url": "https://dashscope.aliyuncs.com/api/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "mistral-nemo",
+    "provider_slug": "mistral",
+    "endpoint_url": "https://api.mistral.ai/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "codestral",
+    "provider_slug": "mistral",
+    "endpoint_url": "https://api.mistral.ai/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "mistral-small",
+    "provider_slug": "mistral",
+    "endpoint_url": "https://api.mistral.ai/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "command-r",
+    "provider_slug": "cohere",
+    "endpoint_url": "https://api.cohere.ai/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "aya-expanse-32b",
+    "provider_slug": "cohere",
+    "endpoint_url": "https://api.cohere.ai/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "grok-beta",
+    "provider_slug": "xai",
+    "endpoint_url": "https://api.x.ai/v1",
+    "status": "active",
+    "is_primary": true
+  },
+  {
+    "model_slug": "grok-2-mini",
+    "provider_slug": "xai",
+    "endpoint_url": "https://api.x.ai/v1",
+    "status": "active",
+    "is_primary": true
+  }
+]
