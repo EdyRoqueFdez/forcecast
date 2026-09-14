@@ -21,6 +21,7 @@ from app.voting.repositories.user_vote import UserVoteRepository
 from app.voting.repositories.vote_event import VoteEventRepository
 from app.voting.services.anomaly import AnomalyDetectionService
 from app.voting.services.audit_service import AuditService
+from app.voting.services.rate_limit import RateLimitService
 
 
 class VoteService:
@@ -33,6 +34,7 @@ class VoteService:
         self.audit_service = AuditService(session)
         self.reputation_service = ReputationService(session)
         self.anomaly_service = AnomalyDetectionService(session)
+        self.rate_limit_service = RateLimitService(session)
 
     async def cast_vote(
         self,
@@ -213,6 +215,13 @@ class VoteService:
 
         # Validate category
         await self._validate_category(category_id)
+
+        # HU-V04: Check rate limit (max 10 changes/hour/user)
+        if not await self.rate_limit_service.check_change_rate_limit(user.id):
+            raise DomainError(
+                "Rate limit exceeded. Max 10 changes per hour.",
+                status_code=429,
+            )
 
         # Check active vote exists
         existing_vote = await self.user_vote_repo.get(
