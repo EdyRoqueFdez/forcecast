@@ -80,6 +80,9 @@ class UserVotesResponse(BaseModel):
     """Response body for listing user votes."""
 
     votes: list[UserVoteItem]
+    total: int
+    has_more: bool
+    next_cursor: str | None
 
 
 class CategoryVoteCount(BaseModel):

@@ -193,25 +193,52 @@ async def revoke_vote(
 
 @router.get("/users/me/votes", response_model=UserVotesResponse)
 async def get_my_votes(
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session),
 ) -> UserVotesResponse:
-    """Get all active votes for the authenticated user."""
-    service = VoteService(db)
-    votes = await service.get_user_votes(user)
+    """HU-V05 — Get all active votes for the authenticated user.
+
+    - Paginated results
+    - Filter by type (model/orchestrator)
+    """
+    from app.voting.models.user_vote import UserVote
+    from sqlalchemy import select, func
+
+    # Get total count
+    count_result = await db.execute(
+        select(func.count(UserVote.user_id)).where(UserVote.user_id == user.id)
+    )
+    total = count_result.scalar() or 0
+
+    # Get votes with pagination
+    query = select(UserVote).where(UserVote.user_id == user.id).order_by(UserVote.created_at.desc())
+    query = query.offset(offset).limit(limit)
+    result = await db.execute(query)
+    votes = result.scalars().all()
+
+    # Build response
+    has_more = offset + limit < total
+    next_cursor = None
+    if has_more:
+        next_cursor = str(offset + limit)
 
     return UserVotesResponse(
         votes=[
             UserVoteItem(
-                category_id=v["category_id"],
-                target_type=v["target_type"],
-                target_id=v["target_id"],
-                weight=v["weight"],
-                created_at=v["created_at"],
-                updated_at=v["updated_at"],
+                category_id=v.category_id,
+                target_type=v.target_type,
+                target_id=v.target_id,
+                weight=v.weight,
+                created_at=v.created_at,
+                updated_at=v.updated_at,
             )
             for v in votes
-        ]
+        ],
+        total=total,
+        has_more=has_more,
+        next_cursor=next_cursor,
     )
 
 
