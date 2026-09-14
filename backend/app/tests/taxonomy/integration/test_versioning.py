@@ -174,3 +174,183 @@ class TestVersioningService:
         v2_trans = (await session.execute(select(CategoryTranslation).where(CategoryTranslation.category_id == v2_cat.id, CategoryTranslation.locale == "es"))).scalars().all()
         assert len(v2_trans) == 1
         assert v2_trans[0].name == "Programación"
+
+
+class TestVersioningEdgeCases:
+    @pytest.mark.asyncio
+    async def test_create_version_flush_integrity_error(self, session):
+        from unittest.mock import AsyncMock, patch
+        from sqlalchemy.exc import IntegrityError
+        from app.taxonomy.services.versioning import VersioningService
+        from app.taxonomy.services.core import DomainError
+        svc = VersioningService(session)
+        with patch.object(session, 'flush', new_callable=AsyncMock, side_effect=IntegrityError("dup", None, None)):
+            with pytest.raises(DomainError) as exc:
+                await svc.create_version(version="v1", notes="flush error")
+            assert exc.value.status_code == 409
+
+    @pytest.mark.asyncio
+    async def test_create_version_commit_integrity_error(self, session):
+        from unittest.mock import AsyncMock
+        from sqlalchemy.exc import IntegrityError
+        from app.taxonomy.services.versioning import VersioningService
+        from app.taxonomy.services.core import DomainError
+        svc = VersioningService(session)
+        original_flush = session.flush
+        original_commit = session.commit
+
+        async def mock_commit():
+            raise IntegrityError("dup", None, None)
+
+        session.commit = mock_commit
+        with pytest.raises(DomainError) as exc:
+            await svc.create_version(version="v1", notes="commit error")
+        assert exc.value.status_code == 409
+
+    @pytest.mark.asyncio
+    async def test_create_version_no_current_no_tree_copy(self, session):
+        from app.taxonomy.services.versioning import VersioningService
+        svc = VersioningService(session)
+        v1 = await svc.create_version(version="v1", notes="first")
+        assert v1.version == "v1"
+        from sqlalchemy import select
+        cats = (await session.execute(select(Category).where(Category.taxonomy_version == "v1"))).scalars().all()
+        assert len(cats) == 0
+
+    @pytest.mark.asyncio
+    async def test_copy_tree_empty_categories(self, session):
+        from app.taxonomy.services.versioning import VersioningService
+        svc = VersioningService(session)
+        v1 = TaxonomyVersion(version="v1", released_at=datetime.now(timezone.utc), is_current=True)
+        session.add(v1)
+        await session.flush()
+        await session.commit()
+        v2 = await svc.create_version(version="v2", notes="copy empty")
+        assert v2.version == "v2"
+        from sqlalchemy import select
+        v2_cats = (await session.execute(select(Category).where(Category.taxonomy_version == "v2"))).scalars().all()
+        assert len(v2_cats) == 0
+
+    @pytest.mark.asyncio
+    async def test_copy_tree_with_parent_id_mapping(self, session):
+        from app.taxonomy.services.versioning import VersioningService
+        svc = VersioningService(session)
+        v1 = TaxonomyVersion(version="v1", released_at=datetime.now(timezone.utc), is_current=True)
+        session.add(v1)
+        await session.flush()
+        await session.commit()
+        parent = Category(slug="parent", taxonomy_version="v1")
+        session.add(parent)
+        await session.flush()
+        await session.commit()
+        await session.refresh(parent)
+        child = Category(slug="child", parent_id=parent.id, taxonomy_version="v1")
+        session.add(child)
+        await session.flush()
+        await session.commit()
+        v2 = await svc.create_version(version="v2", notes="with parent")
+        from sqlalchemy import select
+        v2_parent = (await session.execute(select(Category).where(Category.taxonomy_version == "v2", Category.slug == "parent"))).scalar_one()
+        v2_child = (await session.execute(select(Category).where(Category.taxonomy_version == "v2", Category.slug == "child"))).scalar_one()
+        assert v2_child.parent_id == v2_parent.id
+
+    @pytest.mark.asyncio
+    async def test_activate_version_integrity_error(self, session):
+        from unittest.mock import AsyncMock
+        from sqlalchemy.exc import IntegrityError
+        from app.taxonomy.services.versioning import VersioningService
+        from app.taxonomy.services.core import DomainError
+        svc = VersioningService(session)
+        v1 = TaxonomyVersion(version="v1", released_at=datetime.now(timezone.utc), is_current=True)
+        v2 = TaxonomyVersion(version="v2", released_at=datetime.now(timezone.utc), is_current=False)
+        session.add_all([v1, v2])
+        await session.commit()
+        await session.refresh(v2)
+
+        original_execute = session.execute
+        call_count = 0
+
+        async def mock_execute(*args, **kwargs):
+            nonlocal call_count
+            call_count += 1
+            if call_count <= 2:
+                return await original_execute(*args, **kwargs)
+            raise IntegrityError("conflict", None, None)
+
+        session.execute = mock_execute
+        with pytest.raises(DomainError) as exc:
+            await svc.activate_version(v2.id)
+        assert exc.value.status_code == 409
+
+    @pytest.mark.asyncio
+    async def test_update_category_not_found(self, session):
+        from app.taxonomy.services.versioning import VersioningService
+        from app.taxonomy.services.core import DomainError
+        svc = VersioningService(session)
+        with pytest.raises(DomainError) as exc:
+            await svc.update_category("00000000-0000-0000-0000-000000000000", slug="x")
+        assert exc.value.status_code == 404
+
+    @pytest.mark.asyncio
+    async def test_update_category_no_current_version(self, session):
+        from app.taxonomy.services.versioning import VersioningService
+        svc = VersioningService(session)
+        v99 = TaxonomyVersion(version="v99", released_at=datetime.now(timezone.utc), is_current=False)
+        session.add(v99)
+        await session.flush()
+        await session.commit()
+        cat = Category(slug="coding", taxonomy_version="v99")
+        session.add(cat)
+        await session.flush()
+        await session.commit()
+        await session.refresh(cat)
+        updated = await svc.update_category(cat.id, slug="New Slug!")
+        assert updated.slug == "new-slug"
+
+    @pytest.mark.asyncio
+    async def test_update_category_with_status_and_parent(self, session):
+        from app.taxonomy.services.versioning import VersioningService
+        svc = VersioningService(session)
+        v1 = TaxonomyVersion(version="v1", released_at=datetime.now(timezone.utc), is_current=True)
+        session.add(v1)
+        await session.flush()
+        await session.commit()
+        parent = Category(slug="parent", taxonomy_version="v1")
+        session.add(parent)
+        await session.flush()
+        await session.commit()
+        await session.refresh(parent)
+        child = Category(slug="child", taxonomy_version="v1")
+        session.add(child)
+        await session.flush()
+        await session.commit()
+        await session.refresh(child)
+        updated = await svc.update_category(child.id, slug="child-updated", status="deprecated", parent_id=parent.id)
+        assert updated.slug == "child-updated"
+        assert updated.status == "deprecated"
+        assert updated.parent_id == parent.id
+
+    @pytest.mark.asyncio
+    async def test_update_category_integrity_error(self, session):
+        from unittest.mock import AsyncMock
+        from sqlalchemy.exc import IntegrityError
+        from app.taxonomy.services.versioning import VersioningService
+        from app.taxonomy.services.core import DomainError
+        svc = VersioningService(session)
+        v1 = TaxonomyVersion(version="v1", released_at=datetime.now(timezone.utc), is_current=True)
+        session.add(v1)
+        await session.flush()
+        await session.commit()
+        cat = Category(slug="coding", taxonomy_version="v1")
+        session.add(cat)
+        await session.flush()
+        await session.commit()
+        await session.refresh(cat)
+
+        original_flush = session.flush
+        async def mock_flush():
+            raise IntegrityError("conflict", None, None)
+        session.flush = mock_flush
+        with pytest.raises(DomainError) as exc:
+            await svc.update_category(cat.id, slug="new-slug")
+        assert exc.value.status_code == 409

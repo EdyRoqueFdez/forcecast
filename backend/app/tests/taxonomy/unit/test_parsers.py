@@ -260,3 +260,551 @@ class TestLMSYSParser:
             parser = LMSYSParser(base_url="https://arena.lmsys.org/api")
             data = await parser.fetch()
             assert data == LMSYS_RAW
+
+
+# ===========================================================================
+# Coverage boost — LMSYS
+# ===========================================================================
+
+class TestLMSYSProviderFromOrg:
+    def test_partial_match_in_org_to_provider(self):
+        from app.taxonomy.services.parsers.lmsys import _provider_from_org
+
+        assert _provider_from_org("OpenAI Org", "model") == "openai"
+        assert _provider_from_org("Anthropic Corp", "model") == "anthropic"
+        assert _provider_from_org("Google DeepMind", "model") == "google"
+        assert _provider_from_org("Meta AI", "model") == "meta"
+        assert _provider_from_org("Mistral Labs", "model") == "mistral"
+        assert _provider_from_org("Cohere AI", "model") == "cohere"
+        assert _provider_from_org("DeepSeek AI", "model") == "deepseek"
+        assert _provider_from_org("Alibaba Cloud", "model") == "alibaba"
+        assert _provider_from_org("Qwen Team", "model") == "qwen"
+        assert _provider_from_org("xAI Labs", "model") == "xai"
+
+    def test_org_not_in_map_falls_to_normalize(self):
+        from app.taxonomy.services.parsers.lmsys import _provider_from_org
+
+        result = _provider_from_org("totally-unknown-org", "model")
+        assert result not in ("", None)
+
+    def test_org_is_none_prefix_slash(self):
+        from app.taxonomy.services.parsers.lmsys import _provider_from_org
+
+        assert _provider_from_org(None, "some-org/some-model") == "some-org"
+
+    def test_org_is_none_heuristic_gpt(self):
+        from app.taxonomy.services.parsers.lmsys import _provider_from_org
+
+        assert _provider_from_org(None, "gpt-4-turbo") == "openai"
+
+    def test_org_is_none_heuristic_claude(self):
+        from app.taxonomy.services.parsers.lmsys import _provider_from_org
+
+        assert _provider_from_org(None, "claude-3-opus") == "anthropic"
+
+    def test_org_is_none_heuristic_gemini(self):
+        from app.taxonomy.services.parsers.lmsys import _provider_from_org
+
+        assert _provider_from_org(None, "gemini-pro") == "google"
+
+    def test_org_is_none_heuristic_llama(self):
+        from app.taxonomy.services.parsers.lmsys import _provider_from_org
+
+        assert _provider_from_org(None, "llama-3-70b") == "meta"
+
+    def test_org_is_none_fallback_unknown(self):
+        from app.taxonomy.services.parsers.lmsys import _provider_from_org
+
+        assert _provider_from_org(None, "randommodel") == "unknown"
+
+
+class TestLMSYSFetchExtra:
+    @pytest.mark.asyncio
+    async def test_fetch_with_injected_client(self):
+        from app.taxonomy.services.parsers.lmsys import LMSYSParser
+
+        mock_client = AsyncMock()
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.json.return_value = LMSYS_RAW
+        mock_client.get = AsyncMock(return_value=mock_resp)
+
+        parser = LMSYSParser(http_client=mock_client)
+        data = await parser.fetch()
+        assert data == LMSYS_RAW
+        mock_client.get.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_fetch_429_raises_domain_error(self):
+        from app.taxonomy.services.parsers.lmsys import LMSYSParser
+        from app.taxonomy.services.core import DomainError
+
+        mock_client = AsyncMock()
+        mock_resp = MagicMock()
+        mock_resp.status_code = 429
+        mock_client.get = AsyncMock(return_value=mock_resp)
+
+        parser = LMSYSParser(http_client=mock_client)
+        with pytest.raises(DomainError) as exc_info:
+            await parser.fetch()
+        assert exc_info.value.status_code == 429
+
+    @pytest.mark.asyncio
+    async def test_fetch_500_raises_domain_error(self):
+        from app.taxonomy.services.parsers.lmsys import LMSYSParser
+        from app.taxonomy.services.core import DomainError
+
+        mock_client = AsyncMock()
+        mock_resp = MagicMock()
+        mock_resp.status_code = 500
+        mock_client.get = AsyncMock(return_value=mock_resp)
+
+        parser = LMSYSParser(http_client=mock_client)
+        with pytest.raises(DomainError) as exc_info:
+            await parser.fetch()
+        assert exc_info.value.status_code == 500
+
+
+class TestLMSYSTransformExtra:
+    def test_transform_data_key(self):
+        from app.taxonomy.services.parsers.lmsys import LMSYSParser
+
+        raw = {"data": [{"id": "model-a", "name": "Model A"}]}
+        result = LMSYSParser().transform(raw)
+        assert len(result) == 1
+        assert result[0]["slug"] == "model-a"
+
+    def test_transform_list_input(self):
+        from app.taxonomy.services.parsers.lmsys import LMSYSParser
+
+        raw = [{"id": "model-b", "name": "Model B", "org": "OpenAI"}]
+        result = LMSYSParser().transform(raw)
+        assert len(result) == 1
+        assert result[0]["slug"] == "model-b"
+        assert result[0]["provider_slug"] == "openai"
+
+    def test_transform_single_dict(self):
+        from app.taxonomy.services.parsers.lmsys import LMSYSParser
+
+        raw = {"id": "single-model", "name": "Single"}
+        result = LMSYSParser().transform(raw)
+        assert len(result) == 1
+        assert result[0]["slug"] == "single-model"
+
+    def test_transform_empty_input(self):
+        from app.taxonomy.services.parsers.lmsys import LMSYSParser
+
+        result = LMSYSParser().transform("invalid")
+        assert result == []
+
+    def test_transform_empty_list(self):
+        from app.taxonomy.services.parsers.lmsys import LMSYSParser
+
+        result = LMSYSParser().transform([])
+        assert result == []
+
+    def test_transform_slug_fallback_from_display_name(self):
+        from app.taxonomy.services.parsers.lmsys import LMSYSParser
+
+        raw = {"models": [{"id": "", "name": "My Cool Model"}]}
+        result = LMSYSParser().transform(raw)
+        assert len(result) == 1
+        assert result[0]["slug"] != ""
+        assert result[0]["slug"] != "unknown"
+
+    def test_transform_exception_in_item_skips(self):
+        from app.taxonomy.services.parsers.lmsys import LMSYSParser
+
+        raw = {"models": [
+            {"id": "ok-model", "name": "OK"},
+            None,
+            {"id": "also-ok", "name": "Also OK"},
+        ]}
+        result = LMSYSParser().transform(raw)
+        assert len(result) == 2
+
+    def test_transform_org_provider_key(self):
+        from app.taxonomy.services.parsers.lmsys import LMSYSParser
+
+        raw = {"models": [{"id": "m1", "name": "M1", "provider": "Mistral"}]}
+        result = LMSYSParser().transform(raw)
+        assert result[0]["provider_slug"] == "mistral"
+
+    def test_transform_slug_from_model_id_with_slash(self):
+        from app.taxonomy.services.parsers.lmsys import LMSYSParser
+
+        raw = {"models": [{"id": "org/my-model", "name": "My Model"}]}
+        result = LMSYSParser().transform(raw)
+        assert result[0]["slug"] == "my-model"
+        assert result[0]["provider_slug"] == "org"
+
+
+# ===========================================================================
+# Coverage boost — HuggingFace
+# ===========================================================================
+
+class TestHuggingFaceModalityExtra:
+    def test_code_tag(self):
+        from app.taxonomy.services.parsers.huggingface import _modality_from_hf
+
+        result = _modality_from_hf(["code", "pytorch"], None)
+        assert "code" in result
+
+    def test_embedding_tag(self):
+        from app.taxonomy.services.parsers.huggingface import _modality_from_hf
+
+        result = _modality_from_hf(["embedding", "pytorch"], None)
+        assert "embedding" in result
+
+    def test_sentence_similarity_tag(self):
+        from app.taxonomy.services.parsers.huggingface import _modality_from_hf
+
+        result = _modality_from_hf(["sentence-similarity"], None)
+        assert "embedding" in result
+
+    def test_no_tags_no_pipeline_defaults_text(self):
+        from app.taxonomy.services.parsers.huggingface import _modality_from_hf
+
+        result = _modality_from_hf([], None)
+        assert result == ["text"]
+
+    def test_none_tags_defaults_text(self):
+        from app.taxonomy.services.parsers.huggingface import _modality_from_hf
+
+        result = _modality_from_hf(None, None)
+        assert result == ["text"]
+
+    def test_vision_pipeline_tag(self):
+        from app.taxonomy.services.parsers.huggingface import _modality_from_hf
+
+        result = _modality_from_hf([], "image-text-to-text")
+        assert "vision" in result
+
+
+class TestHuggingFaceFetchExtra:
+    @pytest.mark.asyncio
+    async def test_fetch_with_injected_client(self):
+        from app.taxonomy.services.parsers.huggingface import HuggingFaceParser
+
+        mock_client = AsyncMock()
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.json.return_value = HF_RAW
+        mock_client.get = AsyncMock(return_value=mock_resp)
+
+        parser = HuggingFaceParser(http_client=mock_client)
+        data = await parser.fetch()
+        assert data == HF_RAW
+        mock_client.get.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_fetch_429_raises(self):
+        from app.taxonomy.services.parsers.huggingface import HuggingFaceParser
+        from app.taxonomy.services.core import DomainError
+
+        mock_client = AsyncMock()
+        mock_resp = MagicMock()
+        mock_resp.status_code = 429
+        mock_client.get = AsyncMock(return_value=mock_resp)
+
+        parser = HuggingFaceParser(http_client=mock_client)
+        with pytest.raises(DomainError) as exc_info:
+            await parser.fetch()
+        assert exc_info.value.status_code == 429
+
+    @pytest.mark.asyncio
+    async def test_fetch_500_raises(self):
+        from app.taxonomy.services.parsers.huggingface import HuggingFaceParser
+        from app.taxonomy.services.core import DomainError
+
+        mock_client = AsyncMock()
+        mock_resp = MagicMock()
+        mock_resp.status_code = 500
+        mock_client.get = AsyncMock(return_value=mock_resp)
+
+        parser = HuggingFaceParser(http_client=mock_client)
+        with pytest.raises(DomainError) as exc_info:
+            await parser.fetch()
+        assert exc_info.value.status_code == 500
+
+
+class TestHuggingFaceTransformExtra:
+    def test_transform_data_key(self):
+        from app.taxonomy.services.parsers.huggingface import HuggingFaceParser
+
+        raw = {"data": [{"id": "org/model-a", "name": "Model A"}]}
+        result = HuggingFaceParser().transform(raw)
+        assert len(result) == 1
+        assert result[0]["slug"] == "model-a"
+
+    def test_transform_single_dict(self):
+        from app.taxonomy.services.parsers.huggingface import HuggingFaceParser
+
+        raw = {"id": "single-model", "name": "Single"}
+        result = HuggingFaceParser().transform(raw)
+        assert len(result) == 1
+        assert result[0]["slug"] == "single-model"
+
+    def test_transform_invalid_input(self):
+        from app.taxonomy.services.parsers.huggingface import HuggingFaceParser
+
+        result = HuggingFaceParser().transform("invalid")
+        assert result == []
+
+    def test_transform_no_slash_uses_author(self):
+        from app.taxonomy.services.parsers.huggingface import HuggingFaceParser
+
+        raw = [{"id": "my-model", "author": "custom-org", "name": "My Model"}]
+        result = HuggingFaceParser().transform(raw)
+        assert result[0]["provider_slug"] == "custom-org"
+        assert result[0]["slug"] == "my-model"
+
+    def test_transform_no_slash_no_author(self):
+        from app.taxonomy.services.parsers.huggingface import HuggingFaceParser
+
+        raw = [{"id": "my-model", "name": "My Model"}]
+        result = HuggingFaceParser().transform(raw)
+        assert result[0]["provider_slug"] == "huggingface"
+
+    def test_transform_empty_id_fallback_slug(self):
+        from app.taxonomy.services.parsers.huggingface import HuggingFaceParser
+
+        raw = [{"id": "", "name": "", "modelId": ""}]
+        result = HuggingFaceParser().transform(raw)
+        assert result[0]["slug"] == "unknown"
+
+    def test_transform_exception_skips_item(self):
+        from app.taxonomy.services.parsers.huggingface import HuggingFaceParser
+
+        raw = [
+            {"id": "ok-model", "name": "OK"},
+            None,
+            {"id": "also-ok", "name": "Also OK"},
+        ]
+        result = HuggingFaceParser().transform(raw)
+        assert len(result) == 2
+
+    def test_transform_pipeline_tag_key(self):
+        from app.taxonomy.services.parsers.huggingface import HuggingFaceParser
+
+        raw = [{"id": "a/b", "pipelineTag": "text-generation"}]
+        result = HuggingFaceParser().transform(raw)
+        assert "text" in result[0]["modality"]
+
+    def test_transform_model_id_key(self):
+        from app.taxonomy.services.parsers.huggingface import HuggingFaceParser
+
+        raw = [{"modelId": "org/model-x", "name": "X"}]
+        result = HuggingFaceParser().transform(raw)
+        assert result[0]["slug"] == "model-x"
+        assert result[0]["provider_slug"] == "org"
+
+
+# ===========================================================================
+# Coverage boost — OpenRouter
+# ===========================================================================
+
+class TestOpenRouterModalityExtra:
+    def test_audio(self):
+        from app.taxonomy.services.parsers.openrouter import _modality_from_openrouter
+
+        result = _modality_from_openrouter("audio+text")
+        assert "audio" in result
+        assert "text" in result
+
+    def test_code(self):
+        from app.taxonomy.services.parsers.openrouter import _modality_from_openrouter
+
+        result = _modality_from_openrouter("code")
+        assert "code" in result
+
+    def test_no_modality_matches_defaults_text(self):
+        from app.taxonomy.services.parsers.openrouter import _modality_from_openrouter
+
+        result = _modality_from_openrouter("something-else")
+        assert result == ["text"]
+
+    def test_empty_string(self):
+        from app.taxonomy.services.parsers.openrouter import _modality_from_openrouter
+
+        result = _modality_from_openrouter("")
+        assert result == ["text"]
+
+
+class TestOpenRouterFetchExtra:
+    @pytest.mark.asyncio
+    async def test_fetch_with_injected_client(self):
+        from app.taxonomy.services.parsers.openrouter import OpenRouterParser
+
+        mock_client = AsyncMock()
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.json.return_value = OPENROUTER_RAW
+        mock_client.get = AsyncMock(return_value=mock_resp)
+
+        parser = OpenRouterParser(http_client=mock_client)
+        data = await parser.fetch()
+        assert data == OPENROUTER_RAW
+        mock_client.get.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_fetch_500_raises(self):
+        from app.taxonomy.services.parsers.openrouter import OpenRouterParser
+        from app.taxonomy.services.core import DomainError
+
+        mock_client = AsyncMock()
+        mock_resp = MagicMock()
+        mock_resp.status_code = 500
+        mock_client.get = AsyncMock(return_value=mock_resp)
+
+        parser = OpenRouterParser(http_client=mock_client)
+        with pytest.raises(DomainError) as exc_info:
+            await parser.fetch()
+        assert exc_info.value.status_code == 500
+
+
+class TestOpenRouterTransformExtra:
+    def test_transform_list_input(self):
+        from app.taxonomy.services.parsers.openrouter import OpenRouterParser
+
+        raw = [{"id": "test/model", "name": "Test"}]
+        result = OpenRouterParser().transform(raw)
+        assert len(result) == 1
+        assert result[0]["slug"] == "model"
+        assert result[0]["provider_slug"] == "test"
+
+    def test_transform_single_dict(self):
+        from app.taxonomy.services.parsers.openrouter import OpenRouterParser
+
+        raw = {"id": "single-model", "name": "Single"}
+        result = OpenRouterParser().transform(raw)
+        assert len(result) == 1
+        assert result[0]["slug"] == "single-model"
+
+    def test_transform_invalid_input(self):
+        from app.taxonomy.services.parsers.openrouter import OpenRouterParser
+
+        result = OpenRouterParser().transform("invalid")
+        assert result == []
+
+    def test_transform_no_slash_uses_provider_slug_from_item(self):
+        from app.taxonomy.services.parsers.openrouter import OpenRouterParser
+
+        raw = [{"id": "my-model", "name": "My Model", "provider_slug": "custom"}]
+        result = OpenRouterParser().transform(raw)
+        assert result[0]["provider_slug"] == "custom"
+        assert result[0]["slug"] == "my-model"
+
+    def test_transform_no_slash_no_provider(self):
+        from app.taxonomy.services.parsers.openrouter import OpenRouterParser
+
+        raw = [{"id": "my-model", "name": "My Model"}]
+        result = OpenRouterParser().transform(raw)
+        assert result[0]["provider_slug"] == "openai"
+
+    def test_transform_empty_id_fallback_slug(self):
+        from app.taxonomy.services.parsers.openrouter import OpenRouterParser
+
+        raw = [{"id": "", "name": ""}]
+        result = OpenRouterParser().transform(raw)
+        assert result[0]["slug"] == "unknown"
+
+    def test_transform_pricing_bad_prompt(self):
+        from app.taxonomy.services.parsers.openrouter import OpenRouterParser
+
+        raw = [{"id": "a/b", "name": "M", "pricing": {"prompt": "not-a-number", "completion": "0.001"}}]
+        result = OpenRouterParser().transform(raw)
+        assert result[0]["input_price_per_mtok"] is None
+        assert result[0]["output_price_per_mtok"] is not None
+
+    def test_transform_pricing_bad_completion(self):
+        from app.taxonomy.services.parsers.openrouter import OpenRouterParser
+
+        raw = [{"id": "a/b", "name": "M", "pricing": {"prompt": "0.001", "completion": "bad"}}]
+        result = OpenRouterParser().transform(raw)
+        assert result[0]["input_price_per_mtok"] is not None
+        assert result[0]["output_price_per_mtok"] is None
+
+    def test_transform_pricing_empty_string_prompt(self):
+        from app.taxonomy.services.parsers.openrouter import OpenRouterParser
+
+        raw = [{"id": "a/b", "name": "M", "pricing": {"prompt": "", "completion": ""}}]
+        result = OpenRouterParser().transform(raw)
+        assert result[0]["input_price_per_mtok"] is None
+        assert result[0]["output_price_per_mtok"] is None
+
+    def test_transform_exception_skips_item(self):
+        from app.taxonomy.services.parsers.openrouter import OpenRouterParser
+
+        raw = [
+            {"id": "ok/model", "name": "OK"},
+            None,
+            {"id": "also-ok/model2", "name": "Also OK"},
+        ]
+        result = OpenRouterParser().transform(raw)
+        assert len(result) == 2
+
+    def test_transform_slug_key_fallback(self):
+        from app.taxonomy.services.parsers.openrouter import OpenRouterParser
+
+        raw = [{"slug": "org/my-slug", "name": "M"}]
+        result = OpenRouterParser().transform(raw)
+        assert result[0]["slug"] == "my-slug"
+        assert result[0]["provider_slug"] == "org"
+
+    def test_transform_empty_list(self):
+        from app.taxonomy.services.parsers.openrouter import OpenRouterParser
+
+        result = OpenRouterParser().transform([])
+        assert result == []
+
+    def test_transform_pricing_none_prompt(self):
+        from app.taxonomy.services.parsers.openrouter import OpenRouterParser
+
+        raw = [{"id": "a/b", "name": "M", "pricing": {"prompt": None, "completion": None}}]
+        result = OpenRouterParser().transform(raw)
+        assert result[0]["input_price_per_mtok"] is None
+        assert result[0]["output_price_per_mtok"] is None
+
+    def test_transform_context_length_only(self):
+        from app.taxonomy.services.parsers.openrouter import OpenRouterParser
+
+        raw = [{"id": "a/b", "name": "M", "context_length": 32000}]
+        result = OpenRouterParser().transform(raw)
+        assert result[0]["context_window"] == 32000
+
+    def test_transform_context_window_fallback(self):
+        from app.taxonomy.services.parsers.openrouter import OpenRouterParser
+
+        raw = [{"id": "a/b", "name": "M", "context_window": 16000}]
+        result = OpenRouterParser().transform(raw)
+        assert result[0]["context_window"] == 16000
+
+    def test_transform_display_name_fallback_to_slug(self):
+        from app.taxonomy.services.parsers.openrouter import OpenRouterParser
+
+        raw = [{"id": "a/b", "name": "", "display_name": ""}]
+        result = OpenRouterParser().transform(raw)
+        assert result[0]["display_name"] in ("a/b", "b")
+
+    def test_transform_top_provider_not_dict(self):
+        from app.taxonomy.services.parsers.openrouter import OpenRouterParser
+
+        raw = [{"id": "a/b", "name": "M", "top_provider": "not-a-dict"}]
+        result = OpenRouterParser().transform(raw)
+        assert result[0]["max_output_tokens"] is None
+
+    def test_transform_pricing_not_dict(self):
+        from app.taxonomy.services.parsers.openrouter import OpenRouterParser
+
+        raw = [{"id": "a/b", "name": "M", "pricing": "not-a-dict"}]
+        result = OpenRouterParser().transform(raw)
+        assert result[0]["input_price_per_mtok"] is None
+        assert result[0]["output_price_per_mtok"] is None
+
+    def test_transform_display_name_from_display_name_key(self):
+        from app.taxonomy.services.parsers.openrouter import OpenRouterParser
+
+        raw = [{"id": "a/b", "display_name": "Custom Display Name"}]
+        result = OpenRouterParser().transform(raw)
+        assert result[0]["display_name"] == "Custom Display Name"

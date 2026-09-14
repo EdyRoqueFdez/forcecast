@@ -209,3 +209,253 @@ class TestWebhookServiceIntegration:
 
             # Delivered path
         await eng.dispose()
+
+
+class TestWebhookServiceEdgeCases:
+    @pytest.mark.asyncio
+    async def test_deactivate_not_found_returns_none(self):
+        from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+        from sqlalchemy.orm import sessionmaker
+        from sqlalchemy import event as sa_event, text as sa_text
+        from app.db.session import Base
+
+        eng = create_async_engine("sqlite+aiosqlite:///:memory:")
+        @sa_event.listens_for(eng.sync_engine, "connect")
+        def _fk_on(dbapi_conn, _):
+            cur = dbapi_conn.cursor()
+            cur.execute("PRAGMA foreign_keys=ON")
+            cur.close()
+        async with eng.begin() as conn:
+            await conn.execute(sa_text("PRAGMA foreign_keys=ON"))
+            await conn.run_sync(Base.metadata.create_all)
+
+        async_session = sessionmaker(eng, class_=AsyncSession, expire_on_commit=False)
+        async with async_session() as session:
+            svc = WebhookService(session)
+            result = await svc.deactivate("nonexistent-id")
+            assert result is None
+        await eng.dispose()
+
+    @pytest.mark.asyncio
+    async def test_mark_delivered(self):
+        from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+        from sqlalchemy.orm import sessionmaker
+        from sqlalchemy import event as sa_event, text as sa_text
+        from app.db.session import Base
+
+        eng = create_async_engine("sqlite+aiosqlite:///:memory:")
+        @sa_event.listens_for(eng.sync_engine, "connect")
+        def _fk_on(dbapi_conn, _):
+            cur = dbapi_conn.cursor()
+            cur.execute("PRAGMA foreign_keys=ON")
+            cur.close()
+        async with eng.begin() as conn:
+            await conn.execute(sa_text("PRAGMA foreign_keys=ON"))
+            await conn.run_sync(Base.metadata.create_all)
+
+        async_session = sessionmaker(eng, class_=AsyncSession, expire_on_commit=False)
+        async with async_session() as session:
+            svc = WebhookService(session)
+            reg = await svc.register(url="https://example.com/hook", secret="s", events=["model.approved"])
+            deliveries = await svc.emit("model.approved", {"id": "x"})
+            d = deliveries[0]
+            assert d.status == "pending"
+            marked = await svc.mark_delivered(d.id, 200, "OK")
+            assert marked.status == "delivered"
+            assert marked.response_status == 200
+            assert marked.delivered_at is not None
+        await eng.dispose()
+
+    def test_calculate_retry_delay(self):
+        svc = WebhookService.__new__(WebhookService)
+        assert svc.calculate_retry_delay(1) == timedelta(minutes=1)
+        assert svc.calculate_retry_delay(6) == timedelta(hours=6)
+
+    @pytest.mark.asyncio
+    async def test_dispatch_registration_not_found(self):
+        from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+        from sqlalchemy.orm import sessionmaker
+        from sqlalchemy import event as sa_event, text as sa_text
+        from app.db.session import Base
+        from app.taxonomy.models.entities import WebhookDelivery
+
+        eng = create_async_engine("sqlite+aiosqlite:///:memory:")
+        @sa_event.listens_for(eng.sync_engine, "connect")
+        def _fk_on(dbapi_conn, _):
+            cur = dbapi_conn.cursor()
+            cur.execute("PRAGMA foreign_keys=ON")
+            cur.close()
+        async with eng.begin() as conn:
+            await conn.execute(sa_text("PRAGMA foreign_keys=ON"))
+            await conn.run_sync(Base.metadata.create_all)
+
+        async_session = sessionmaker(eng, class_=AsyncSession, expire_on_commit=False)
+        async with async_session() as session:
+            svc = WebhookService(session)
+            fake_delivery = WebhookDelivery(
+                id="fake-id", webhook_id="nonexistent", event_type="model.approved",
+                payload={"type": "model.approved"}, delivery_id="del-1",
+                attempt=1, status="pending", response_status=None,
+                response_body=None, error=None, created_at=datetime.now(timezone.utc),
+                delivered_at=None, next_retry_at=None,
+            )
+            result = await svc.dispatch(fake_delivery)
+            assert result is False
+        await eng.dispose()
+
+    @pytest.mark.asyncio
+    async def test_dispatch_inactive_registration(self):
+        from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+        from sqlalchemy.orm import sessionmaker
+        from sqlalchemy import event as sa_event, text as sa_text
+        from app.db.session import Base
+
+        eng = create_async_engine("sqlite+aiosqlite:///:memory:")
+        @sa_event.listens_for(eng.sync_engine, "connect")
+        def _fk_on(dbapi_conn, _):
+            cur = dbapi_conn.cursor()
+            cur.execute("PRAGMA foreign_keys=ON")
+            cur.close()
+        async with eng.begin() as conn:
+            await conn.execute(sa_text("PRAGMA foreign_keys=ON"))
+            await conn.run_sync(Base.metadata.create_all)
+
+        async_session = sessionmaker(eng, class_=AsyncSession, expire_on_commit=False)
+        async with async_session() as session:
+            svc = WebhookService(session)
+            reg = await svc.register(url="https://example.com/hook", secret="s", events=["model.approved"])
+            await svc.deactivate(reg.id)
+            deliveries = await svc.emit("model.approved", {"id": "x"})
+            d = deliveries[0] if deliveries else None
+            if d is None:
+                reg2 = await svc.register(url="https://example.com/hook", secret="s", events=["model.approved"])
+                deliveries2 = await svc.emit("model.approved", {"id": "x"})
+                d = deliveries2[0]
+            result = await svc.dispatch(d)
+            assert result is False
+        await eng.dispose()
+
+    @pytest.mark.asyncio
+    async def test_dispatch_http_success(self):
+        from unittest.mock import AsyncMock, patch, MagicMock
+        from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+        from sqlalchemy.orm import sessionmaker
+        from sqlalchemy import event as sa_event, text as sa_text
+        from app.db.session import Base
+
+        eng = create_async_engine("sqlite+aiosqlite:///:memory:")
+        @sa_event.listens_for(eng.sync_engine, "connect")
+        def _fk_on(dbapi_conn, _):
+            cur = dbapi_conn.cursor()
+            cur.execute("PRAGMA foreign_keys=ON")
+            cur.close()
+        async with eng.begin() as conn:
+            await conn.execute(sa_text("PRAGMA foreign_keys=ON"))
+            await conn.run_sync(Base.metadata.create_all)
+
+        async_session = sessionmaker(eng, class_=AsyncSession, expire_on_commit=False)
+        async with async_session() as session:
+            svc = WebhookService(session)
+            reg = await svc.register(url="https://example.com/hook", secret="s", events=["model.approved"])
+            deliveries = await svc.emit("model.approved", {"id": "x"})
+            d = deliveries[0]
+
+            mock_resp = MagicMock()
+            mock_resp.status_code = 200
+            mock_resp.text = "OK"
+
+            mock_client = AsyncMock()
+            mock_client.post = AsyncMock(return_value=mock_resp)
+            mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+            mock_client.__aexit__ = AsyncMock(return_value=False)
+
+            with patch("httpx.AsyncClient", return_value=mock_client):
+                result = await svc.dispatch(d)
+            assert result is True
+            from sqlalchemy import select
+            from app.taxonomy.models.entities import WebhookDelivery
+            refreshed = (await session.execute(select(WebhookDelivery).where(WebhookDelivery.id == d.id))).scalar_one()
+            assert refreshed.status == "delivered"
+        await eng.dispose()
+
+    @pytest.mark.asyncio
+    async def test_dispatch_http_error(self):
+        from unittest.mock import AsyncMock, patch, MagicMock
+        from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+        from sqlalchemy.orm import sessionmaker
+        from sqlalchemy import event as sa_event, text as sa_text
+        from app.db.session import Base
+
+        eng = create_async_engine("sqlite+aiosqlite:///:memory:")
+        @sa_event.listens_for(eng.sync_engine, "connect")
+        def _fk_on(dbapi_conn, _):
+            cur = dbapi_conn.cursor()
+            cur.execute("PRAGMA foreign_keys=ON")
+            cur.close()
+        async with eng.begin() as conn:
+            await conn.execute(sa_text("PRAGMA foreign_keys=ON"))
+            await conn.run_sync(Base.metadata.create_all)
+
+        async_session = sessionmaker(eng, class_=AsyncSession, expire_on_commit=False)
+        async with async_session() as session:
+            svc = WebhookService(session)
+            reg = await svc.register(url="https://example.com/hook", secret="s", events=["model.approved"])
+            deliveries = await svc.emit("model.approved", {"id": "x"})
+            d = deliveries[0]
+
+            mock_resp = MagicMock()
+            mock_resp.status_code = 500
+            mock_resp.text = "Internal Server Error"
+
+            mock_client = AsyncMock()
+            mock_client.post = AsyncMock(return_value=mock_resp)
+            mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+            mock_client.__aexit__ = AsyncMock(return_value=False)
+
+            with patch("httpx.AsyncClient", return_value=mock_client):
+                result = await svc.dispatch(d)
+            assert result is False
+            from sqlalchemy import select
+            from app.taxonomy.models.entities import WebhookDelivery
+            refreshed = (await session.execute(select(WebhookDelivery).where(WebhookDelivery.id == d.id))).scalar_one()
+            assert refreshed.status == "failed"
+        await eng.dispose()
+
+    @pytest.mark.asyncio
+    async def test_dispatch_exception_returns_false(self):
+        from unittest.mock import AsyncMock, patch
+        from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+        from sqlalchemy.orm import sessionmaker
+        from sqlalchemy import event as sa_event, text as sa_text
+        from app.db.session import Base
+
+        eng = create_async_engine("sqlite+aiosqlite:///:memory:")
+        @sa_event.listens_for(eng.sync_engine, "connect")
+        def _fk_on(dbapi_conn, _):
+            cur = dbapi_conn.cursor()
+            cur.execute("PRAGMA foreign_keys=ON")
+            cur.close()
+        async with eng.begin() as conn:
+            await conn.execute(sa_text("PRAGMA foreign_keys=ON"))
+            await conn.run_sync(Base.metadata.create_all)
+
+        async_session = sessionmaker(eng, class_=AsyncSession, expire_on_commit=False)
+        async with async_session() as session:
+            svc = WebhookService(session)
+            reg = await svc.register(url="https://example.com/hook", secret="s", events=["model.approved"])
+            deliveries = await svc.emit("model.approved", {"id": "x"})
+            d = deliveries[0]
+
+            mock_client = AsyncMock()
+            mock_client.post = AsyncMock(side_effect=Exception("Connection refused"))
+            mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+            mock_client.__aexit__ = AsyncMock(return_value=False)
+
+            with patch("httpx.AsyncClient", return_value=mock_client):
+                result = await svc.dispatch(d)
+            assert result is False
+            from sqlalchemy import select
+            from app.taxonomy.models.entities import WebhookDelivery
+            refreshed = (await session.execute(select(WebhookDelivery).where(WebhookDelivery.id == d.id))).scalar_one()
+            assert refreshed.status == "failed"
+        await eng.dispose()
