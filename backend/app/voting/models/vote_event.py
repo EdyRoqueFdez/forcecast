@@ -88,6 +88,7 @@ class VoteEvent(Base):
     )
     ip_address: Mapped[str | None] = mapped_column(String(45), nullable=True)
     comment: Mapped[str | None] = mapped_column(String(1000), nullable=True)
+    previous_target_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=_now
     )

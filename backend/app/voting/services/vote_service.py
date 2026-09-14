@@ -249,6 +249,7 @@ class VoteService:
                 "device_fingerprint": device_fingerprint,
                 "ip_address": ip_address,
                 "comment": comment,
+                "previous_target_id": existing_vote.target_id,
             }
         )
 

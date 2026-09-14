@@ -420,6 +420,7 @@ class VoteHistoryItem(BaseModel):
     event_id: str
     action: str  # "vote", "change", "revoke"
     target_id: str
+    previous_target_id: str | None
     category_id: str
     target_type: str
     comment: str | None
@@ -499,6 +500,7 @@ async def get_vote_history(
                 event_id=e.id,
                 action=e.action,
                 target_id=e.target_id,
+                previous_target_id=e.previous_target_id,
                 category_id=e.category_id,
                 target_type=e.target_type,
                 comment=e.comment,
