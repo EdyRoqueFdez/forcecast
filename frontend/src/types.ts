@@ -8,6 +8,7 @@ export interface Model {
   slug: string;
   display_name: string;
   provider: Provider;
+  icon: string;
   family: string;
   version: string;
   modality: string[];

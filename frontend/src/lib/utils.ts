@@ -25,6 +25,18 @@ export function slugToInitials(slug: string): string {
     .slice(0, 2);
 }
 
+export function getProviderIcon(icon: string): string {
+  const icons: Record<string, string> = {
+    openai: "https://cdn.simpleicons.org/openai/10a37f",
+    anthropic: "https://cdn.simpleicons.org/anthropic/d97757",
+    deepseek: "https://cdn.simpleicons.org/deepseek/4d6bfe",
+    meta: "https://cdn.simpleicons.org/meta/0668E1",
+    google: "https://cdn.simpleicons.org/google/4285F4",
+    alibaba: "https://cdn.simpleicons.org/alibaba/FF6A00",
+  };
+  return icons[icon] || "";
+}
+
 export function getBrowserLocale(): string {
   const lang = navigator.language.split("-")[0];
   return ["en", "es", "pt", "fr", "zh"].includes(lang) ? lang : "en";

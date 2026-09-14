@@ -84,6 +84,7 @@ class ModelResponse(BaseModel):
     slug: str
     display_name: str
     provider: dict
+    icon: str
     family: str
     version: str
     modality: list[str]

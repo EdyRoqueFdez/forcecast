@@ -1,4 +1,4 @@
-import { cn, formatNumber, formatPrice, slugToInitials } from "../lib/utils";
+import { cn, formatNumber, formatPrice, getProviderIcon } from "../lib/utils";
 import { tCategory } from "../types";
 import type { Model, Locale } from "../types";
 
@@ -10,6 +10,8 @@ interface ModelCardProps {
 }
 
 export function ModelCard({ model, isSelected, onClick, locale }: ModelCardProps) {
+  const iconUrl = getProviderIcon(model.icon);
+
   return (
     <article
       className={cn("model-card", isSelected && "model-card-selected")}
@@ -20,8 +22,12 @@ export function ModelCard({ model, isSelected, onClick, locale }: ModelCardProps
       data-slug={model.slug}
     >
       <div className="flex items-start gap-3 mb-3">
-        <div className="model-avatar w-10 h-10 flex-shrink-0 rounded-lg bg-[var(--accent-dim)] flex items-center justify-center font-bold text-[var(--accent)] text-lg">
-          {slugToInitials(model.slug)}
+        <div className="model-avatar w-10 h-10 flex-shrink-0 rounded-lg bg-[var(--accent-dim)] flex items-center justify-center overflow-hidden">
+          {iconUrl ? (
+            <img src={iconUrl} alt={model.provider.name} className="w-6 h-6 object-contain" />
+          ) : (
+            <span className="font-bold text-[var(--accent)] text-lg">{model.provider.name.charAt(0)}</span>
+          )}
         </div>
         <div className="min-w-0 flex-1">
           <h3 className="font-semibold text-base truncate">{model.display_name}</h3>
