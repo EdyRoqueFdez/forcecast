@@ -1,0 +1,162 @@
+<!--
+  Forcecast Component: Card
+
+  Usage:
+    <div class="fc-card">Simple card content</div>
+
+    <div class="fc-card fc-card--interactive">
+      <div class="fc-card__header">
+        <h3 class="fc-card__title">Model Name</h3>
+        <span class="fc-badge fc-badge--accent">Active</span>
+      </div>
+      <div class="fc-card__body">
+        <p>Card content goes here.</p>
+      </div>
+      <div class="fc-card__footer">
+        <button class="fc-btn fc-btn--primary fc-btn--sm">Action</button>
+      </div>
+    </div>
+
+    <div class="fc-card fc-card--highlighted">Highlighted card</div>
+
+  Variants: default, interactive (hoverable), highlighted, outlined
+  Sections: header, body, footer
+-->
+
+<style>
+  .fc-card {
+    background-color: var(--fc-surface);
+    border: 1px solid var(--fc-border);
+    border-radius: var(--fc-radius-lg);
+    overflow: hidden;
+    transition: all var(--fc-transition-base);
+  }
+
+  .fc-card--interactive {
+    cursor: pointer;
+  }
+
+  .fc-card--interactive:hover {
+    border-color: var(--fc-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--fc-shadow-lg);
+  }
+
+  .fc-card--interactive:active {
+    transform: translateY(0);
+  }
+
+  .fc-card--highlighted {
+    border-color: var(--fc-primary);
+    box-shadow: var(--fc-shadow-glow);
+  }
+
+  .fc-card--outlined {
+    background-color: transparent;
+    border-color: var(--fc-border);
+  }
+
+  .fc-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--fc-space-4);
+    border-bottom: 1px solid var(--fc-border);
+  }
+
+  .fc-card__title {
+    font-size: var(--fc-text-base);
+    font-weight: 600;
+    color: var(--fc-text);
+    margin: 0;
+  }
+
+  .fc-card__subtitle {
+    font-size: var(--fc-text-sm);
+    color: var(--fc-text-muted);
+    margin-top: 2px;
+  }
+
+  .fc-card__body {
+    padding: var(--fc-space-4);
+  }
+
+  .fc-card__body--compact {
+    padding: var(--fc-space-3);
+  }
+
+  .fc-card__body--flush {
+    padding: 0;
+  }
+
+  .fc-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--fc-space-2);
+    padding: var(--fc-space-3) var(--fc-space-4);
+    border-top: 1px solid var(--fc-border);
+  }
+
+  .fc-card__footer--between {
+    justify-content: space-between;
+  }
+
+  /* Media (image at top) */
+  .fc-card__media {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    background-color: var(--fc-surface-2);
+  }
+
+  /* Stats grid inside card */
+  .fc-card__stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--fc-space-2);
+    padding: var(--fc-space-3) var(--fc-space-4);
+    border-top: 1px solid var(--fc-border);
+    text-align: center;
+  }
+
+  .fc-card__stat-value {
+    font-size: var(--fc-text-base);
+    font-weight: 700;
+    color: var(--fc-text);
+  }
+
+  .fc-card__stat-label {
+    font-size: var(--fc-text-xs);
+    color: var(--fc-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+</style>
+
+<!-- Preview -->
+<div style="padding: 16px; display: flex; flex-direction: column; gap: 16px; max-width: 400px;">
+  <div class="fc-card">
+    <div class="fc-card__header">
+      <div>
+        <div class="fc-card__title">GPT-4o</div>
+        <div class="fc-card__subtitle">OpenAI</div>
+      </div>
+      <span class="fc-badge fc-badge--accent">Active</span>
+    </div>
+    <div class="fc-card__body">
+      <p style="color: var(--fc-text-2); font-size: var(--fc-text-sm);">Most capable model for complex reasoning, creativity, and instruction following.</p>
+    </div>
+    <div class="fc-card__stats">
+      <div><div class="fc-card__stat-value">128K</div><div class="fc-card__stat-label">Context</div></div>
+      <div><div class="fc-card__stat-value">16K</div><div class="fc-card__stat-label">Max Out</div></div>
+      <div><div class="fc-card__stat-value">$5</div><div class="fc-card__stat-label">/1M tok</div></div>
+    </div>
+  </div>
+
+  <div class="fc-card fc-card--interactive">
+    <div class="fc-card__body">
+      <p style="color: var(--fc-text-2); font-size: var(--fc-text-sm);">This card is hoverable.</p>
+    </div>
+  </div>
+</div>

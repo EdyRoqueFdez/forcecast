@@ -1,0 +1,137 @@
+<!--
+  Forcecast Component: Toggle / Switch
+
+  Usage:
+    <label class="fc-toggle">
+      <input type="checkbox" class="fc-toggle__input">
+      <span class="fc-toggle__track">
+        <span class="fc-toggle__thumb"></span>
+      </span>
+      <span class="fc-toggle__label">Public profile</span>
+    </label>
+
+    <label class="fc-toggle fc-toggle--sm">
+      <input type="checkbox" class="fc-toggle__input">
+      <span class="fc-toggle__track"><span class="fc-toggle__thumb"></span></span>
+    </label>
+
+  Sizes: sm, md (default)
+  States: checked, disabled
+-->
+
+<style>
+  .fc-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--fc-space-3);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .fc-toggle__input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .fc-toggle__track {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    background-color: var(--fc-surface-3);
+    border-radius: var(--fc-radius-full);
+    border: 1px solid var(--fc-border);
+    transition: all var(--fc-transition-fast);
+    flex-shrink: 0;
+  }
+
+  .fc-toggle__thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    background-color: var(--fc-text-muted);
+    border-radius: var(--fc-radius-full);
+    transition: all var(--fc-transition-fast);
+  }
+
+  .fc-toggle__input:checked + .fc-toggle__track {
+    background-color: var(--fc-primary-dim);
+    border-color: var(--fc-primary);
+  }
+
+  .fc-toggle__input:checked + .fc-toggle__track .fc-toggle__thumb {
+    transform: translateX(20px);
+    background-color: var(--fc-primary);
+  }
+
+  .fc-toggle__input:focus-visible + .fc-toggle__track {
+    outline: 2px solid var(--fc-border-focus);
+    outline-offset: 2px;
+  }
+
+  /* Disabled */
+  .fc-toggle__input:disabled + .fc-toggle__track {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .fc-toggle:has(.fc-toggle__input:disabled) {
+    cursor: not-allowed;
+  }
+
+  /* Small */
+  .fc-toggle--sm .fc-toggle__track {
+    width: 36px;
+    height: 20px;
+  }
+
+  .fc-toggle--sm .fc-toggle__thumb {
+    width: 14px;
+    height: 14px;
+  }
+
+  .fc-toggle--sm .fc-toggle__input:checked + .fc-toggle__track .fc-toggle__thumb {
+    transform: translateX(16px);
+  }
+
+  .fc-toggle__label {
+    font-size: var(--fc-text-sm);
+    color: var(--fc-text);
+  }
+
+  .fc-toggle__description {
+    font-size: var(--fc-text-xs);
+    color: var(--fc-text-muted);
+    margin-top: 2px;
+  }
+</style>
+
+<!-- Preview -->
+<div style="padding: 16px; display: flex; flex-direction: column; gap: 16px; max-width: 300px;">
+  <label class="fc-toggle">
+    <input type="checkbox" class="fc-toggle__input" checked>
+    <span class="fc-toggle__track"><span class="fc-toggle__thumb"></span></span>
+    <div>
+      <div class="fc-toggle__label">Public profile</div>
+      <div class="fc-toggle__description">Others can see your votes</div>
+    </div>
+  </label>
+
+  <label class="fc-toggle">
+    <input type="checkbox" class="fc-toggle__input">
+    <span class="fc-toggle__track"><span class="fc-toggle__thumb"></span></span>
+    <div>
+      <div class="fc-toggle__label">Email notifications</div>
+      <div class="fc-toggle__description">Get notified about new rankings</div>
+    </div>
+  </label>
+
+  <label class="fc-toggle fc-toggle--sm">
+    <input type="checkbox" class="fc-toggle__input" disabled>
+    <span class="fc-toggle__track"><span class="fc-toggle__thumb"></span></span>
+    <span class="fc-toggle__label">Locked setting</span>
+  </label>
+</div>

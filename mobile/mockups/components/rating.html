@@ -1,0 +1,147 @@
+<!--
+  Forcecast Component: Rating (Stars 1-5)
+
+  Usage:
+    <div class="fc-rating" data-rating="4" data-max="5" role="img" aria-label="4 out of 5 stars">
+      <span class="fc-rating__star fc-rating__star--filled">★</span>
+      <span class="fc-rating__star fc-rating__star--filled">★</span>
+      <span class="fc-rating__star fc-rating__star--filled">★</span>
+      <span class="fc-rating__star fc-rating__star--filled">★</span>
+      <span class="fc-rating__star">★</span>
+    </div>
+
+    <!-- Interactive -->
+    <div class="fc-rating fc-rating--interactive" data-rating="0">
+      <button class="fc-rating__star" data-value="1" aria-label="1 star">★</button>
+      <button class="fc-rating__star" data-value="2" aria-label="2 stars">★</button>
+      <button class="fc-rating__star" data-value="3" aria-label="3 stars">★</button>
+      <button class="fc-rating__star" data-value="4" aria-label="4 stars">★</button>
+      <button class="fc-rating__star" data-value="5" aria-label="5 stars">★</button>
+    </div>
+
+    <!-- With text -->
+    <div class="fc-rating fc-rating--with-text">
+      <div class="fc-rating__stars">★★★★☆</div>
+      <span class="fc-rating__text">4.0</span>
+      <span class="fc-rating__count">(128 votes)</span>
+    </div>
+
+  Modes: readonly (default), interactive
+  Sizes: sm, md (default), lg
+-->
+
+<style>
+  .fc-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--fc-space-1);
+  }
+
+  .fc-rating__stars {
+    display: flex;
+    gap: 2px;
+  }
+
+  .fc-rating__star {
+    font-size: 20px;
+    color: var(--fc-surface-3);
+    transition: color var(--fc-transition-fast), transform var(--fc-transition-fast);
+    line-height: 1;
+  }
+
+  .fc-rating__star--filled {
+    color: var(--fc-elo-gold);
+  }
+
+  .fc-rating__star--half {
+    color: var(--fc-elo-gold);
+    opacity: 0.5;
+  }
+
+  /* Interactive */
+  .fc-rating--interactive .fc-rating__star {
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 2px;
+  }
+
+  .fc-rating--interactive .fc-rating__star:hover {
+    transform: scale(1.2);
+  }
+
+  .fc-rating--interactive .fc-rating__star:hover ~ .fc-rating__star {
+    color: var(--fc-surface-3);
+  }
+
+  /* Hover preview (CSS only) */
+  .fc-rating--interactive .fc-rating__star:hover,
+  .fc-rating--interactive .fc-rating__star:hover ~ .fc-rating__star {
+    /* Reset handled by JS */
+  }
+
+  /* Sizes */
+  .fc-rating--sm .fc-rating__star { font-size: 16px; }
+  .fc-rating--lg .fc-rating__star { font-size: 28px; }
+
+  /* With text */
+  .fc-rating--with-text {
+    gap: var(--fc-space-2);
+  }
+
+  .fc-rating__text {
+    font-weight: 600;
+    font-size: var(--fc-text-sm);
+    color: var(--fc-text);
+  }
+
+  .fc-rating__count {
+    font-size: var(--fc-text-xs);
+    color: var(--fc-text-muted);
+  }
+</style>
+
+<!-- Preview -->
+<div style="display: flex; flex-direction: column; gap: 16px; padding: 16px;">
+  <!-- Readonly -->
+  <div>
+    <div style="font-size: 12px; color: var(--fc-text-muted); margin-bottom: 4px;">Readonly</div>
+    <div class="fc-rating">
+      <div class="fc-rating__stars">
+        <span class="fc-rating__star fc-rating__star--filled">★</span>
+        <span class="fc-rating__star fc-rating__star--filled">★</span>
+        <span class="fc-rating__star fc-rating__star--filled">★</span>
+        <span class="fc-rating__star fc-rating__star--filled">★</span>
+        <span class="fc-rating__star">★</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive -->
+  <div>
+    <div style="font-size: 12px; color: var(--fc-text-muted); margin-bottom: 4px;">Interactive</div>
+    <div class="fc-rating fc-rating--interactive">
+      <button class="fc-rating__star fc-rating__star--filled" data-value="1" aria-label="1 star">★</button>
+      <button class="fc-rating__star fc-rating__star--filled" data-value="2" aria-label="2 stars">★</button>
+      <button class="fc-rating__star fc-rating__star--filled" data-value="3" aria-label="3 stars">★</button>
+      <button class="fc-rating__star fc-rating__star--filled" data-value="4" aria-label="4 stars">★</button>
+      <button class="fc-rating__star" data-value="5" aria-label="5 stars">★</button>
+    </div>
+  </div>
+
+  <!-- With text -->
+  <div>
+    <div style="font-size: 12px; color: var(--fc-text-muted); margin-bottom: 4px;">With text</div>
+    <div class="fc-rating fc-rating--with-text">
+      <div class="fc-rating__stars">
+        <span class="fc-rating__star fc-rating__star--filled">★</span>
+        <span class="fc-rating__star fc-rating__star--filled">★</span>
+        <span class="fc-rating__star fc-rating__star--filled">★</span>
+        <span class="fc-rating__star fc-rating__star--filled">★</span>
+        <span class="fc-rating__star">★</span>
+      </div>
+      <span class="fc-rating__text">4.0</span>
+      <span class="fc-rating__count">(128 votes)</span>
+    </div>
+  </div>
+</div>

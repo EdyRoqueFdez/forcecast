@@ -1,0 +1,146 @@
+<!--
+  Forcecast Component: Tooltip
+
+  Usage:
+    <div class="fc-tooltip-wrapper">
+      <span class="fc-tooltip-trigger">Hover me</span>
+      <div class="fc-tooltip" role="tooltip">Tooltip content</div>
+    </div>
+
+    <!-- With arrow -->
+    <div class="fc-tooltip-wrapper">
+      <span class="fc-tooltip-trigger">?</span>
+      <div class="fc-tooltip fc-tooltip--arrow" role="tooltip">
+        ELO rating calculated from community votes
+        <div class="fc-tooltip__arrow"></div>
+      </div>
+    </div>
+
+  Positions: top (default), bottom, left, right
+  Show: hover (default), focus, always
+-->
+
+<style>
+  .fc-tooltip-wrapper {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .fc-tooltip {
+    position: absolute;
+    z-index: var(--fc-z-dropdown);
+    padding: var(--fc-space-2) var(--fc-space-3);
+    background-color: var(--fc-surface);
+    border: 1px solid var(--fc-border);
+    border-radius: var(--fc-radius-md);
+    box-shadow: var(--fc-shadow-lg);
+    font-size: var(--fc-text-xs);
+    color: var(--fc-text);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--fc-transition-fast);
+  }
+
+  /* Show on hover */
+  .fc-tooltip-wrapper:hover .fc-tooltip,
+  .fc-tooltip-wrapper:focus-within .fc-tooltip {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Positions */
+  .fc-tooltip--top {
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .fc-tooltip--bottom {
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .fc-tooltip--left {
+    right: calc(100% + 8px);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .fc-tooltip--right {
+    left: calc(100% + 8px);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* Arrow */
+  .fc-tooltip--arrow::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background-color: var(--fc-surface);
+    border: 1px solid var(--fc-border);
+    transform: rotate(45deg);
+  }
+
+  .fc-tooltip--top::after {
+    bottom: -5px;
+    left: 50%;
+    margin-left: -4px;
+    border-top: none;
+    border-left: none;
+  }
+
+  .fc-tooltip--bottom::after {
+    top: -5px;
+    left: 50%;
+    margin-left: -4px;
+    border-bottom: none;
+    border-right: none;
+  }
+
+  .fc-tooltip--left::after {
+    right: -5px;
+    top: 50%;
+    margin-top: -4px;
+    border-bottom: none;
+    border-left: none;
+  }
+
+  .fc-tooltip--right::after {
+    left: -5px;
+    top: 50%;
+    margin-top: -4px;
+    border-top: none;
+    border-right: none;
+  }
+
+  /* Max width for wrapping */
+  .fc-tooltip--wrap {
+    white-space: normal;
+    max-width: 200px;
+  }
+</style>
+
+<!-- Preview -->
+<div style="padding: 40px 16px; display: flex; gap: 24px; align-items: center;">
+  <div class="fc-tooltip-wrapper">
+    <button class="fc-btn fc-btn--ghost fc-btn--sm">Hover me</button>
+    <div class="fc-tooltip fc-tooltip--top fc-tooltip--arrow">Hello from tooltip!</div>
+  </div>
+
+  <div class="fc-tooltip-wrapper">
+    <span class="fc-elo-badge fc-elo-badge--elite" tabindex="0">1842</span>
+    <div class="fc-tooltip fc-tooltip--bottom fc-tooltip--wrap">
+      ELO rating calculated from community votes. Higher is better.
+    </div>
+  </div>
+
+  <div class="fc-tooltip-wrapper">
+    <button class="fc-btn fc-btn--ghost fc-btn--sm" style="width: 24px; height: 24px; padding: 0; border-radius: 50%;">?</button>
+    <div class="fc-tooltip fc-tooltip--right">What is this?</div>
+  </div>
+</div>

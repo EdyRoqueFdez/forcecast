@@ -42,8 +42,6 @@ export function Toggle({ value, onValueChange, disabled = false, size = 'md' }: 
           height: sizeConfig.height,
           backgroundColor: getBackgroundColor(),
           borderRadius: sizeConfig.height / 2,
-          justifyContent: value ? 'flex-end' : 'flex-start',
-          paddingHorizontal: 2,
         },
         disabled && styles.disabled,
       ]}
@@ -58,6 +56,8 @@ export function Toggle({ value, onValueChange, disabled = false, size = 'md' }: 
             height: sizeConfig.thumb,
             borderRadius: sizeConfig.thumb / 2,
             backgroundColor: getThumbColor(),
+            left: value ? sizeConfig.width - sizeConfig.thumb - 2 : 2,
+            top: (sizeConfig.height - sizeConfig.thumb) / 2,
           },
         ]}
       />
@@ -67,10 +67,11 @@ export function Toggle({ value, onValueChange, disabled = false, size = 'md' }: 
 
 const styles = StyleSheet.create({
   container: {
-    // Base styles applied dynamically
+    position: 'relative',
+    overflow: 'hidden',
   },
   thumb: {
-    // Thumb styles applied dynamically
+    position: 'absolute',
   },
   disabled: {
     opacity: 0.5,

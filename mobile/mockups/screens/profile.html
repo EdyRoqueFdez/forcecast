@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forcecast — Profile</title>
+  <link rel="stylesheet" href="../theme.css">
+  <link rel="stylesheet" href="../layout.css">
+  <link rel="stylesheet" href="../utils.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--fc-font-sans); background: var(--fc-bg); color: var(--fc-text); min-height: 100vh; display: flex; flex-direction: column; }
+    .app { flex: 1; display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; width: 100%; }
+    .screen { flex: 1; display: flex; flex-direction: column; padding: var(--fc-space-4); gap: var(--fc-space-5); overflow-y: auto; }
+
+    .profile-header {
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      padding: var(--fc-space-6) 0; gap: var(--fc-space-3);
+    }
+    .profile-header__name { font-size: var(--fc-text-xl); font-weight: 700; }
+    .profile-header__join { font-size: var(--fc-text-sm); color: var(--fc-text-muted); }
+
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--fc-space-3);
+    }
+    .stat-card {
+      display: flex; flex-direction: column; align-items: center;
+      padding: var(--fc-space-4); background: var(--fc-surface);
+      border: 1px solid var(--fc-border); border-radius: var(--fc-radius-lg);
+      text-align: center;
+    }
+    .stat-card__value { font-size: var(--fc-text-2xl); font-weight: 800; color: var(--fc-primary); }
+    .stat-card__label { font-size: var(--fc-text-xs); color: var(--fc-text-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .section-title {
+      font-size: var(--fc-text-sm); font-weight: 600; color: var(--fc-text-muted);
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+
+    .recent-list { display: flex; flex-direction: column; gap: var(--fc-space-2); }
+    .recent-item {
+      display: flex; align-items: center; gap: var(--fc-space-3);
+      padding: var(--fc-space-3); background: var(--fc-surface);
+      border: 1px solid var(--fc-border); border-radius: var(--fc-radius-lg);
+    }
+    .recent-item__info { flex: 1; }
+    .recent-item__pair { font-size: var(--fc-text-sm); font-weight: 500; }
+    .recent-item__meta { font-size: var(--fc-text-xs); color: var(--fc-text-muted); }
+    .recent-item__result { font-size: var(--fc-text-xs); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <nav class="fc-navbar" style="position: relative;">
+      <a class="fc-navbar__brand" href="../index.html">
+        <svg class="fc-navbar__logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span class="fc-navbar__title">Forcecast</span>
+      </a>
+      <div class="fc-navbar__actions">
+        <button class="fc-navbar__action" data-action="toggle-theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+      </div>
+    </nav>
+
+    <div class="screen">
+      <div class="profile-header">
+        <div class="fc-avatar fc-avatar--xl">U</div>
+        <div class="profile-header__name">Forcecaster</div>
+        <div class="profile-header__join">Member since Sep 2026</div>
+        <div style="display: flex; gap: var(--fc-space-2);">
+          <span class="fc-badge fc-badge--accent">Top 10%</span>
+          <span class="fc-badge fc-badge--warning">7-day streak</span>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card__value">47</div>
+          <div class="stat-card__label" data-i18n="profile.votesCast">Votes Cast</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__value">5</div>
+          <div class="stat-card__label" data-i18n="profile.categoriesExplored">Categories</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__value">7</div>
+          <div class="stat-card__label" data-i18n="profile.streak">Day Streak</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title" data-i18n="profile.recentVotes">Recent Votes</div>
+        <div class="recent-list" style="margin-top: 12px;">
+          <div class="recent-item">
+            <div class="fc-avatar fc-avatar--sm">G4</div>
+            <div class="recent-item__info">
+              <div class="recent-item__pair">GPT-4o vs Claude 3.5 Sonnet</div>
+              <div class="recent-item__meta">Code · 2 min ago</div>
+            </div>
+            <div class="recent-item__result" style="color: var(--fc-primary);">GPT-4o</div>
+          </div>
+          <div class="recent-item">
+            <div class="fc-avatar fc-avatar--sm fc-avatar--accent">C3</div>
+            <div class="recent-item__info">
+              <div class="recent-item__pair">Claude 3.5 Sonnet vs Gemini 1.5</div>
+              <div class="recent-item__meta">Writing · 15 min ago</div>
+            </div>
+            <div class="recent-item__result" style="color: var(--fc-accent);">Claude</div>
+          </div>
+          <div class="recent-item">
+            <div class="fc-avatar fc-avatar--sm" style="background: #4285f4;">G</div>
+            <div class="recent-item__info">
+              <div class="recent-item__pair">Gemini 1.5 vs Mixtral 8x7B</div>
+              <div class="recent-item__meta">Analysis · 1 hour ago</div>
+            </div>
+            <div class="recent-item__result" style="color: #4285f4;">Gemini</div>
+          </div>
+          <div class="recent-item">
+            <div class="fc-avatar fc-avatar--sm">G4</div>
+            <div class="recent-item__info">
+              <div class="recent-item__pair">GPT-4o vs Llama 3.1 405B</div>
+              <div class="recent-item__meta">Code · 3 hours ago</div>
+            </div>
+            <div class="recent-item__result" style="color: var(--fc-primary);">GPT-4o</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding: var(--fc-space-4) 0;">
+        <button class="fc-btn fc-btn--ghost fc-btn--md fc-btn--full" style="color: var(--fc-danger);">Sign Out</button>
+      </div>
+    </div>
+
+    <nav class="fc-bottom-nav" style="position: relative;">
+      <a class="fc-bottom-nav__item" href="vote.html"><svg class="fc-bottom-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span class="fc-bottom-nav__label">Vote</span></a>
+      <a class="fc-bottom-nav__item" href="rankings.html"><svg class="fc-bottom-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg><span class="fc-bottom-nav__label">Rankings</span></a>
+      <a class="fc-bottom-nav__item" href="models.html"><svg class="fc-bottom-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span class="fc-bottom-nav__label">Models</span></a>
+      <a class="fc-bottom-nav__item fc-bottom-nav__item--active" href="profile.html"><svg class="fc-bottom-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="fc-bottom-nav__label">Profile</span></a>
+    </nav>
+  </div>
+  <script src="../app.js"></script>
+</body>
+</html>

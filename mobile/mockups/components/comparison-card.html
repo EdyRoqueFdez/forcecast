@@ -1,0 +1,155 @@
+<!--
+  Forcecast Component: Comparison Card
+
+  Shows two models compared across multiple categories with bars.
+
+  Usage:
+    <div class="fc-comparison-card">
+      <div class="fc-comparison-card__header">
+        <div class="fc-comparison-card__model">
+          <div class="fc-avatar fc-avatar--sm">G4</div>
+          <span>GPT-4o</span>
+        </div>
+        <span class="fc-comparison-card__vs">vs</span>
+        <div class="fc-comparison-card__model">
+          <div class="fc-avatar fc-avatar--sm fc-avatar--accent">C3</div>
+          <span>Claude 3.5 Sonnet</span>
+        </div>
+      </div>
+      <div class="fc-comparison-card__body">
+        <div class="fc-comparison-row">
+          <span class="fc-comparison-row__label">Code</span>
+          <div class="fc-comparison-row__bar-group">
+            <div class="fc-comparison-row__bar fc-comparison-row__bar--left" style="width: 72%">72%</div>
+            <div class="fc-comparison-row__bar fc-comparison-row__bar--right" style="width: 68%">68%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  Sections: header (two models), body (comparison rows)
+-->
+
+<style>
+  .fc-comparison-card {
+    background-color: var(--fc-surface);
+    border: 1px solid var(--fc-border);
+    border-radius: var(--fc-radius-lg);
+    overflow: hidden;
+  }
+
+  .fc-comparison-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--fc-space-3) var(--fc-space-4);
+    border-bottom: 1px solid var(--fc-border);
+  }
+
+  .fc-comparison-card__model {
+    display: flex;
+    align-items: center;
+    gap: var(--fc-space-2);
+    font-size: var(--fc-text-sm);
+    font-weight: 600;
+    color: var(--fc-text);
+  }
+
+  .fc-comparison-card__vs {
+    font-size: var(--fc-text-xs);
+    color: var(--fc-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+
+  .fc-comparison-card__body {
+    padding: var(--fc-space-3) var(--fc-space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--fc-space-3);
+  }
+
+  /* Comparison row */
+  .fc-comparison-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fc-space-1);
+  }
+
+  .fc-comparison-row__label {
+    font-size: var(--fc-text-sm);
+    color: var(--fc-text-muted);
+    font-weight: 500;
+  }
+
+  .fc-comparison-row__bar-group {
+    display: flex;
+    gap: 2px;
+    height: 28px;
+  }
+
+  .fc-comparison-row__bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--fc-text-xs);
+    font-weight: 600;
+    color: var(--fc-bg);
+    border-radius: var(--fc-radius-sm);
+    min-width: 36px;
+    transition: width var(--fc-transition-base);
+  }
+
+  .fc-comparison-row__bar--left {
+    background-color: var(--fc-primary);
+  }
+
+  .fc-comparison-row__bar--right {
+    background-color: var(--fc-accent);
+  }
+
+  .fc-comparison-row__bar--winning {
+    box-shadow: 0 0 0 2px var(--fc-primary);
+  }
+</style>
+
+<!-- Preview -->
+<div style="padding: 16px;">
+  <div class="fc-comparison-card">
+    <div class="fc-comparison-card__header">
+      <div class="fc-comparison-card__model">
+        <div class="fc-avatar fc-avatar--sm">G4</div>
+        <span>GPT-4o</span>
+      </div>
+      <span class="fc-comparison-card__vs">vs</span>
+      <div class="fc-comparison-card__model">
+        <div class="fc-avatar fc-avatar--sm fc-avatar--accent">C3</div>
+        <span>Claude 3.5 Sonnet</span>
+      </div>
+    </div>
+    <div class="fc-comparison-card__body">
+      <div class="fc-comparison-row">
+        <span class="fc-comparison-row__label">Code</span>
+        <div class="fc-comparison-row__bar-group">
+          <div class="fc-comparison-row__bar fc-comparison-row__bar--left fc-comparison-row__bar--winning" style="width: 72%">72%</div>
+          <div class="fc-comparison-row__bar fc-comparison-row__bar--right" style="width: 68%">68%</div>
+        </div>
+      </div>
+      <div class="fc-comparison-row">
+        <span class="fc-comparison-row__label">Writing</span>
+        <div class="fc-comparison-row__bar-group">
+          <div class="fc-comparison-row__bar fc-comparison-row__bar--left" style="width: 45%">45%</div>
+          <div class="fc-comparison-row__bar fc-comparison-row__bar--right fc-comparison-row__bar--winning" style="width: 85%">85%</div>
+        </div>
+      </div>
+      <div class="fc-comparison-row">
+        <span class="fc-comparison-row__label">Analysis</span>
+        <div class="fc-comparison-row__bar-group">
+          <div class="fc-comparison-row__bar fc-comparison-row__bar--left fc-comparison-row__bar--winning" style="width: 62%">62%</div>
+          <div class="fc-comparison-row__bar fc-comparison-row__bar--right" style="width: 58%">58%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

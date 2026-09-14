@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forcecast — Rankings</title>
+  <link rel="stylesheet" href="../theme.css">
+  <link rel="stylesheet" href="../layout.css">
+  <link rel="stylesheet" href="../utils.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--fc-font-sans); background: var(--fc-bg); color: var(--fc-text); min-height: 100vh; display: flex; flex-direction: column; }
+    .app { flex: 1; display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; width: 100%; }
+    .screen { flex: 1; display: flex; flex-direction: column; padding: var(--fc-space-4); gap: var(--fc-space-4); overflow-y: auto; }
+    .screen__title { font-size: var(--fc-text-xl); font-weight: 700; }
+    .screen__subtitle { font-size: var(--fc-text-sm); color: var(--fc-text-muted); margin-top: -8px; }
+
+    .ranking-list { display: flex; flex-direction: column; gap: var(--fc-space-2); }
+    .ranking-item {
+      display: flex; align-items: center; gap: var(--fc-space-3);
+      padding: var(--fc-space-3); background: var(--fc-surface);
+      border: 1px solid var(--fc-border); border-radius: var(--fc-radius-lg);
+      transition: all var(--fc-transition-fast);
+    }
+    .ranking-item:hover { border-color: var(--fc-primary); }
+    .ranking-item__rank {
+      font-size: var(--fc-text-lg); font-weight: 800; color: var(--fc-text-muted);
+      width: 32px; text-align: center; flex-shrink: 0;
+    }
+    .ranking-item__rank--top { color: var(--fc-warning); }
+    .ranking-item__info { flex: 1; min-width: 0; }
+    .ranking-item__name { font-size: var(--fc-text-sm); font-weight: 600; }
+    .ranking-item__provider { font-size: var(--fc-text-xs); color: var(--fc-text-muted); }
+    .ranking-item__stats { display: flex; gap: var(--fc-space-3); flex-shrink: 0; }
+    .ranking-item__stat { text-align: right; }
+    .ranking-item__stat-value { font-size: var(--fc-text-sm); font-weight: 600; font-family: var(--fc-font-mono); }
+    .ranking-item__stat-label { font-size: 9px; color: var(--fc-text-muted); text-transform: uppercase; }
+    .ranking-item__delta { font-size: var(--fc-text-xs); font-weight: 600; }
+    .ranking-item__delta--up { color: var(--fc-success); }
+    .ranking-item__delta--down { color: var(--fc-danger); }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <nav class="fc-navbar" style="position: relative;">
+      <a class="fc-navbar__brand" href="../index.html">
+        <svg class="fc-navbar__logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span class="fc-navbar__title">Forcecast</span>
+      </a>
+      <div class="fc-navbar__actions">
+        <button class="fc-navbar__action" data-action="toggle-theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+      </div>
+    </nav>
+
+    <div class="screen">
+      <h1 class="screen__title" data-i18n="rankings.title">Rankings</h1>
+      <p class="screen__subtitle" data-i18n="rankings.subtitle">Community-ranked AI models by category</p>
+
+      <div class="fc-tabs fc-tabs--pills">
+        <button class="fc-tab fc-tab--active">Code</button>
+        <button class="fc-tab">Writing</button>
+        <button class="fc-tab">Analysis</button>
+        <button class="fc-tab">All</button>
+      </div>
+
+      <div class="ranking-list">
+        <div class="ranking-item">
+          <div class="ranking-item__rank ranking-item__rank--top">1</div>
+          <div class="fc-avatar fc-avatar--sm">G4</div>
+          <div class="ranking-item__info">
+            <div class="ranking-item__name">GPT-4o</div>
+            <div class="ranking-item__provider">OpenAI</div>
+          </div>
+          <div class="ranking-item__stats">
+            <div class="ranking-item__stat">
+              <div class="ranking-item__stat-value fc-elo-badge fc-elo-badge--elite fc-elo-badge--sm">1842</div>
+              <div class="ranking-item__stat-label">ELO</div>
+            </div>
+          </div>
+          <div class="ranking-item__delta ranking-item__delta--up">+12</div>
+        </div>
+
+        <div class="ranking-item">
+          <div class="ranking-item__rank ranking-item__rank--top">2</div>
+          <div class="fc-avatar fc-avatar--sm fc-avatar--accent">C3</div>
+          <div class="ranking-item__info">
+            <div class="ranking-item__name">Claude 3.5 Sonnet</div>
+            <div class="ranking-item__provider">Anthropic</div>
+          </div>
+          <div class="ranking-item__stats">
+            <div class="ranking-item__stat">
+              <div class="ranking-item__stat-value fc-elo-badge fc-elo-badge--strong fc-elo-badge--sm">1798</div>
+              <div class="ranking-item__stat-label">ELO</div>
+            </div>
+          </div>
+          <div class="ranking-item__delta ranking-item__delta--up">+5</div>
+        </div>
+
+        <div class="ranking-item">
+          <div class="ranking-item__rank">3</div>
+          <div class="fc-avatar fc-avatar--sm" style="background: var(--fc-surface-3);">G4</div>
+          <div class="ranking-item__info">
+            <div class="ranking-item__name">GPT-4o-mini</div>
+            <div class="ranking-item__provider">OpenAI</div>
+          </div>
+          <div class="ranking-item__stats">
+            <div class="ranking-item__stat">
+              <div class="ranking-item__stat-value fc-elo-badge fc-elo-badge--strong fc-elo-badge--sm">1645</div>
+              <div class="ranking-item__stat-label">ELO</div>
+            </div>
+          </div>
+          <div class="ranking-item__delta ranking-item__delta--down">-3</div>
+        </div>
+
+        <div class="ranking-item">
+          <div class="ranking-item__rank">4</div>
+          <div class="fc-avatar fc-avatar--sm" style="background: #7c3aed;">C3</div>
+          <div class="ranking-item__info">
+            <div class="ranking-item__name">Claude 3 Haiku</div>
+            <div class="ranking-item__provider">Anthropic</div>
+          </div>
+          <div class="ranking-item__stats">
+            <div class="ranking-item__stat">
+              <div class="ranking-item__stat-value fc-elo-badge fc-elo-badge--average fc-elo-badge--sm">1521</div>
+              <div class="ranking-item__stat-label">ELO</div>
+            </div>
+          </div>
+          <div class="ranking-item__delta ranking-item__delta--up">+1</div>
+        </div>
+
+        <div class="ranking-item">
+          <div class="ranking-item__rank">5</div>
+          <div class="fc-avatar fc-avatar--sm" style="background: #f97316;">M</div>
+          <div class="ranking-item__info">
+            <div class="ranking-item__name">Mixtral 8x7B</div>
+            <div class="ranking-item__provider">Mistral AI</div>
+          </div>
+          <div class="ranking-item__stats">
+            <div class="ranking-item__stat">
+              <div class="ranking-item__stat-value fc-elo-badge fc-elo-badge--average fc-elo-badge--sm">1488</div>
+              <div class="ranking-item__stat-label">ELO</div>
+            </div>
+          </div>
+          <div class="ranking-item__delta ranking-item__delta--down">-7</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="fc-bottom-nav" style="position: relative;">
+      <a class="fc-bottom-nav__item" href="vote.html"><svg class="fc-bottom-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span class="fc-bottom-nav__label">Vote</span></a>
+      <a class="fc-bottom-nav__item fc-bottom-nav__item--active" href="rankings.html"><svg class="fc-bottom-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg><span class="fc-bottom-nav__label">Rankings</span></a>
+      <a class="fc-bottom-nav__item" href="models.html"><svg class="fc-bottom-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span class="fc-bottom-nav__label">Models</span></a>
+      <a class="fc-bottom-nav__item" href="profile.html"><svg class="fc-bottom-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="fc-bottom-nav__label">Profile</span></a>
+    </nav>
+  </div>
+  <script src="../app.js"></script>
+</body>
+</html>

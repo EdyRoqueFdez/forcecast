@@ -1,0 +1,142 @@
+<!--
+  Forcecast Component: Top Navigation Bar
+
+  Usage:
+    <nav class="fc-navbar">
+      <div class="fc-navbar__brand">
+        <svg class="fc-navbar__logo">...</svg>
+        <span class="fc-navbar__title">Forcecast</span>
+      </div>
+      <div class="fc-navbar__actions">
+        <button class="fc-navbar__action" aria-label="Search">
+          <svg>...</svg>
+        </button>
+        <button class="fc-navbar__action" aria-label="Theme">
+          <svg>...</svg>
+        </button>
+      </div>
+    </nav>
+
+  Sections: brand (left), center (optional), actions (right)
+  Mobile: brand + action icons only (bottom nav handles primary nav)
+-->
+
+<style>
+  .fc-navbar {
+    position: sticky;
+    top: 0;
+    z-index: var(--fc-z-nav);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    padding: 0 var(--fc-space-4);
+    background-color: var(--fc-bg);
+    border-bottom: 1px solid var(--fc-border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .fc-navbar__brand {
+    display: flex;
+    align-items: center;
+    gap: var(--fc-space-2);
+    text-decoration: none;
+  }
+
+  .fc-navbar__logo {
+    width: 28px;
+    height: 28px;
+    color: var(--fc-primary);
+  }
+
+  .fc-navbar__title {
+    font-size: var(--fc-text-lg);
+    font-weight: 700;
+    color: var(--fc-text);
+    letter-spacing: -0.02em;
+  }
+
+  .fc-navbar__center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: var(--fc-space-6);
+  }
+
+  .fc-navbar__link {
+    font-size: var(--fc-text-sm);
+    font-weight: 500;
+    color: var(--fc-text-muted);
+    text-decoration: none;
+    padding: var(--fc-space-2) 0;
+    border-bottom: 2px solid transparent;
+    transition: all var(--fc-transition-fast);
+  }
+
+  .fc-navbar__link:hover,
+  .fc-navbar__link--active {
+    color: var(--fc-text);
+    border-bottom-color: var(--fc-primary);
+  }
+
+  .fc-navbar__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--fc-space-1);
+  }
+
+  .fc-navbar__action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: none;
+    border-radius: var(--fc-radius-full);
+    color: var(--fc-text-muted);
+    cursor: pointer;
+    transition: all var(--fc-transition-fast);
+  }
+
+  .fc-navbar__action:hover {
+    background-color: var(--fc-surface-2);
+    color: var(--fc-text);
+  }
+
+  .fc-navbar__action svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Hide center on mobile */
+  @media (max-width: 768px) {
+    .fc-navbar__center { display: none; }
+  }
+</style>
+
+<!-- Preview -->
+<nav class="fc-navbar" style="position: relative;">
+  <a class="fc-navbar__brand" href="#">
+    <svg class="fc-navbar__logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+    </svg>
+    <span class="fc-navbar__title">Forcecast</span>
+  </a>
+  <div class="fc-navbar__center">
+    <a class="fc-navbar__link fc-navbar__link--active" href="#">Vote</a>
+    <a class="fc-navbar__link" href="#">Rankings</a>
+    <a class="fc-navbar__link" href="#">Models</a>
+  </div>
+  <div class="fc-navbar__actions">
+    <button class="fc-navbar__action" aria-label="Search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    </button>
+    <button class="fc-navbar__action" aria-label="Toggle theme">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+</nav>

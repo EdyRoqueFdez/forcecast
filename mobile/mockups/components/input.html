@@ -1,0 +1,177 @@
+<!--
+  Forcecast Component: Input
+
+  Usage:
+    <div class="fc-input-group">
+      <label class="fc-input-label" for="email">Email</label>
+      <input class="fc-input" type="email" id="email" placeholder="you@example.com">
+      <span class="fc-input-hint">We'll never share your email.</span>
+    </div>
+
+    <div class="fc-input-group">
+      <label class="fc-input-label" for="search">Search</label>
+      <div class="fc-input-wrapper">
+        <svg class="fc-input-icon">...</svg>
+        <input class="fc-input fc-input--search" type="search" id="search" placeholder="Search models...">
+      </div>
+    </div>
+
+    <div class="fc-input-group">
+      <label class="fc-input-label" for="bio">Bio</label>
+      <textarea class="fc-input fc-input--textarea" id="bio" rows="4" placeholder="Tell us about yourself..."></textarea>
+    </div>
+
+    <div class="fc-input-group fc-input-group--error">
+      <label class="fc-input-label" for="pass">Password</label>
+      <input class="fc-input fc-input--error" type="password" id="pass">
+      <span class="fc-input-error">Password must be at least 8 characters.</span>
+    </div>
+
+  Types: text, email, password, search, textarea
+  States: default, focus, error, disabled
+-->
+
+<style>
+  .fc-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fc-space-1);
+  }
+
+  .fc-input-group + .fc-input-group {
+    margin-top: var(--fc-space-4);
+  }
+
+  .fc-input-label {
+    font-size: var(--fc-text-sm);
+    font-weight: 500;
+    color: var(--fc-text);
+  }
+
+  .fc-input-hint {
+    font-size: var(--fc-text-xs);
+    color: var(--fc-text-muted);
+  }
+
+  .fc-input-error {
+    font-size: var(--fc-text-xs);
+    color: var(--fc-danger);
+    font-weight: 500;
+  }
+
+  .fc-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .fc-input-icon {
+    position: absolute;
+    left: var(--fc-space-3);
+    width: 18px;
+    height: 18px;
+    color: var(--fc-text-muted);
+    pointer-events: none;
+  }
+
+  .fc-input {
+    width: 100%;
+    height: 44px;
+    padding: 0 var(--fc-space-3);
+    font-family: var(--fc-font-sans);
+    font-size: var(--fc-text-base);
+    color: var(--fc-text);
+    background-color: var(--fc-bg);
+    border: 1px solid var(--fc-border);
+    border-radius: var(--fc-radius-md);
+    transition: all var(--fc-transition-fast);
+    outline: none;
+  }
+
+  .fc-input::placeholder {
+    color: var(--fc-text-muted);
+  }
+
+  .fc-input:hover:not(:disabled) {
+    border-color: var(--fc-border-2);
+  }
+
+  .fc-input:focus {
+    border-color: var(--fc-border-focus);
+    box-shadow: 0 0 0 3px var(--fc-primary-dim);
+  }
+
+  .fc-input--search {
+    padding-left: var(--fc-space-10);
+  }
+
+  .fc-input--textarea {
+    height: auto;
+    min-height: 100px;
+    padding: var(--fc-space-3);
+    resize: vertical;
+    line-height: 1.5;
+  }
+
+  .fc-input--error {
+    border-color: var(--fc-danger);
+  }
+
+  .fc-input--error:focus {
+    box-shadow: 0 0 0 3px var(--fc-danger-dim);
+    border-color: var(--fc-danger);
+  }
+
+  .fc-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--fc-surface-2);
+  }
+
+  /* Password toggle */
+  .fc-input-wrapper--password .fc-input {
+    padding-right: var(--fc-space-10);
+  }
+
+  .fc-input-toggle {
+    position: absolute;
+    right: var(--fc-space-3);
+    background: none;
+    border: none;
+    color: var(--fc-text-muted);
+    cursor: pointer;
+    padding: var(--fc-space-1);
+  }
+
+  .fc-input-toggle:hover {
+    color: var(--fc-text);
+  }
+</style>
+
+<!-- Preview -->
+<div style="padding: 16px; max-width: 360px;">
+  <div class="fc-input-group">
+    <label class="fc-input-label">Email</label>
+    <input class="fc-input" type="email" placeholder="you@example.com">
+    <span class="fc-input-hint">We'll never share your email.</span>
+  </div>
+
+  <div class="fc-input-group" style="margin-top: 20px;">
+    <label class="fc-input-label">Search</label>
+    <div class="fc-input-wrapper">
+      <svg class="fc-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input class="fc-input fc-input--search" type="search" placeholder="Search models...">
+    </div>
+  </div>
+
+  <div class="fc-input-group" style="margin-top: 20px;">
+    <label class="fc-input-label">Bio</label>
+    <textarea class="fc-input fc-input--textarea" rows="3" placeholder="Tell us about yourself..."></textarea>
+  </div>
+
+  <div class="fc-input-group fc-input-group--error" style="margin-top: 20px;">
+    <label class="fc-input-label">Password</label>
+    <input class="fc-input fc-input--error" type="password" value="123">
+    <span class="fc-input-error">Password must be at least 8 characters.</span>
+  </div>
+</div>

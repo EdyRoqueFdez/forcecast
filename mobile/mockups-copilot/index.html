@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Forcecast mobile product mockup">
+  <title>Forcecast Mobile Mockup</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="workspace">
+    <header class="workspace-header">
+      <div>
+        <span class="eyebrow">Forcecast / mobile concept</span>
+        <h1>Community intelligence, in your pocket.</h1>
+        <p>Interactive product mockup for voting, rankings, model discovery, and reputation.</p>
+      </div>
+      <div class="workspace-actions">
+        <button class="icon-button" data-action="theme" aria-label="Toggle color theme" title="Toggle theme">◐</button>
+        <button class="language-button" data-action="language">EN / ES</button>
+      </div>
+    </header>
+
+    <main class="device-stage">
+      <div class="device-label">iPhone 15 Pro / 393 x 852</div>
+      <section class="phone" aria-label="Forcecast mobile app preview">
+        <div class="phone-status"><span>9:41</span><span>▴ ᯤ 100%</span></div>
+        <div id="app" class="app-shell"></div>
+      </section>
+      <div class="stage-note"><span class="status-dot"></span> Prototype mode <span>·</span> Local interactions only</div>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <dialog id="model-dialog" class="model-dialog">
+    <button class="dialog-close" data-action="close-dialog" aria-label="Close model details">×</button>
+    <div id="dialog-content"></div>
+  </dialog>
+  <script src="app.js"></script>
+</body>
+</html>

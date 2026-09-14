@@ -1,0 +1,112 @@
+<!--
+  Forcecast Component: Snackbar (Persistent Notification)
+
+  Similar to Toast but stays until dismissed. Used for important info.
+
+  Usage:
+    <div class="fc-snackbar" role="alert">
+      <span class="fc-snackbar__message">Your vote will sync when you're back online.</span>
+      <button class="fc-snackbar__action">Retry</button>
+      <button class="fc-snackbar__close" aria-label="Dismiss">×</button>
+    </div>
+
+  Variants: default, info, warning
+  Position: bottom (default), top
+-->
+
+<style>
+  .fc-snackbar {
+    position: fixed;
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    left: var(--fc-space-4);
+    right: var(--fc-space-4);
+    z-index: var(--fc-z-toast);
+    display: flex;
+    align-items: center;
+    gap: var(--fc-space-3);
+    padding: var(--fc-space-3) var(--fc-space-4);
+    background-color: var(--fc-surface);
+    border: 1px solid var(--fc-border);
+    border-radius: var(--fc-radius-lg);
+    box-shadow: var(--fc-shadow-lg);
+    animation: fc-slide-up 0.3s var(--fc-ease-out);
+  }
+
+  .fc-snackbar--top {
+    bottom: auto;
+    top: calc(60px + env(safe-area-inset-top, 0px));
+    animation: fc-slide-down 0.3s var(--fc-ease-out);
+  }
+
+  .fc-snackbar--info {
+    border-left: 3px solid var(--fc-info);
+  }
+
+  .fc-snackbar--warning {
+    border-left: 3px solid var(--fc-warning);
+  }
+
+  .fc-snackbar__message {
+    flex: 1;
+    font-size: var(--fc-text-sm);
+    color: var(--fc-text);
+  }
+
+  .fc-snackbar__action {
+    flex-shrink: 0;
+    font-family: var(--fc-font-sans);
+    font-size: var(--fc-text-sm);
+    font-weight: 600;
+    color: var(--fc-primary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--fc-space-1) var(--fc-space-2);
+    border-radius: var(--fc-radius-sm);
+    transition: background-color var(--fc-transition-fast);
+  }
+
+  .fc-snackbar__action:hover {
+    background-color: var(--fc-primary-dim);
+  }
+
+  .fc-snackbar__close {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: none;
+    border: none;
+    border-radius: var(--fc-radius-sm);
+    color: var(--fc-text-muted);
+    font-size: 16px;
+    cursor: pointer;
+    transition: all var(--fc-transition-fast);
+  }
+
+  .fc-snackbar__close:hover {
+    background-color: var(--fc-surface-2);
+    color: var(--fc-text);
+  }
+</style>
+
+<!-- Preview -->
+<div style="padding: 16px; display: flex; flex-direction: column; gap: 16px; position: relative; height: 200px;">
+  <div class="fc-snackbar" style="position: relative; bottom: auto; left: auto; right: auto;">
+    <span class="fc-snackbar__message">Your vote will sync when you're back online.</span>
+    <button class="fc-snackbar__action">Retry</button>
+    <button class="fc-snackbar__close" aria-label="Dismiss">×</button>
+  </div>
+
+  <div class="fc-snackbar fc-snackbar--info" style="position: relative; bottom: auto; left: auto; right: auto;">
+    <span class="fc-snackbar__message">New category: Creative Writing is now available.</span>
+    <button class="fc-snackbar__close" aria-label="Dismiss">×</button>
+  </div>
+
+  <div class="fc-snackbar fc-snackbar--warning" style="position: relative; bottom: auto; left: auto; right: auto;">
+    <span class="fc-snackbar__message">Rate limit: wait 30 seconds before voting again.</span>
+    <button class="fc-snackbar__close" aria-label="Dismiss">×</button>
+  </div>
+</div>

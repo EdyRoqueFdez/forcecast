@@ -1,0 +1,152 @@
+<!--
+  Forcecast Component: Avatar
+
+  Usage:
+    <div class="fc-avatar fc-avatar--sm">
+      <img src="photo.jpg" alt="User">
+    </div>
+    <div class="fc-avatar fc-avatar--md">
+      <img src="photo.jpg" alt="User">
+    </div>
+    <div class="fc-avatar fc-avatar--lg">
+      <img src="photo.jpg" alt="User">
+    </div>
+    <div class="fc-avatar fc-avatar--xl">
+      <img src="photo.jpg" alt="User">
+    </div>
+
+    <!-- With initials fallback -->
+    <div class="fc-avatar fc-avatar--md fc-avatar--initials">
+      <span>JD</span>
+    </div>
+
+    <!-- With provider icon -->
+    <div class="fc-avatar fc-avatar--md fc-avatar--provider">
+      <img src="openai-icon.svg" alt="OpenAI">
+    </div>
+
+    <!-- Status indicator -->
+    <div class="fc-avatar fc-avatar--md fc-avatar--status-online">
+      <img src="photo.jpg" alt="User">
+    </div>
+
+  Sizes: sm (32px), md (40px), lg (56px), xl (80px)
+  Variants: default, initials, provider
+  Status: online, offline, away
+-->
+
+<style>
+  .fc-avatar {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--fc-radius-full);
+    background-color: var(--fc-surface-2);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .fc-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Sizes */
+  .fc-avatar--sm { width: 32px; height: 32px; }
+  .fc-avatar--md { width: 40px; height: 40px; }
+  .fc-avatar--lg { width: 56px; height: 56px; }
+  .fc-avatar--xl { width: 80px; height: 80px; }
+
+  /* Initials */
+  .fc-avatar--initials {
+    background: linear-gradient(135deg, var(--fc-primary-dim), var(--fc-secondary-dim));
+  }
+
+  .fc-avatar--initials span {
+    font-weight: 600;
+    color: var(--fc-primary);
+    font-size: 0.4em;
+    text-transform: uppercase;
+  }
+
+  .fc-avatar--sm.fc-avatar--initials span { font-size: 11px; }
+  .fc-avatar--md.fc-avatar--initials span { font-size: 14px; }
+  .fc-avatar--lg.fc-avatar--initials span { font-size: 18px; }
+  .fc-avatar--xl.fc-avatar--initials span { font-size: 24px; }
+
+  /* Provider icon (square with rounded corners) */
+  .fc-avatar--provider {
+    border-radius: var(--fc-radius-md);
+  }
+
+  .fc-avatar--provider img {
+    padding: 20%;
+    object-fit: contain;
+  }
+
+  /* Status indicator */
+  .fc-avatar--status-online::after,
+  .fc-avatar--status-offline::after,
+  .fc-avatar--status-away::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    border-radius: 50%;
+    border: 2px solid var(--fc-bg);
+  }
+
+  .fc-avatar--status-online::after {
+    width: 10px;
+    height: 10px;
+    background-color: var(--fc-success);
+  }
+
+  .fc-avatar--status-offline::after {
+    width: 10px;
+    height: 10px;
+    background-color: var(--fc-text-muted);
+  }
+
+  .fc-avatar--status-away::after {
+    width: 10px;
+    height: 10px;
+    background-color: var(--fc-warning);
+  }
+
+  .fc-avatar--sm.fc-avatar--status-online::after,
+  .fc-avatar--sm.fc-avatar--status-offline::after,
+  .fc-avatar--sm.fc-avatar--status-away::after {
+    width: 8px;
+    height: 8px;
+  }
+
+  /* Group (overlapping) */
+  .fc-avatar-group {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+  }
+
+  .fc-avatar-group .fc-avatar + .fc-avatar {
+    margin-left: -8px;
+  }
+
+  .fc-avatar-group .fc-avatar {
+    border: 2px solid var(--fc-bg);
+  }
+</style>
+
+<!-- Preview -->
+<div style="display: flex; flex-wrap: wrap; gap: 16px; padding: 16px; align-items: end;">
+  <div class="fc-avatar fc-avatar--sm fc-avatar--initials"><span>AB</span></div>
+  <div class="fc-avatar fc-avatar--md fc-avatar--initials"><span>CD</span></div>
+  <div class="fc-avatar fc-avatar--lg fc-avatar--initials"><span>EF</span></div>
+  <div class="fc-avatar fc-avatar--xl fc-avatar--initials"><span>GH</span></div>
+  <div class="fc-avatar fc-avatar--md fc-avatar--status-online fc-avatar--initials"><span>ON</span></div>
+  <div class="fc-avatar fc-avatar--md fc-avatar--provider" style="background-color: var(--fc-surface-2);">
+    <svg viewBox="0 0 24 24" fill="var(--fc-primary)" style="padding: 20%;"><circle cx="12" cy="12" r="10"/></svg>
+  </div>
+</div>

@@ -1,0 +1,254 @@
+/**
+ * Forcecast Design System — Layout
+ *
+ * Mobile-first layout utilities.
+ * Reference widths: 360px, 390px, 414px (standard mobile).
+ * Max container: 430px (iPhone Pro Max).
+ */
+
+/* ─── Container ─── */
+.fc-container {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  background-color: var(--fc-bg);
+}
+
+.fc-container--padded {
+  padding-left: var(--fc-space-4);
+  padding-right: var(--fc-space-4);
+}
+
+/* ─── Safe Area Padding ─── */
+.fc-safe-top {
+  padding-top: calc(var(--fc-space-4) + var(--fc-safe-top));
+}
+
+.fc-safe-bottom {
+  padding-bottom: calc(var(--fc-space-16) + var(--fc-safe-bottom));
+}
+
+.fc-safe-both {
+  padding-top: calc(var(--fc-space-4) + var(--fc-safe-top));
+  padding-bottom: calc(var(--fc-space-16) + var(--fc-safe-bottom));
+}
+
+/* ─── Flex Utilities ─── */
+.fc-flex { display: flex; }
+.fc-flex-col { flex-direction: column; }
+.fc-flex-row { flex-direction: row; }
+.fc-flex-wrap { flex-wrap: wrap; }
+.fc-flex-1 { flex: 1; }
+.fc-flex-shrink-0 { flex-shrink: 0; }
+.fc-items-center { align-items: center; }
+.fc-items-start { align-items: flex-start; }
+.fc-items-end { align-items: flex-end; }
+.fc-items-stretch { align-items: stretch; }
+.fc-justify-center { justify-content: center; }
+.fc-justify-between { justify-content: space-between; }
+.fc-justify-end { justify-content: flex-end; }
+.fc-justify-start { justify-content: flex-start; }
+
+/* ─── Gap ─── */
+.fc-gap-1 { gap: var(--fc-space-1); }
+.fc-gap-2 { gap: var(--fc-space-2); }
+.fc-gap-3 { gap: var(--fc-space-3); }
+.fc-gap-4 { gap: var(--fc-space-4); }
+.fc-gap-5 { gap: var(--fc-space-5); }
+.fc-gap-6 { gap: var(--fc-space-6); }
+.fc-gap-8 { gap: var(--fc-space-8); }
+
+/* ─── Grid ─── */
+.fc-grid {
+  display: grid;
+  gap: var(--fc-space-4);
+}
+
+.fc-grid-2 { grid-template-columns: repeat(2, 1fr); }
+.fc-grid-3 { grid-template-columns: repeat(3, 1fr); }
+.fc-grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+/* ─── Spacing (margin & padding) ─── */
+.fc-m-0 { margin: 0; }
+.fc-mt-1 { margin-top: var(--fc-space-1); }
+.fc-mt-2 { margin-top: var(--fc-space-2); }
+.fc-mt-3 { margin-top: var(--fc-space-3); }
+.fc-mt-4 { margin-top: var(--fc-space-4); }
+.fc-mt-6 { margin-top: var(--fc-space-6); }
+.fc-mt-8 { margin-top: var(--fc-space-8); }
+.fc-mb-1 { margin-bottom: var(--fc-space-1); }
+.fc-mb-2 { margin-bottom: var(--fc-space-2); }
+.fc-mb-3 { margin-bottom: var(--fc-space-3); }
+.fc-mb-4 { margin-bottom: var(--fc-space-4); }
+.fc-mb-6 { margin-bottom: var(--fc-space-6); }
+.fc-mb-8 { margin-bottom: var(--fc-space-8); }
+.fc-ml-auto { margin-left: auto; }
+.fc-mr-auto { margin-right: auto; }
+.fc-mx-auto { margin-left: auto; margin-right: auto; }
+
+.fc-p-0 { padding: 0; }
+.fc-p-1 { padding: var(--fc-space-1); }
+.fc-p-2 { padding: var(--fc-space-2); }
+.fc-p-3 { padding: var(--fc-space-3); }
+.fc-p-4 { padding: var(--fc-space-4); }
+.fc-p-5 { padding: var(--fc-space-5); }
+.fc-p-6 { padding: var(--fc-space-6); }
+.fc-px-4 { padding-left: var(--fc-space-4); padding-right: var(--fc-space-4); }
+.fc-px-5 { padding-left: var(--fc-space-5); padding-right: var(--fc-space-5); }
+.fc-py-2 { padding-top: var(--fc-space-2); padding-bottom: var(--fc-space-2); }
+.fc-py-3 { padding-top: var(--fc-space-3); padding-bottom: var(--fc-space-3); }
+.fc-py-4 { padding-top: var(--fc-space-4); padding-bottom: var(--fc-space-4); }
+
+/* ─── Width / Height ─── */
+.fc-w-full { width: 100%; }
+.fc-h-full { height: 100%; }
+.fc-min-h-screen {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* ─── Position ─── */
+.fc-relative { position: relative; }
+.fc-absolute { position: absolute; }
+.fc-fixed { position: fixed; }
+.fc-sticky { position: sticky; }
+
+.fc-top-0 { top: 0; }
+.fc-bottom-0 { bottom: 0; }
+.fc-left-0 { left: 0; }
+.fc-right-0 { right: 0; }
+.fc-inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+
+/* ─── Overflow ─── */
+.fc-overflow-hidden { overflow: hidden; }
+.fc-overflow-auto { overflow: auto; }
+.fc-overflow-y-auto {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ─── Scroll ─── */
+.fc-scroll-hidden {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.fc-scroll-hidden::-webkit-scrollbar { display: none; }
+
+.fc-scroll-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+}
+
+.fc-scroll-x > * {
+  scroll-snap-align: start;
+}
+
+/* ─── Text Alignment ─── */
+.fc-text-center { text-align: center; }
+.fc-text-left { text-align: left; }
+.fc-text-right { text-align: right; }
+
+/* ─── Typography ─── */
+.fc-font-normal { font-weight: 400; }
+.fc-font-medium { font-weight: 500; }
+.fc-font-semibold { font-weight: 600; }
+.fc-font-bold { font-weight: 700; }
+
+.fc-text-xs { font-size: var(--fc-text-xs); }
+.fc-text-sm { font-size: var(--fc-text-sm); }
+.fc-text-base { font-size: var(--fc-text-base); }
+.fc-text-lg { font-size: var(--fc-text-lg); }
+.fc-text-xl { font-size: var(--fc-text-xl); }
+.fc-text-2xl { font-size: var(--fc-text-2xl); }
+.fc-text-3xl { font-size: var(--fc-text-3xl); }
+
+.fc-leading-tight { line-height: 1.25; }
+.fc-leading-normal { line-height: 1.6; }
+.fc-leading-relaxed { line-height: 1.75; }
+
+/* ─── Truncation ─── */
+.fc-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fc-line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.fc-line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ─── Border ─── */
+.fc-border { border: 1px solid var(--fc-border); }
+.fc-border-b { border-bottom: 1px solid var(--fc-border); }
+.fc-border-t { border-top: 1px solid var(--fc-border); }
+.fc-rounded-sm { border-radius: var(--fc-radius-sm); }
+.fc-rounded-md { border-radius: var(--fc-radius-md); }
+.fc-rounded-lg { border-radius: var(--fc-radius-lg); }
+.fc-rounded-xl { border-radius: var(--fc-radius-xl); }
+.fc-rounded-full { border-radius: var(--fc-radius-full); }
+
+/* ─── Divider ─── */
+.fc-divider {
+  height: 1px;
+  background-color: var(--fc-border);
+  border: none;
+  margin: var(--fc-space-4) 0;
+}
+
+/* ─── Section Spacing ─── */
+.fc-section {
+  padding-top: var(--fc-space-6);
+  padding-bottom: var(--fc-space-6);
+}
+
+.fc-section + .fc-section {
+  padding-top: 0;
+}
+
+/* ─── Page Layout Patterns ─── */
+.fc-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.fc-page__header {
+  position: sticky;
+  top: 0;
+  z-index: var(--fc-z-sticky);
+  background-color: var(--fc-bg);
+  padding-top: var(--fc-safe-top);
+}
+
+.fc-page__content {
+  flex: 1;
+  padding-bottom: var(--fc-space-16);
+}
+
+.fc-page__footer {
+  padding-bottom: var(--fc-safe-bottom);
+}
+
+/* ─── Responsive (landscape / tablet) ─── */
+@media (min-width: 768px) {
+  .fc-container {
+    max-width: 430px;
+    border-left: 1px solid var(--fc-border);
+    border-right: 1px solid var(--fc-border);
+  }
+}

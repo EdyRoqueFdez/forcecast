@@ -1,0 +1,187 @@
+<!--
+  Forcecast Component: Dropdown / Select
+
+  Usage:
+    <div class="fc-dropdown">
+      <button class="fc-dropdown__trigger" aria-haspopup="listbox">
+        <span>Select category</span>
+        <svg class="fc-dropdown__chevron">...</svg>
+      </button>
+      <ul class="fc-dropdown__menu" role="listbox">
+        <li class="fc-dropdown__item fc-dropdown__item--selected" role="option">Code</li>
+        <li class="fc-dropdown__item" role="option">Writing</li>
+        <li class="fc-dropdown__item" role="option">Analysis</li>
+        <li class="fc-dropdown__item fc-dropdown__item--disabled" role="option" disabled>Creative (soon)</li>
+      </ul>
+    </div>
+
+    <!-- Native select fallback -->
+    <select class="fc-select">
+      <option>Code</option>
+      <option>Writing</option>
+    </select>
+
+  States: closed (default), open
+  Open: add .fc-dropdown--open class
+-->
+
+<style>
+  .fc-dropdown {
+    position: relative;
+    display: inline-block;
+  }
+
+  .fc-dropdown__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--fc-space-2);
+    width: 100%;
+    height: 44px;
+    padding: 0 var(--fc-space-3);
+    font-family: var(--fc-font-sans);
+    font-size: var(--fc-text-base);
+    color: var(--fc-text);
+    background-color: var(--fc-bg);
+    border: 1px solid var(--fc-border);
+    border-radius: var(--fc-radius-md);
+    cursor: pointer;
+    transition: all var(--fc-transition-fast);
+  }
+
+  .fc-dropdown__trigger:hover {
+    border-color: var(--fc-border-2);
+  }
+
+  .fc-dropdown--open .fc-dropdown__trigger {
+    border-color: var(--fc-primary);
+    box-shadow: 0 0 0 3px var(--fc-primary-dim);
+  }
+
+  .fc-dropdown__chevron {
+    width: 16px;
+    height: 16px;
+    color: var(--fc-text-muted);
+    transition: transform var(--fc-transition-fast);
+    flex-shrink: 0;
+  }
+
+  .fc-dropdown--open .fc-dropdown__chevron {
+    transform: rotate(180deg);
+  }
+
+  .fc-dropdown__menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: var(--fc-z-dropdown);
+    background-color: var(--fc-surface);
+    border: 1px solid var(--fc-border);
+    border-radius: var(--fc-radius-md);
+    box-shadow: var(--fc-shadow-lg);
+    list-style: none;
+    padding: var(--fc-space-1);
+    margin: 0;
+    max-height: 240px;
+    overflow-y: auto;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: all var(--fc-transition-fast);
+  }
+
+  .fc-dropdown--open .fc-dropdown__menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .fc-dropdown__item {
+    display: flex;
+    align-items: center;
+    gap: var(--fc-space-2);
+    padding: var(--fc-space-2) var(--fc-space-3);
+    font-size: var(--fc-text-sm);
+    color: var(--fc-text);
+    border-radius: var(--fc-radius-sm);
+    cursor: pointer;
+    transition: background-color var(--fc-transition-fast);
+  }
+
+  .fc-dropdown__item:hover {
+    background-color: var(--fc-surface-2);
+  }
+
+  .fc-dropdown__item--selected {
+    background-color: var(--fc-primary-dim);
+    color: var(--fc-primary);
+    font-weight: 500;
+  }
+
+  .fc-dropdown__item--disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .fc-dropdown__divider {
+    height: 1px;
+    background-color: var(--fc-border);
+    margin: var(--fc-space-1) 0;
+  }
+
+  /* Native select */
+  .fc-select {
+    appearance: none;
+    width: 100%;
+    height: 44px;
+    padding: 0 var(--fc-space-10) 0 var(--fc-space-3);
+    font-family: var(--fc-font-sans);
+    font-size: var(--fc-text-base);
+    color: var(--fc-text);
+    background-color: var(--fc-bg);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238b92a3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    border: 1px solid var(--fc-border);
+    border-radius: var(--fc-radius-md);
+    cursor: pointer;
+  }
+
+  .fc-select:focus {
+    border-color: var(--fc-border-focus);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--fc-primary-dim);
+  }
+</style>
+
+<!-- Preview -->
+<div style="padding: 16px; display: flex; flex-direction: column; gap: 20px; max-width: 300px;">
+  <!-- Open state -->
+  <div>
+    <div style="font-size: 12px; color: var(--fc-text-muted); margin-bottom: 8px;">Custom dropdown (open)</div>
+    <div class="fc-dropdown fc-dropdown--open">
+      <button class="fc-dropdown__trigger">
+        <span>Category</span>
+        <svg class="fc-dropdown__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <ul class="fc-dropdown__menu" role="listbox">
+        <li class="fc-dropdown__item fc-dropdown__item--selected" role="option">✓ Code</li>
+        <li class="fc-dropdown__item" role="option">Writing</li>
+        <li class="fc-dropdown__item" role="option">Analysis</li>
+        <li class="fc-dropdown__divider"></li>
+        <li class="fc-dropdown__item fc-dropdown__item--disabled" role="option" disabled>Creative (coming soon)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Native select -->
+  <div>
+    <div style="font-size: 12px; color: var(--fc-text-muted); margin-bottom: 8px;">Native select</div>
+    <select class="fc-select">
+      <option>Code</option>
+      <option>Writing</option>
+      <option>Analysis</option>
+    </select>
+  </div>
+</div>

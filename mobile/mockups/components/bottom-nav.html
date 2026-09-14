@@ -1,0 +1,129 @@
+<!--
+  Forcecast Component: Bottom Navigation (Mobile)
+
+  Usage:
+    <nav class="fc-bottom-nav">
+      <a class="fc-bottom-nav__item fc-bottom-nav__item--active" href="#">
+        <svg class="fc-bottom-nav__icon">...</svg>
+        <span class="fc-bottom-nav__label">Vote</span>
+      </a>
+      <a class="fc-bottom-nav__item" href="#">
+        <svg class="fc-bottom-nav__icon">...</svg>
+        <span class="fc-bottom-nav__label">Rankings</span>
+      </a>
+      <a class="fc-bottom-nav__item" href="#">
+        <svg class="fc-bottom-nav__icon">...</svg>
+        <span class="fc-bottom-nav__label">Models</span>
+      </a>
+      <a class="fc-bottom-nav__item" href="#">
+        <svg class="fc-bottom-nav__icon">...</svg>
+        <span class="fc-bottom-nav__label">Profile</span>
+      </a>
+    </nav>
+
+  Behavior: fixed bottom, 4-5 items max, active indicator dot
+  Safe area: accounts for iPhone notch via env(safe-area-inset-bottom)
+-->
+
+<style>
+  .fc-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--fc-z-nav);
+    display: flex;
+    align-items: stretch;
+    height: 64px;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    background-color: var(--fc-bg);
+    border-top: 1px solid var(--fc-border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .fc-bottom-nav__item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    text-decoration: none;
+    color: var(--fc-text-muted);
+    transition: color var(--fc-transition-fast);
+    position: relative;
+  }
+
+  .fc-bottom-nav__item:hover,
+  .fc-bottom-nav__item--active {
+    color: var(--fc-primary);
+  }
+
+  /* Active indicator dot */
+  .fc-bottom-nav__item--active::after {
+    content: '';
+    position: absolute;
+    top: 6px;
+    width: 4px;
+    height: 4px;
+    background-color: var(--fc-primary);
+    border-radius: var(--fc-radius-full);
+  }
+
+  .fc-bottom-nav__icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .fc-bottom-nav__label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  /* Optional badge on icon */
+  .fc-bottom-nav__badge {
+    position: absolute;
+    top: 6px;
+    right: calc(50% - 16px);
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--fc-bg);
+    background-color: var(--fc-danger);
+    border-radius: var(--fc-radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Spacing for page content */
+  .fc-page-content--bottom-nav {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  }
+</style>
+
+<!-- Preview -->
+<div style="padding-bottom: 80px;">
+  <nav class="fc-bottom-nav" style="position: relative;">
+    <a class="fc-bottom-nav__item fc-bottom-nav__item--active" href="#">
+      <svg class="fc-bottom-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <span class="fc-bottom-nav__label">Vote</span>
+    </a>
+    <a class="fc-bottom-nav__item" href="#">
+      <svg class="fc-bottom-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+      <span class="fc-bottom-nav__label">Rankings</span>
+    </a>
+    <a class="fc-bottom-nav__item" href="#">
+      <svg class="fc-bottom-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      <span class="fc-bottom-nav__label">Models</span>
+    </a>
+    <a class="fc-bottom-nav__item" href="#">
+      <svg class="fc-bottom-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="fc-bottom-nav__label">Profile</span>
+    </a>
+  </nav>
+</div>

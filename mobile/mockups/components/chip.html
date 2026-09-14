@@ -1,0 +1,123 @@
+<!--
+  Forcecast Component: Chip / Tag
+
+  Usage:
+    <span class="fc-chip">Default</span>
+    <span class="fc-chip fc-chip--selected">Selected</span>
+    <span class="fc-chip fc-chip--removable">
+      Tag
+      <button class="fc-chip__remove" aria-label="Remove">×</button>
+    </span>
+    <span class="fc-chip fc-chip--code">code</span>
+    <span class="fc-chip fc-chip--outlined">Outlined</span>
+
+  Variants: default, selected, removable, code, outlined
+  Use for: filters, tags, category selectors
+-->
+
+<style>
+  .fc-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--fc-space-1);
+    padding: var(--fc-space-1) var(--fc-space-3);
+    font-family: var(--fc-font-sans);
+    font-size: var(--fc-text-sm);
+    font-weight: 500;
+    color: var(--fc-text-2);
+    background-color: var(--fc-surface-2);
+    border: 1px solid transparent;
+    border-radius: var(--fc-radius-full);
+    cursor: pointer;
+    transition: all var(--fc-transition-fast);
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  .fc-chip:hover {
+    background-color: var(--fc-surface-3);
+    color: var(--fc-text);
+  }
+
+  .fc-chip--selected {
+    background-color: var(--fc-primary-dim);
+    color: var(--fc-primary);
+    border-color: var(--fc-primary);
+  }
+
+  .fc-chip--selected:hover {
+    background-color: var(--fc-primary-dim);
+    border-color: var(--fc-primary-hover);
+  }
+
+  .fc-chip--outlined {
+    background-color: transparent;
+    border-color: var(--fc-border);
+    color: var(--fc-text-2);
+  }
+
+  .fc-chip--outlined:hover {
+    border-color: var(--fc-primary);
+    color: var(--fc-primary);
+  }
+
+  .fc-chip--code {
+    font-family: var(--fc-font-mono);
+    font-size: var(--fc-text-xs);
+    background-color: var(--fc-primary-dim);
+    color: var(--fc-primary);
+  }
+
+  .fc-chip__remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    margin-left: 2px;
+    font-size: 14px;
+    line-height: 1;
+    color: inherit;
+    background: none;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity var(--fc-transition-fast);
+  }
+
+  .fc-chip__remove:hover {
+    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Scrollable chip row */
+  .fc-chip-row {
+    display: flex;
+    gap: var(--fc-space-2);
+    overflow-x: auto;
+    padding: var(--fc-space-1) 0;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .fc-chip-row::-webkit-scrollbar { display: none; }
+</style>
+
+<!-- Preview -->
+<div style="padding: 16px;">
+  <div class="fc-chip-row">
+    <span class="fc-chip">All</span>
+    <span class="fc-chip fc-chip--selected">Code</span>
+    <span class="fc-chip">Writing</span>
+    <span class="fc-chip">Analysis</span>
+    <span class="fc-chip">Creative</span>
+  </div>
+  <div class="fc-chip-row" style="margin-top: 12px;">
+    <span class="fc-chip fc-chip--removable">react-native <button class="fc-chip__remove" aria-label="Remove">×</button></span>
+    <span class="fc-chip fc-chip--removable">expo <button class="fc-chip__remove" aria-label="Remove">×</button></span>
+    <span class="fc-chip fc-chip--code">python</span>
+    <span class="fc-chip fc-chip--outlined">+ Add tag</span>
+  </div>
+</div>

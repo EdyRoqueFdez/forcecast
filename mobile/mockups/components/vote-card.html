@@ -1,0 +1,221 @@
+<!--
+  Forcecast Component: Vote Card
+
+  The primary component for model comparison voting.
+  Shows two models side-by-side with action buttons.
+
+  Usage:
+    <div class="fc-vote-card">
+      <div class="fc-vote-card__header">
+        <span class="fc-chip fc-chip--default fc-chip--sm">Category: Code</span>
+        <span class="fc-vote-card__match">1 / 50</span>
+      </div>
+      <div class="fc-vote-card__grid">
+        <div class="fc-vote-card__model">
+          <div class="fc-avatar fc-avatar--lg">G4</div>
+          <h3 class="fc-vote-card__name">GPT-4o</h3>
+          <p class="fc-vote-card__provider">OpenAI</p>
+          <div class="fc-vote-card__stats">
+            <div class="fc-vote-card__stat">
+              <span class="fc-vote-card__stat-value">128K</span>
+              <span class="fc-vote-card__stat-label">Context</span>
+            </div>
+          </div>
+          <button class="fc-btn fc-btn--primary fc-btn--lg fc-btn--full">Vote</button>
+        </div>
+        <div class="fc-vote-card__vs">VS</div>
+        <div class="fc-vote-card__model">
+          <div class="fc-avatar fc-avatar--lg fc-avatar--accent">C3</div>
+          <h3 class="fc-vote-card__name">Claude 3.5 Sonnet</h3>
+          <p class="fc-vote-card__provider">Anthropic</p>
+          <div class="fc-vote-card__stats">
+            <div class="fc-vote-card__stat">
+              <span class="fc-vote-card__stat-value">200K</span>
+              <span class="fc-vote-card__stat-label">Context</span>
+            </div>
+          </div>
+          <button class="fc-btn fc-btn--primary fc-btn--lg fc-btn--full">Vote</button>
+        </div>
+      </div>
+      <div class="fc-vote-card__footer">
+        <button class="fc-btn fc-btn--ghost fc-btn--sm">Skip</button>
+        <button class="fc-btn fc-btn--ghost fc-btn--sm">Don't Know</button>
+      </div>
+    </div>
+
+  States: default, voted (left/right highlighted), skipped
+-->
+
+<style>
+  .fc-vote-card {
+    background-color: var(--fc-surface);
+    border: 1px solid var(--fc-border);
+    border-radius: var(--fc-radius-xl);
+    overflow: hidden;
+    width: 100%;
+    max-width: 600px;
+  }
+
+  .fc-vote-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--fc-space-3) var(--fc-space-4);
+    border-bottom: 1px solid var(--fc-border);
+  }
+
+  .fc-vote-card__match {
+    font-size: var(--fc-text-sm);
+    color: var(--fc-text-muted);
+    font-weight: 500;
+  }
+
+  .fc-vote-card__grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: var(--fc-space-3);
+    padding: var(--fc-space-4);
+  }
+
+  .fc-vote-card__model {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--fc-space-2);
+  }
+
+  .fc-vote-card__name {
+    font-size: var(--fc-text-base);
+    font-weight: 600;
+    color: var(--fc-text);
+    margin: 0;
+  }
+
+  .fc-vote-card__provider {
+    font-size: var(--fc-text-sm);
+    color: var(--fc-text-muted);
+    margin: 0;
+  }
+
+  .fc-vote-card__stats {
+    display: flex;
+    gap: var(--fc-space-4);
+    margin: var(--fc-space-2) 0;
+  }
+
+  .fc-vote-card__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .fc-vote-card__stat-value {
+    font-size: var(--fc-text-base);
+    font-weight: 600;
+    color: var(--fc-text);
+  }
+
+  .fc-vote-card__stat-label {
+    font-size: var(--fc-text-xs);
+    color: var(--fc-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .fc-vote-card__vs {
+    font-size: var(--fc-text-sm);
+    font-weight: 700;
+    color: var(--fc-text-muted);
+    background-color: var(--fc-surface-2);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--fc-radius-full);
+  }
+
+  .fc-vote-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--fc-space-4);
+    padding: var(--fc-space-3);
+    border-top: 1px solid var(--fc-border);
+  }
+
+  /* Voted state */
+  .fc-vote-card__model--winner {
+    opacity: 1;
+  }
+
+  .fc-vote-card__model--loser {
+    opacity: 0.5;
+  }
+
+  /* Mobile: stack vertically */
+  @media (max-width: 480px) {
+    .fc-vote-card__grid {
+      grid-template-columns: 1fr;
+      gap: var(--fc-space-4);
+    }
+
+    .fc-vote-card__vs {
+      width: 100%;
+      height: auto;
+      padding: var(--fc-space-1) 0;
+      border-radius: var(--fc-radius-sm);
+    }
+  }
+</style>
+
+<!-- Preview -->
+<div style="padding: 16px;">
+  <div class="fc-vote-card">
+    <div class="fc-vote-card__header">
+      <span class="fc-chip fc-chip--default fc-chip--sm">Code</span>
+      <span class="fc-vote-card__match">1 / 50</span>
+    </div>
+    <div class="fc-vote-card__grid">
+      <div class="fc-vote-card__model fc-vote-card__model--winner">
+        <div class="fc-avatar fc-avatar--lg">G4</div>
+        <h3 class="fc-vote-card__name">GPT-4o</h3>
+        <p class="fc-vote-card__provider">OpenAI</p>
+        <div class="fc-vote-card__stats">
+          <div class="fc-vote-card__stat">
+            <span class="fc-vote-card__stat-value">128K</span>
+            <span class="fc-vote-card__stat-label">Context</span>
+          </div>
+          <div class="fc-vote-card__stat">
+            <span class="fc-vote-card__stat-value">$5</span>
+            <span class="fc-vote-card__stat-label">/1M</span>
+          </div>
+        </div>
+        <button class="fc-btn fc-btn--primary fc-btn--md" style="width: 100%;">Vote</button>
+      </div>
+      <div class="fc-vote-card__vs">VS</div>
+      <div class="fc-vote-card__model fc-vote-card__model--loser">
+        <div class="fc-avatar fc-avatar--lg fc-avatar--accent">C3</div>
+        <h3 class="fc-vote-card__name">Claude 3.5 Sonnet</h3>
+        <p class="fc-vote-card__provider">Anthropic</p>
+        <div class="fc-vote-card__stats">
+          <div class="fc-vote-card__stat">
+            <span class="fc-vote-card__stat-value">200K</span>
+            <span class="fc-vote-card__stat-label">Context</span>
+          </div>
+          <div class="fc-vote-card__stat">
+            <span class="fc-vote-card__stat-value">$3</span>
+            <span class="fc-vote-card__stat-label">/1M</span>
+          </div>
+        </div>
+        <button class="fc-btn fc-btn--primary fc-btn--md" style="width: 100%;">Vote</button>
+      </div>
+    </div>
+    <div class="fc-vote-card__footer">
+      <button class="fc-btn fc-btn--ghost fc-btn--sm">Skip</button>
+      <button class="fc-btn fc-btn--ghost fc-btn--sm">Don't Know</button>
+    </div>
+  </div>
+</div>

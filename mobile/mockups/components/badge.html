@@ -1,0 +1,137 @@
+<!--
+  Forcecast Component: Badge
+
+  Usage:
+    <span class="fc-badge fc-badge--accent">Active</span>
+    <span class="fc-badge fc-badge--success">Verified</span>
+    <span class="fc-badge fc-badge--warning">Pending</span>
+    <span class="fc-badge fc-badge--danger">Banned</span>
+    <span class="fc-badge fc-badge--info">New</span>
+    <span class="fc-badge fc-badge--neutral">Draft</span>
+    <span class="fc-badge fc-badge--elo fc-badge--elo-gold">1520</span>
+    <span class="fc-badge fc-badge--category">Code</span>
+    <span class="fc-badge fc-badge--modality">Text</span>
+    <span class="fc-badge fc-badge--sm">Small</span>
+    <span class="fc-badge fc-badge--lg">Large</span>
+
+  Variants: accent, success, warning, danger, info, neutral, elo, category, modality
+  Sizes: sm (default), md, lg
+-->
+
+<style>
+  .fc-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--fc-space-1);
+    font-family: var(--fc-font-sans);
+    font-weight: 500;
+    white-space: nowrap;
+    border-radius: var(--fc-radius-full);
+  }
+
+  /* Sizes */
+  .fc-badge--sm {
+    padding: 2px var(--fc-space-2);
+    font-size: var(--fc-text-xs);
+  }
+
+  .fc-badge--md {
+    padding: var(--fc-space-1) var(--fc-space-3);
+    font-size: var(--fc-text-xs);
+  }
+
+  .fc-badge--lg {
+    padding: var(--fc-space-1) var(--fc-space-3);
+    font-size: var(--fc-text-sm);
+  }
+
+  /* Variants */
+  .fc-badge--accent {
+    background-color: var(--fc-primary-dim);
+    color: var(--fc-primary);
+  }
+
+  .fc-badge--success {
+    background-color: var(--fc-success-dim);
+    color: var(--fc-success);
+  }
+
+  .fc-badge--warning {
+    background-color: var(--fc-warning-dim);
+    color: var(--fc-warning);
+  }
+
+  .fc-badge--danger {
+    background-color: var(--fc-danger-dim);
+    color: var(--fc-danger);
+  }
+
+  .fc-badge--info {
+    background-color: var(--fc-info-dim);
+    color: var(--fc-info);
+  }
+
+  .fc-badge--neutral {
+    background-color: var(--fc-surface-2);
+    color: var(--fc-text-muted);
+  }
+
+  /* ELO badges */
+  .fc-badge--elo {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .fc-badge--elo-gold {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(217, 119, 6, 0.2));
+    color: var(--fc-elo-gold);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+  }
+
+  .fc-badge--elo-silver {
+    background: linear-gradient(135deg, rgba(148, 163, 184, 0.2), rgba(100, 116, 139, 0.2));
+    color: var(--fc-elo-silver);
+    border: 1px solid rgba(148, 163, 184, 0.3);
+  }
+
+  .fc-badge--elo-bronze {
+    background: linear-gradient(135deg, rgba(217, 119, 6, 0.2), rgba(180, 83, 9, 0.2));
+    color: var(--fc-elo-bronze);
+    border: 1px solid rgba(217, 119, 6, 0.3);
+  }
+
+  /* Semantic tags */
+  .fc-badge--category {
+    background-color: var(--fc-secondary-dim);
+    color: var(--fc-secondary);
+  }
+
+  .fc-badge--modality {
+    background-color: var(--fc-primary-dim);
+    color: var(--fc-primary);
+  }
+
+  /* Dot indicator */
+  .fc-badge--dot::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: currentColor;
+  }
+</style>
+
+<!-- Preview -->
+<div style="display: flex; flex-wrap: wrap; gap: 8px; padding: 16px; align-items: center;">
+  <span class="fc-badge fc-badge--accent">Active</span>
+  <span class="fc-badge fc-badge--success fc-badge--dot">Verified</span>
+  <span class="fc-badge fc-badge--warning">Pending</span>
+  <span class="fc-badge fc-badge--danger">Banned</span>
+  <span class="fc-badge fc-badge--info">New</span>
+  <span class="fc-badge fc-badge--neutral">Draft</span>
+  <span class="fc-badge fc-badge--elo fc-badge--elo-gold">1520</span>
+  <span class="fc-badge fc-badge--elo fc-badge--elo-silver">1280</span>
+  <span class="fc-badge fc-badge--elo fc-badge--elo-bronze">1100</span>
+  <span class="fc-badge fc-badge--category">Code</span>
+  <span class="fc-badge fc-badge--modality">Text</span>
+</div>

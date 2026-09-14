@@ -1,0 +1,201 @@
+/**
+ * Forcecast Design System — Utilities
+ *
+ * Helper classes for common patterns.
+ */
+
+/* ─── Display ─── */
+.fc-hidden { display: none; }
+.fc-block { display: block; }
+.fc-inline-block { display: inline-block; }
+.fc-inline { display: inline; }
+
+/* ─── Opacity ─── */
+.fc-opacity-0 { opacity: 0; }
+.fc-opacity-50 { opacity: 0.5; }
+.fc-opacity-75 { opacity: 0.75; }
+.fc-opacity-100 { opacity: 1; }
+
+/* ─── Pointer ─── */
+.fc-pointer { cursor: pointer; }
+.fc-not-allowed { cursor: not-allowed; }
+.fc-select-none { user-select: none; }
+
+/* ─── Colors ─── */
+.fc-color-text { color: var(--fc-text); }
+.fc-color-text-2 { color: var(--fc-text-2); }
+.fc-color-text-muted { color: var(--fc-text-muted); }
+.fc-color-accent { color: var(--fc-accent); }
+.fc-color-success { color: var(--fc-success); }
+.fc-color-warning { color: var(--fc-warning); }
+.fc-color-danger { color: var(--fc-danger); }
+.fc-color-info { color: var(--fc-info); }
+
+.fc-bg-accent { background-color: var(--fc-accent); }
+.fc-bg-surface { background-color: var(--fc-surface); }
+.fc-bg-surface-2 { background-color: var(--fc-surface-2); }
+
+/* ─── Accessibility ─── */
+.fc-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.fc-sr-only { /* alias */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ─── Animations ─── */
+@keyframes fc-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fc-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes fc-slide-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fc-slide-down {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fc-slide-in-right {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fc-scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fc-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes fc-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fc-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.fc-animate-fade-in { animation: fc-fade-in 0.2s ease-out; }
+.fc-animate-slide-up { animation: fc-slide-up 0.3s ease-out; }
+.fc-animate-slide-down { animation: fc-slide-down 0.3s ease-out; }
+.fc-animate-scale-in { animation: fc-scale-in 0.2s ease-out; }
+.fc-animate-pulse { animation: fc-pulse 2s infinite; }
+.fc-animate-spin { animation: fc-spin 1s linear infinite; }
+
+/* ─── Transitions ─── */
+.fc-transition {
+  transition-property: color, background-color, border-color, box-shadow, opacity, transform;
+  transition-duration: var(--fc-transition-base);
+  transition-timing-function: ease;
+}
+
+.fc-transition-fast {
+  transition-property: color, background-color, border-color, box-shadow, opacity, transform;
+  transition-duration: var(--fc-transition-fast);
+  transition-timing-function: ease;
+}
+
+/* ─── Shadow Utilities ─── */
+.fc-shadow-sm { box-shadow: var(--fc-shadow-sm); }
+.fc-shadow-md { box-shadow: var(--fc-shadow-md); }
+.fc-shadow-lg { box-shadow: var(--fc-shadow-lg); }
+.fc-shadow-glow { box-shadow: var(--fc-shadow-glow); }
+
+/* ─── Skeleton Shimmer ─── */
+.fc-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--fc-surface-2) 25%,
+    var(--fc-surface-3) 50%,
+    var(--fc-surface-2) 75%
+  );
+  background-size: 200% 100%;
+  animation: fc-shimmer 1.5s infinite;
+  border-radius: var(--fc-radius-sm);
+}
+
+/* ─── Scrollbar Custom ─── */
+.fc-scroll-thin::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.fc-scroll-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.fc-scroll-thin::-webkit-scrollbar-thumb {
+  background-color: var(--fc-border);
+  border-radius: var(--fc-radius-full);
+}
+
+/* ─── Z-Index Shortcuts ─── */
+.fc-z-dropdown { z-index: var(--fc-z-dropdown); }
+.fc-z-sticky { z-index: var(--fc-z-sticky); }
+.fc-z-modal-backdrop { z-index: var(--fc-z-modal-backdrop); }
+.fc-z-modal { z-index: var(--fc-z-modal); }
+.fc-z-toast { z-index: var(--fc-z-toast); }
+
+/* ─── Gradient Text ─── */
+.fc-gradient-text {
+  background: linear-gradient(135deg, var(--fc-accent), var(--fc-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Glow Effect ─── */
+.fc-glow {
+  box-shadow: 0 0 20px var(--fc-accent-glow),
+              0 0 40px var(--fc-accent-glow);
+}
+
+/* ─── Backdrop Blur ─── */
+.fc-backdrop {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background-color: rgba(11, 13, 18, 0.8);
+}
+
+[data-theme="jedi-dark"] .fc-backdrop,
+[data-theme="jedi-light"] .fc-backdrop {
+  background-color: rgba(10, 14, 26, 0.85);
+}
+
+/* ─── No Scroll (modal open) ─── */
+.fc-no-scroll {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}

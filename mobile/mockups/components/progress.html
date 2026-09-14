@@ -1,0 +1,151 @@
+<!--
+  Forcecast Component: Progress Bar / Progress Circle
+
+  Usage:
+    <div class="fc-progress">
+      <div class="fc-progress__bar" style="width: 65%"></div>
+    </div>
+
+    <div class="fc-progress fc-progress--lg">
+      <div class="fc-progress__bar fc-progress__bar--success" style="width: 80%"></div>
+    </div>
+
+    <!-- With label -->
+    <div class="fc-progress fc-progress--with-label">
+      <div class="fc-progress__info">
+        <span>Votes cast</span>
+        <span>65 / 100</span>
+      </div>
+      <div class="fc-progress">
+        <div class="fc-progress__bar" style="width: 65%"></div>
+      </div>
+    </div>
+
+    <!-- Circle variant -->
+    <div class="fc-progress-circle" style="--progress: 75;">
+      <svg viewBox="0 0 36 36">
+        <path class="fc-progress-circle__bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+        <path class="fc-progress-circle__fill" stroke-dasharray="75, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+      </svg>
+      <span class="fc-progress-circle__label">75%</span>
+    </div>
+
+  Sizes: sm, md (default), lg
+  Variants: default, success, warning, danger
+-->
+
+<style>
+  /* Linear progress */
+  .fc-progress {
+    width: 100%;
+    height: 8px;
+    background-color: var(--fc-surface-2);
+    border-radius: var(--fc-radius-full);
+    overflow: hidden;
+  }
+
+  .fc-progress--sm { height: 4px; }
+  .fc-progress--lg { height: 12px; }
+
+  .fc-progress__bar {
+    height: 100%;
+    background-color: var(--fc-primary);
+    border-radius: var(--fc-radius-full);
+    transition: width var(--fc-transition-base);
+  }
+
+  .fc-progress__bar--success { background-color: var(--fc-success); }
+  .fc-progress__bar--warning { background-color: var(--fc-warning); }
+  .fc-progress__bar--danger { background-color: var(--fc-danger); }
+
+  .fc-progress--with-label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fc-space-2);
+  }
+
+  .fc-progress__info {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--fc-text-sm);
+    color: var(--fc-text-muted);
+  }
+
+  /* Circle progress */
+  .fc-progress-circle {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .fc-progress-circle svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+
+  .fc-progress-circle__bg {
+    fill: none;
+    stroke: var(--fc-surface-2);
+    stroke-width: 3;
+  }
+
+  .fc-progress-circle__fill {
+    fill: none;
+    stroke: var(--fc-primary);
+    stroke-width: 3;
+    stroke-linecap: round;
+    transition: stroke-dasharray var(--fc-transition-base);
+  }
+
+  .fc-progress-circle__label {
+    position: absolute;
+    font-size: var(--fc-text-sm);
+    font-weight: 700;
+    color: var(--fc-text);
+  }
+</style>
+
+<!-- Preview -->
+<div style="padding: 16px; display: flex; flex-direction: column; gap: 20px; max-width: 400px;">
+  <div>
+    <div style="font-size: 12px; color: var(--fc-text-muted); margin-bottom: 8px;">Default</div>
+    <div class="fc-progress">
+      <div class="fc-progress__bar" style="width: 65%"></div>
+    </div>
+  </div>
+
+  <div>
+    <div style="font-size: 12px; color: var(--fc-text-muted); margin-bottom: 8px;">Success</div>
+    <div class="fc-progress fc-progress--lg">
+      <div class="fc-progress__bar fc-progress__bar--success" style="width: 80%"></div>
+    </div>
+  </div>
+
+  <div>
+    <div style="font-size: 12px; color: var(--fc-text-muted); margin-bottom: 8px;">With label</div>
+    <div class="fc-progress fc-progress--with-label">
+      <div class="fc-progress__info">
+        <span>Votes cast</span>
+        <span>65 / 100</span>
+      </div>
+      <div class="fc-progress">
+        <div class="fc-progress__bar" style="width: 65%"></div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div style="font-size: 12px; color: var(--fc-text-muted); margin-bottom: 8px;">Circle</div>
+    <div class="fc-progress-circle">
+      <svg viewBox="0 0 36 36">
+        <path class="fc-progress-circle__bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+        <path class="fc-progress-circle__fill" stroke-dasharray="75, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+      </svg>
+      <span class="fc-progress-circle__label">75%</span>
+    </div>
+  </div>
+</div>

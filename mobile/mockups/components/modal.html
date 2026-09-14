@@ -1,0 +1,167 @@
+<!--
+  Forcecast Component: Modal / Dialog
+
+  Usage:
+    <div class="fc-modal-backdrop" id="modal-backdrop">
+      <div class="fc-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="fc-modal__header">
+          <h2 class="fc-modal__title" id="modal-title">Confirm Action</h2>
+          <button class="fc-modal__close" aria-label="Close">×</button>
+        </div>
+        <div class="fc-modal__body">
+          <p>Are you sure you want to proceed?</p>
+        </div>
+        <div class="fc-modal__footer">
+          <button class="fc-btn fc-btn--ghost fc-btn--md">Cancel</button>
+          <button class="fc-btn fc-btn--primary fc-btn--md">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom sheet (mobile) -->
+    <div class="fc-modal-backdrop">
+      <div class="fc-modal fc-modal--bottom-sheet">
+        <div class="fc-modal__grabber"></div>
+        <div class="fc-modal__body">Sheet content</div>
+      </div>
+    </div>
+
+  Variants: default (centered), bottom-sheet
+  Open: add .fc-modal-backdrop--open class
+-->
+
+<style>
+  .fc-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: var(--fc-z-modal-backdrop);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--fc-transition-base), visibility var(--fc-transition-base);
+    padding: var(--fc-space-4);
+  }
+
+  .fc-modal-backdrop--open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .fc-modal {
+    width: 100%;
+    max-width: 400px;
+    max-height: 85vh;
+    background-color: var(--fc-surface);
+    border: 1px solid var(--fc-border);
+    border-radius: var(--fc-radius-xl);
+    box-shadow: var(--fc-shadow-lg);
+    display: flex;
+    flex-direction: column;
+    transform: scale(0.95) translateY(10px);
+    transition: transform var(--fc-transition-base);
+  }
+
+  .fc-modal-backdrop--open .fc-modal {
+    transform: scale(1) translateY(0);
+  }
+
+  .fc-modal--bottom-sheet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: none;
+    max-height: 90vh;
+    border-radius: var(--fc-radius-xl) var(--fc-radius-xl) 0 0;
+    transform: translateY(100%);
+  }
+
+  .fc-modal-backdrop--open .fc-modal--bottom-sheet {
+    transform: translateY(0);
+  }
+
+  .fc-modal__grabber {
+    width: 36px;
+    height: 4px;
+    background-color: var(--fc-surface-3);
+    border-radius: var(--fc-radius-full);
+    margin: var(--fc-space-2) auto var(--fc-space-3);
+  }
+
+  .fc-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--fc-space-4);
+    border-bottom: 1px solid var(--fc-border);
+  }
+
+  .fc-modal__title {
+    font-size: var(--fc-text-lg);
+    font-weight: 600;
+    color: var(--fc-text);
+    margin: 0;
+  }
+
+  .fc-modal__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: none;
+    border: none;
+    border-radius: var(--fc-radius-full);
+    color: var(--fc-text-muted);
+    font-size: 20px;
+    cursor: pointer;
+    transition: all var(--fc-transition-fast);
+  }
+
+  .fc-modal__close:hover {
+    background-color: var(--fc-surface-2);
+    color: var(--fc-text);
+  }
+
+  .fc-modal__body {
+    padding: var(--fc-space-4);
+    overflow-y: auto;
+    flex: 1;
+    color: var(--fc-text-2);
+    font-size: var(--fc-text-base);
+    line-height: 1.6;
+  }
+
+  .fc-modal__footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--fc-space-2);
+    padding: var(--fc-space-3) var(--fc-space-4);
+    border-top: 1px solid var(--fc-border);
+  }
+</style>
+
+<!-- Preview (static, no JS toggle) -->
+<div style="padding: 16px;">
+  <div class="fc-modal-backdrop fc-modal-backdrop--open" style="position: relative; opacity: 1; visibility: visible; background: none; backdrop-filter: none;">
+    <div class="fc-modal" style="transform: none; position: relative;">
+      <div class="fc-modal__header">
+        <h2 class="fc-modal__title">Confirm Vote</h2>
+        <button class="fc-modal__close" aria-label="Close">×</button>
+      </div>
+      <div class="fc-modal__body">
+        <p>You're about to vote for <strong>GPT-4o</strong> in the <strong>Code</strong> category.</p>
+        <p style="margin-top: 8px; font-size: 14px; color: var(--fc-text-muted);">This will replace your current vote for Claude 3.5 Sonnet.</p>
+      </div>
+      <div class="fc-modal__footer">
+        <button class="fc-btn fc-btn--ghost fc-btn--md">Cancel</button>
+        <button class="fc-btn fc-btn--primary fc-btn--md">Confirm Vote</button>
+      </div>
+    </div>
+  </div>
+</div>

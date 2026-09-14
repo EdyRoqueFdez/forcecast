@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forcecast — Vote</title>
+  <link rel="stylesheet" href="../theme.css">
+  <link rel="stylesheet" href="../layout.css">
+  <link rel="stylesheet" href="../utils.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--fc-font-sans); background: var(--fc-bg); color: var(--fc-text); min-height: 100vh; display: flex; flex-direction: column; }
+
+    .app { flex: 1; display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; width: 100%; }
+
+    .screen { flex: 1; display: flex; flex-direction: column; padding: var(--fc-space-4); gap: var(--fc-space-4); }
+
+    .screen__header {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .screen__title {
+      font-size: var(--fc-text-xl); font-weight: 700; color: var(--fc-text);
+    }
+
+    .category-selector {
+      display: flex; gap: var(--fc-space-2); overflow-x: auto;
+      -ms-overflow-style: none; scrollbar-width: none;
+    }
+    .category-selector::-webkit-scrollbar { display: none; }
+
+    .vote-area { flex: 1; display: flex; flex-direction: column; gap: var(--fc-space-4); }
+
+    .progress-info {
+      display: flex; justify-content: space-between; font-size: var(--fc-text-sm); color: var(--fc-text-muted);
+    }
+
+    .vote-footer {
+      display: flex; justify-content: center; gap: var(--fc-space-6);
+      padding: var(--fc-space-3) 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Navbar -->
+    <nav class="fc-navbar" style="position: relative;">
+      <a class="fc-navbar__brand" href="../index.html">
+        <svg class="fc-navbar__logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+        <span class="fc-navbar__title">Forcecast</span>
+      </a>
+      <div class="fc-navbar__actions">
+        <button class="fc-navbar__action" data-action="toggle-theme" aria-label="Toggle theme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="fc-navbar__action" data-action="toggle-lang" aria-label="Toggle language">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Screen -->
+    <div class="screen">
+      <div class="screen__header">
+        <h1 class="screen__title" data-i18n="vote.title">Which model is better?</h1>
+      </div>
+
+      <!-- Category chips -->
+      <div class="category-selector">
+        <button class="fc-chip fc-chip--selected">Code</button>
+        <button class="fc-chip">Writing</button>
+        <button class="fc-chip">Analysis</button>
+        <button class="fc-chip">Creative</button>
+        <button class="fc-chip">Math</button>
+      </div>
+
+      <!-- Progress -->
+      <div>
+        <div class="progress-info">
+          <span data-i18n="vote.category">Category: Code</span>
+          <span data-i18n="vote.match" data-i18n-params='{"current":"7","total":"50"}'>7 / 50</span>
+        </div>
+        <div class="fc-progress" style="margin-top: 8px;">
+          <div class="fc-progress__bar" style="width: 14%"></div>
+        </div>
+      </div>
+
+      <!-- Vote card -->
+      <div class="vote-area">
+        <div class="fc-vote-card">
+          <div class="fc-vote-card__grid">
+            <div class="fc-vote-card__model">
+              <div class="fc-avatar fc-avatar--xl">G4</div>
+              <h3 class="fc-vote-card__name">GPT-4o</h3>
+              <p class="fc-vote-card__provider">OpenAI</p>
+              <div class="fc-vote-card__stats">
+                <div class="fc-vote-card__stat">
+                  <span class="fc-vote-card__stat-value">128K</span>
+                  <span class="fc-vote-card__stat-label">Context</span>
+                </div>
+                <div class="fc-vote-card__stat">
+                  <span class="fc-vote-card__stat-value">$5</span>
+                  <span class="fc-vote-card__stat-label">/1M</span>
+                </div>
+              </div>
+              <div class="fc-elo-badge fc-elo-badge--elite" style="margin-top: 4px;">1842</div>
+              <button class="fc-btn fc-btn--primary fc-btn--lg" style="width: 100%; margin-top: 8px;">Vote</button>
+            </div>
+
+            <div class="fc-vote-card__vs">VS</div>
+
+            <div class="fc-vote-card__model">
+              <div class="fc-avatar fc-avatar--xl fc-avatar--accent">C3</div>
+              <h3 class="fc-vote-card__name">Claude 3.5 Sonnet</h3>
+              <p class="fc-vote-card__provider">Anthropic</p>
+              <div class="fc-vote-card__stats">
+                <div class="fc-vote-card__stat">
+                  <span class="fc-vote-card__stat-value">200K</span>
+                  <span class="fc-vote-card__stat-label">Context</span>
+                </div>
+                <div class="fc-vote-card__stat">
+                  <span class="fc-vote-card__stat-value">$3</span>
+                  <span class="fc-vote-card__stat-label">/1M</span>
+                </div>
+              </div>
+              <div class="fc-elo-badge fc-elo-badge--strong" style="margin-top: 4px;">1654</div>
+              <button class="fc-btn fc-btn--primary fc-btn--lg" style="width: 100%; margin-top: 8px;">Vote</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer actions -->
+      <div class="vote-footer">
+        <button class="fc-btn fc-btn--ghost fc-btn--md" data-i18n="vote.skip">Skip</button>
+        <button class="fc-btn fc-btn--ghost fc-btn--md" data-i18n="vote.dontKnow">Don't Know</button>
+      </div>
+    </div>
+
+    <!-- Bottom Nav -->
+    <nav class="fc-bottom-nav" style="position: relative;">
+      <a class="fc-bottom-nav__item fc-bottom-nav__item--active" href="vote.html" data-screen="vote">
+        <svg class="fc-bottom-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span class="fc-bottom-nav__label">Vote</span>
+      </a>
+      <a class="fc-bottom-nav__item" href="rankings.html" data-screen="rankings">
+        <svg class="fc-bottom-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+        <span class="fc-bottom-nav__label">Rankings</span>
+      </a>
+      <a class="fc-bottom-nav__item" href="models.html" data-screen="models">
+        <svg class="fc-bottom-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        <span class="fc-bottom-nav__label">Models</span>
+      </a>
+      <a class="fc-bottom-nav__item" href="profile.html" data-screen="profile">
+        <svg class="fc-bottom-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="fc-bottom-nav__label">Profile</span>
+      </a>
+    </nav>
+
+    <!-- Toast container -->
+    <div class="fc-toast-container fc-toast-container--top-center"></div>
+  </div>
+
+  <script src="../app.js"></script>
+</body>
+</html>

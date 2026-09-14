@@ -1,0 +1,128 @@
+<!--
+  Forcecast Component: Tabs
+
+  Usage:
+    <div class="fc-tabs">
+      <button class="fc-tab fc-tab--active" role="tab" aria-selected="true">Models</button>
+      <button class="fc-tab" role="tab" aria-selected="false">Orchestrators</button>
+      <button class="fc-tab" role="tab" aria-selected="false">Problems</button>
+    </div>
+
+    <!-- Pill variant -->
+    <div class="fc-tabs fc-tabs--pills">
+      <button class="fc-tab fc-tab--active">All</button>
+      <button class="fc-tab">Code</button>
+      <button class="fc-tab">Writing</button>
+    </div>
+
+    <!-- Full width -->
+    <div class="fc-tabs fc-tabs--full">
+      <button class="fc-tab fc-tab--active">Details</button>
+      <button class="fc-tab">Votes</button>
+      <button class="fc-tab">History</button>
+    </div>
+
+  Variants: default (underline), pills, full
+  Alignment: left (default), center, stretch
+-->
+
+<style>
+  .fc-tabs {
+    display: flex;
+    gap: var(--fc-space-1);
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .fc-tabs::-webkit-scrollbar { display: none; }
+
+  .fc-tab {
+    flex-shrink: 0;
+    padding: var(--fc-space-2) var(--fc-space-3);
+    font-family: var(--fc-font-sans);
+    font-size: var(--fc-text-sm);
+    font-weight: 500;
+    color: var(--fc-text-muted);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all var(--fc-transition-fast);
+    white-space: nowrap;
+  }
+
+  .fc-tab:hover {
+    color: var(--fc-text);
+  }
+
+  .fc-tab--active {
+    color: var(--fc-primary);
+    border-bottom-color: var(--fc-primary);
+  }
+
+  /* Pills */
+  .fc-tabs--pills {
+    gap: var(--fc-space-2);
+    background-color: var(--fc-surface-2);
+    border-radius: var(--fc-radius-full);
+    padding: var(--fc-space-1);
+  }
+
+  .fc-tabs--pills .fc-tab {
+    border-bottom: none;
+    border-radius: var(--fc-radius-full);
+    padding: var(--fc-space-1) var(--fc-space-3);
+  }
+
+  .fc-tabs--pills .fc-tab--active {
+    background-color: var(--fc-primary);
+    color: var(--fc-bg);
+  }
+
+  /* Full width */
+  .fc-tabs--full {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    gap: 0;
+  }
+
+  .fc-tabs--full .fc-tab {
+    text-align: center;
+    border-bottom: 2px solid var(--fc-border);
+  }
+
+  .fc-tabs--full .fc-tab--active {
+    border-bottom-color: var(--fc-primary);
+  }
+</style>
+
+<!-- Preview -->
+<div style="padding: 16px; display: flex; flex-direction: column; gap: 20px;">
+  <div>
+    <div style="font-size: 12px; color: var(--fc-text-muted); margin-bottom: 8px;">Default (underline)</div>
+    <div class="fc-tabs" role="tablist">
+      <button class="fc-tab fc-tab--active" role="tab" aria-selected="true">Models</button>
+      <button class="fc-tab" role="tab" aria-selected="false">Orchestrators</button>
+      <button class="fc-tab" role="tab" aria-selected="false">Problems</button>
+    </div>
+  </div>
+
+  <div>
+    <div style="font-size: 12px; color: var(--fc-text-muted); margin-bottom: 8px;">Pills</div>
+    <div class="fc-tabs fc-tabs--pills">
+      <button class="fc-tab fc-tab--active">All</button>
+      <button class="fc-tab">Code</button>
+      <button class="fc-tab">Writing</button>
+    </div>
+  </div>
+
+  <div>
+    <div style="font-size: 12px; color: var(--fc-text-muted); margin-bottom: 8px;">Full width</div>
+    <div class="fc-tabs fc-tabs--full">
+      <button class="fc-tab fc-tab--active">Details</button>
+      <button class="fc-tab">Votes</button>
+      <button class="fc-tab">History</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forcecast — Models</title>
+  <link rel="stylesheet" href="../theme.css">
+  <link rel="stylesheet" href="../layout.css">
+  <link rel="stylesheet" href="../utils.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--fc-font-sans); background: var(--fc-bg); color: var(--fc-text); min-height: 100vh; display: flex; flex-direction: column; }
+    .app { flex: 1; display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; width: 100%; }
+    .screen { flex: 1; display: flex; flex-direction: column; padding: var(--fc-space-4); gap: var(--fc-space-4); overflow-y: auto; }
+    .screen__title { font-size: var(--fc-text-xl); font-weight: 700; }
+
+    .model-list { display: flex; flex-direction: column; gap: var(--fc-space-3); }
+    .model-card {
+      display: flex; align-items: center; gap: var(--fc-space-3);
+      padding: var(--fc-space-4); background: var(--fc-surface);
+      border: 1px solid var(--fc-border); border-radius: var(--fc-radius-lg);
+      transition: all var(--fc-transition-fast); cursor: pointer;
+    }
+    .model-card:hover { border-color: var(--fc-primary); transform: translateY(-1px); box-shadow: var(--fc-shadow-md); }
+    .model-card__info { flex: 1; min-width: 0; }
+    .model-card__name { font-size: var(--fc-text-base); font-weight: 600; }
+    .model-card__provider { font-size: var(--fc-text-xs); color: var(--fc-text-muted); }
+    .model-card__tags { display: flex; gap: var(--fc-space-1); margin-top: 6px; flex-wrap: wrap; }
+    .model-card__stats { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <nav class="fc-navbar" style="position: relative;">
+      <a class="fc-navbar__brand" href="../index.html">
+        <svg class="fc-navbar__logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span class="fc-navbar__title">Forcecast</span>
+      </a>
+      <div class="fc-navbar__actions">
+        <button class="fc-navbar__action"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+        <button class="fc-navbar__action" data-action="toggle-theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+      </div>
+    </nav>
+
+    <div class="screen">
+      <h1 class="screen__title" data-i18n="models.title">Models</h1>
+
+      <input class="fc-input" type="search" data-i18n-placeholder="models.search" placeholder="Search models...">
+
+      <div class="fc-tabs fc-tabs--pills">
+        <button class="fc-tab fc-tab--active">All</button>
+        <button class="fc-tab">OpenAI</button>
+        <button class="fc-tab">Anthropic</button>
+        <button class="fc-tab">Google</button>
+        <button class="fc-tab">Open</button>
+      </div>
+
+      <div class="model-list">
+        <div class="model-card">
+          <div class="fc-avatar fc-avatar--lg">G4</div>
+          <div class="model-card__info">
+            <div class="model-card__name">GPT-4o</div>
+            <div class="model-card__provider">OpenAI</div>
+            <div class="model-card__tags">
+              <span class="fc-badge fc-badge--accent fc-badge--sm">Code</span>
+              <span class="fc-badge fc-badge--success fc-badge--sm">Writing</span>
+              <span class="fc-badge fc-badge--info fc-badge--sm">Analysis</span>
+            </div>
+          </div>
+          <div class="model-card__stats">
+            <div class="fc-elo-badge fc-elo-badge--elite fc-elo-badge--sm">1842</div>
+            <span style="font-size: 11px; color: var(--fc-text-muted);">128K ctx</span>
+          </div>
+        </div>
+
+        <div class="model-card">
+          <div class="fc-avatar fc-avatar--lg fc-avatar--accent">C3</div>
+          <div class="model-card__info">
+            <div class="model-card__name">Claude 3.5 Sonnet</div>
+            <div class="model-card__provider">Anthropic</div>
+            <div class="model-card__tags">
+              <span class="fc-badge fc-badge--accent fc-badge--sm">Code</span>
+              <span class="fc-badge fc-badge--warning fc-badge--sm">Creative</span>
+            </div>
+          </div>
+          <div class="model-card__stats">
+            <div class="fc-elo-badge fc-elo-badge--strong fc-elo-badge--sm">1798</div>
+            <span style="font-size: 11px; color: var(--fc-text-muted);">200K ctx</span>
+          </div>
+        </div>
+
+        <div class="model-card">
+          <div class="fc-avatar fc-avatar--lg" style="background: #4285f4;">G</div>
+          <div class="model-card__info">
+            <div class="model-card__name">Gemini 1.5 Pro</div>
+            <div class="model-card__provider">Google</div>
+            <div class="model-card__tags">
+              <span class="fc-badge fc-badge--info fc-badge--sm">Analysis</span>
+              <span class="fc-badge fc-badge--success fc-badge--sm">Writing</span>
+            </div>
+          </div>
+          <div class="model-card__stats">
+            <div class="fc-elo-badge fc-elo-badge--strong fc-elo-badge--sm">1720</div>
+            <span style="font-size: 11px; color: var(--fc-text-muted);">2M ctx</span>
+          </div>
+        </div>
+
+        <div class="model-card">
+          <div class="fc-avatar fc-avatar--lg" style="background: #f97316;">M</div>
+          <div class="model-card__info">
+            <div class="model-card__name">Mixtral 8x7B</div>
+            <div class="model-card__provider">Mistral AI</div>
+            <div class="model-card__tags">
+              <span class="fc-badge fc-badge--neutral fc-badge--sm">Open</span>
+              <span class="fc-badge fc-badge--accent fc-badge--sm">Code</span>
+            </div>
+          </div>
+          <div class="model-card__stats">
+            <div class="fc-elo-badge fc-elo-badge--average fc-elo-badge--sm">1488</div>
+            <span style="font-size: 11px; color: var(--fc-text-muted);">32K ctx</span>
+          </div>
+        </div>
+
+        <div class="model-card">
+          <div class="fc-avatar fc-avatar--lg" style="background: #dc2626;">L</div>
+          <div class="model-card__info">
+            <div class="model-card__name">Llama 3.1 405B</div>
+            <div class="model-card__provider">Meta</div>
+            <div class="model-card__tags">
+              <span class="fc-badge fc-badge--neutral fc-badge--sm">Open</span>
+              <span class="fc-badge fc-badge--info fc-badge--sm">Analysis</span>
+            </div>
+          </div>
+          <div class="model-card__stats">
+            <div class="fc-elo-badge fc-elo-badge--average fc-elo-badge--sm">1456</div>
+            <span style="font-size: 11px; color: var(--fc-text-muted);">128K ctx</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="fc-bottom-nav" style="position: relative;">
+      <a class="fc-bottom-nav__item" href="vote.html"><svg class="fc-bottom-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span class="fc-bottom-nav__label">Vote</span></a>
+      <a class="fc-bottom-nav__item" href="rankings.html"><svg class="fc-bottom-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg><span class="fc-bottom-nav__label">Rankings</span></a>
+      <a class="fc-bottom-nav__item fc-bottom-nav__item--active" href="models.html"><svg class="fc-bottom-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span class="fc-bottom-nav__label">Models</span></a>
+      <a class="fc-bottom-nav__item" href="profile.html"><svg class="fc-bottom-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="fc-bottom-nav__label">Profile</span></a>
+    </nav>
+  </div>
+  <script src="../app.js"></script>
+</body>
+</html>

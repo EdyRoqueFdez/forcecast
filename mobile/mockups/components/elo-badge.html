@@ -1,0 +1,139 @@
+<!--
+  Forcecast Component: ELO Badge
+
+  Displays ELO rating with a colored badge indicating tier.
+
+  ELO Tiers:
+    1800+ -> Elite (gold)
+    1600-1799 -> Strong (green)
+    1400-1599 -> Average (gray)
+    <1400 -> Emerging (muted)
+
+  Usage:
+    <div class="fc-elo-badge">1842</div>
+    <div class="fc-elo-badge fc-elo-badge--sm">1520</div>
+    <div class="fc-elo-badge fc-elo-badge--lg">1923</div>
+    <div class="fc-elo-badge fc-elo-badge--with-label">
+      <span class="fc-elo-badge__rating">1842</span>
+      <span class="fc-elo-badge__tier">Elite</span>
+    </div>
+
+  Sizes: sm (default), md, lg
+  Auto-tier: applies tier class based on value when using data-elo attribute
+-->
+
+<style>
+  .fc-elo-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--fc-font-mono);
+    font-weight: 700;
+    border-radius: var(--fc-radius-full);
+    background-color: var(--fc-surface-2);
+    color: var(--fc-text-muted);
+    padding: var(--fc-space-1) var(--fc-space-3);
+    min-width: 48px;
+    font-size: var(--fc-text-sm);
+  }
+
+  /* Sizes */
+  .fc-elo-badge--sm {
+    font-size: var(--fc-text-xs);
+    padding: 2px var(--fc-space-2);
+    min-width: 36px;
+  }
+
+  .fc-elo-badge--lg {
+    font-size: var(--fc-text-lg);
+    padding: var(--fc-space-2) var(--fc-space-4);
+    min-width: 64px;
+  }
+
+  /* Tier colors */
+  .fc-elo-badge--elite {
+    background-color: var(--fc-warning-dim);
+    color: var(--fc-warning);
+  }
+
+  .fc-elo-badge--strong {
+    background-color: var(--fc-success-dim);
+    color: var(--fc-success);
+  }
+
+  .fc-elo-badge--average {
+    background-color: var(--fc-surface-2);
+    color: var(--fc-text-muted);
+  }
+
+  .fc-elo-badge--emerging {
+    background-color: var(--fc-surface-2);
+    color: var(--fc-text-3);
+  }
+
+  /* With label */
+  .fc-elo-badge--with-label {
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--fc-space-2) var(--fc-space-3);
+  }
+
+  .fc-elo-badge__rating {
+    font-size: var(--fc-text-base);
+    font-weight: 700;
+    font-family: var(--fc-font-mono);
+  }
+
+  .fc-elo-badge__tier {
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-family: var(--fc-font-sans);
+  }
+
+  /* Tooltip style */
+  .fc-elo-badge--tooltip {
+    position: relative;
+  }
+
+  .fc-elo-badge--tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--fc-font-sans);
+    font-size: var(--fc-text-xs);
+    font-weight: 400;
+    white-space: nowrap;
+    background-color: var(--fc-surface);
+    color: var(--fc-text);
+    padding: var(--fc-space-1) var(--fc-space-2);
+    border-radius: var(--fc-radius-sm);
+    border: 1px solid var(--fc-border);
+    box-shadow: var(--fc-shadow-md);
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--fc-transition-fast);
+    pointer-events: none;
+  }
+
+  .fc-elo-badge--tooltip:hover::after {
+    opacity: 1;
+    visibility: visible;
+  }
+</style>
+
+<!-- Preview -->
+<div style="padding: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px;">
+  <div class="fc-elo-badge fc-elo-badge--elite fc-elo-badge--sm">1842</div>
+  <div class="fc-elo-badge fc-elo-badge--strong">1654</div>
+  <div class="fc-elo-badge fc-elo-badge--average">1489</div>
+  <div class="fc-elo-badge fc-elo-badge--emerging fc-elo-badge--lg">1230</div>
+  <div class="fc-elo-badge fc-elo-badge--elite fc-elo-badge--with-label">
+    <span class="fc-elo-badge__rating">1842</span>
+    <span class="fc-elo-badge__tier">Elite</span>
+  </div>
+  <div class="fc-elo-badge fc-elo-badge--strong fc-elo-badge--tooltip" data-tooltip="ELO Rating: Strong tier (1600-1799)">1654</div>
+</div>

@@ -1,0 +1,171 @@
+<!--
+  Forcecast Component: Skeleton (Loading State)
+
+  Usage:
+    <div class="fc-skeleton-card">
+      <div class="fc-skeleton fc-skeleton--avatar"></div>
+      <div class="fc-skeleton-content">
+        <div class="fc-skeleton fc-skeleton--title"></div>
+        <div class="fc-skeleton fc-skeleton--text"></div>
+        <div class="fc-skeleton fc-skeleton--text fc-skeleton--short"></div>
+      </div>
+    </div>
+
+    <div class="fc-skeleton fc-skeleton--button"></div>
+    <div class="fc-skeleton fc-skeleton--badge"></div>
+
+  Shapes: avatar, title, text, button, badge, card, image
+  Animation: shimmer (default), pulse
+-->
+
+<style>
+  .fc-skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--fc-surface-2) 25%,
+      var(--fc-surface-3) 50%,
+      var(--fc-surface-2) 75%
+    );
+    background-size: 200% 100%;
+    animation: fc-shimmer 1.5s ease-in-out infinite;
+    border-radius: var(--fc-radius-sm);
+  }
+
+  @keyframes fc-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Pulse variant */
+  .fc-skeleton--pulse {
+    animation: fc-pulse-skeleton 1.8s ease-in-out infinite;
+  }
+
+  @keyframes fc-pulse-skeleton {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+  }
+
+  /* Shapes */
+  .fc-skeleton--avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--fc-radius-full);
+    flex-shrink: 0;
+  }
+
+  .fc-skeleton--avatar-sm { width: 32px; height: 32px; }
+  .fc-skeleton--avatar-lg { width: 56px; height: 56px; }
+
+  .fc-skeleton--title {
+    height: 18px;
+    width: 60%;
+    margin-bottom: var(--fc-space-2);
+  }
+
+  .fc-skeleton--text {
+    height: 14px;
+    width: 100%;
+    margin-bottom: var(--fc-space-2);
+  }
+
+  .fc-skeleton--text.fc-skeleton--short { width: 40%; }
+  .fc-skeleton--text.fc-skeleton--medium { width: 70%; }
+
+  .fc-skeleton--button {
+    height: 40px;
+    width: 120px;
+    border-radius: var(--fc-radius-md);
+  }
+
+  .fc-skeleton--badge {
+    height: 24px;
+    width: 60px;
+    border-radius: var(--fc-radius-full);
+  }
+
+  .fc-skeleton--image {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--fc-radius-md);
+  }
+
+  .fc-skeleton--card {
+    background-color: var(--fc-surface);
+    border: 1px solid var(--fc-border);
+    border-radius: var(--fc-radius-lg);
+    padding: var(--fc-space-4);
+  }
+
+  /* Composite: Card skeleton */
+  .fc-skeleton-card {
+    display: flex;
+    gap: var(--fc-space-3);
+    padding: var(--fc-space-4);
+    background-color: var(--fc-surface);
+    border: 1px solid var(--fc-border);
+    border-radius: var(--fc-radius-lg);
+  }
+
+  .fc-skeleton-card .fc-skeleton-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--fc-space-1);
+  }
+
+  /* Composite: List skeleton */
+  .fc-skeleton-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fc-space-3);
+  }
+
+  .fc-skeleton-list-item {
+    display: flex;
+    align-items: center;
+    gap: var(--fc-space-3);
+    padding: var(--fc-space-3);
+    background-color: var(--fc-surface);
+    border: 1px solid var(--fc-border);
+    border-radius: var(--fc-radius-lg);
+  }
+
+  .fc-skeleton-list-item .fc-skeleton-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--fc-space-2);
+  }
+</style>
+
+<!-- Preview -->
+<div style="padding: 16px; display: flex; flex-direction: column; gap: 16px;">
+  <!-- Single card skeleton -->
+  <div class="fc-skeleton-card">
+    <div class="fc-skeleton fc-skeleton--avatar"></div>
+    <div class="fc-skeleton-content">
+      <div class="fc-skeleton fc-skeleton--title"></div>
+      <div class="fc-skeleton fc-skeleton--text"></div>
+      <div class="fc-skeleton fc-skeleton--text fc-skeleton--short"></div>
+    </div>
+  </div>
+
+  <!-- List skeleton -->
+  <div class="fc-skeleton-list">
+    <div class="fc-skeleton-list-item">
+      <div class="fc-skeleton fc-skeleton--avatar fc-skeleton--avatar-sm"></div>
+      <div class="fc-skeleton-content">
+        <div class="fc-skeleton fc-skeleton--text fc-skeleton--medium"></div>
+        <div class="fc-skeleton fc-skeleton--text fc-skeleton--short"></div>
+      </div>
+    </div>
+    <div class="fc-skeleton-list-item">
+      <div class="fc-skeleton fc-skeleton--avatar fc-skeleton--avatar-sm"></div>
+      <div class="fc-skeleton-content">
+        <div class="fc-skeleton fc-skeleton--text fc-skeleton--medium"></div>
+        <div class="fc-skeleton fc-skeleton--text fc-skeleton--short"></div>
+      </div>
+    </div>
+  </div>
+</div>

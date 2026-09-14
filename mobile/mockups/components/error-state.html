@@ -1,0 +1,133 @@
+<!--
+  Forcecast Component: Error State
+
+  Usage:
+    <div class="fc-error-state">
+      <div class="fc-error-state__icon">
+        <svg>...</svg>
+      </div>
+      <h3 class="fc-error-state__title">Something went wrong</h3>
+      <p class="fc-error-state__description">We couldn't load the models. Please try again.</p>
+      <button class="fc-btn fc-btn--primary fc-btn--md">Try Again</button>
+      <button class="fc-btn fc-btn--ghost fc-btn--sm fc-error-state__secondary">Go back</button>
+    </div>
+
+  Variants: default (500), network (offline), not-found (404), permission (403)
+-->
+
+<style>
+  .fc-error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--fc-space-12) var(--fc-space-6);
+    min-height: 300px;
+  }
+
+  .fc-error-state__icon {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--fc-radius-full);
+    background-color: var(--fc-danger-dim);
+    margin-bottom: var(--fc-space-5);
+  }
+
+  .fc-error-state__icon svg {
+    width: 40px;
+    height: 40px;
+    color: var(--fc-danger);
+  }
+
+  /* Network/offline variant */
+  .fc-error-state--network .fc-error-state__icon {
+    background-color: var(--fc-warning-dim);
+  }
+
+  .fc-error-state--network .fc-error-state__icon svg {
+    color: var(--fc-warning);
+  }
+
+  .fc-error-state__title {
+    font-size: var(--fc-text-lg);
+    font-weight: 600;
+    color: var(--fc-text);
+    margin: 0 0 var(--fc-space-2) 0;
+  }
+
+  .fc-error-state__description {
+    font-size: var(--fc-text-sm);
+    color: var(--fc-text-muted);
+    max-width: 280px;
+    margin: 0 0 var(--fc-space-6) 0;
+    line-height: 1.5;
+  }
+
+  .fc-error-state__code {
+    font-family: var(--fc-font-mono);
+    font-size: var(--fc-text-xs);
+    color: var(--fc-text-muted);
+    background-color: var(--fc-surface-2);
+    padding: var(--fc-space-1) var(--fc-space-2);
+    border-radius: var(--fc-radius-sm);
+    margin-top: var(--fc-space-2);
+  }
+
+  .fc-error-state__actions {
+    display: flex;
+    gap: var(--fc-space-2);
+    margin-top: var(--fc-space-2);
+  }
+
+  .fc-error-state__secondary {
+    margin-top: var(--fc-space-3);
+  }
+</style>
+
+<!-- Preview: 500 error -->
+<div style="padding: 16px; display: flex; flex-direction: column; gap: 32px;">
+  <div>
+    <div style="font-size: 12px; color: var(--fc-text-muted); margin-bottom: 8px;">Server Error (500)</div>
+    <div class="fc-error-state">
+      <div class="fc-error-state__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="15" y1="9" x2="9" y2="15"/>
+          <line x1="9" y1="9" x2="15" y2="15"/>
+        </svg>
+      </div>
+      <h3 class="fc-error-state__title">Something went wrong</h3>
+      <p class="fc-error-state__description">We couldn't load the models. This might be a temporary issue.</p>
+      <div class="fc-error-state__actions">
+        <button class="fc-btn fc-btn--primary fc-btn--md">Try Again</button>
+        <button class="fc-btn fc-btn--ghost fc-btn--md">Go Back</button>
+      </div>
+      <div class="fc-error-state__code">Error: FETCH_FAILED</div>
+    </div>
+  </div>
+
+  <!-- Network/offline -->
+  <div>
+    <div style="font-size: 12px; color: var(--fc-text-muted); margin-bottom: 8px;">Network Offline</div>
+    <div class="fc-error-state fc-error-state--network">
+      <div class="fc-error-state__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M1 1l22 22"/>
+          <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
+          <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/>
+          <path d="M10.71 5.05A16 16 0 0 1 22.56 9"/>
+          <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/>
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+          <line x1="12" y1="20" x2="12.01" y2="20"/>
+        </svg>
+      </div>
+      <h3 class="fc-error-state__title">No internet connection</h3>
+      <p class="fc-error-state__description">Check your connection and try again.</p>
+      <button class="fc-btn fc-btn--primary fc-btn--md">Retry</button>
+    </div>
+  </div>
+</div>

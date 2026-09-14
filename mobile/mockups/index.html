@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forcecast — Mobile Mockups</title>
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="layout.css">
+  <link rel="stylesheet" href="utils.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--fc-font-sans); background: var(--fc-bg); color: var(--fc-text); min-height: 100vh; }
+
+    .catalog { max-width: 960px; margin: 0 auto; padding: var(--fc-space-6) var(--fc-space-4); }
+
+    .catalog__header {
+      text-align: center;
+      padding: var(--fc-space-10) 0 var(--fc-space-8);
+    }
+
+    .catalog__logo {
+      width: 48px; height: 48px; color: var(--fc-primary); margin-bottom: var(--fc-space-3);
+    }
+
+    .catalog__title {
+      font-size: 2rem; font-weight: 800; letter-spacing: -0.03em;
+      background: linear-gradient(135deg, var(--fc-primary), var(--fc-accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .catalog__subtitle {
+      font-size: var(--fc-text-base); color: var(--fc-text-muted); margin-top: var(--fc-space-2);
+    }
+
+    .catalog__controls {
+      display: flex; justify-content: center; gap: var(--fc-space-3); margin-top: var(--fc-space-5);
+    }
+
+    .catalog__section {
+      margin-top: var(--fc-space-8);
+    }
+
+    .catalog__section-title {
+      font-size: var(--fc-text-xs); font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--fc-text-muted); margin-bottom: var(--fc-space-3);
+      padding-bottom: var(--fc-space-2); border-bottom: 1px solid var(--fc-border);
+    }
+
+    .catalog__grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--fc-space-3);
+    }
+
+    .catalog__card {
+      display: flex; flex-direction: column;
+      background: var(--fc-surface); border: 1px solid var(--fc-border);
+      border-radius: var(--fc-radius-lg); overflow: hidden;
+      text-decoration: none; color: var(--fc-text);
+      transition: all var(--fc-transition-base);
+    }
+
+    .catalog__card:hover {
+      border-color: var(--fc-primary); transform: translateY(-2px);
+      box-shadow: var(--fc-shadow-lg);
+    }
+
+    .catalog__card-preview {
+      height: 120px; background: var(--fc-surface-2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; color: var(--fc-text-muted);
+      border-bottom: 1px solid var(--fc-border);
+    }
+
+    .catalog__card-body {
+      padding: var(--fc-space-3);
+    }
+
+    .catalog__card-name {
+      font-size: var(--fc-text-sm); font-weight: 600;
+    }
+
+    .catalog__card-desc {
+      font-size: var(--fc-text-xs); color: var(--fc-text-muted); margin-top: 4px;
+    }
+
+    /* Screen previews */
+    .catalog__screen-frame {
+      border: 1px solid var(--fc-border); border-radius: var(--fc-radius-xl);
+      overflow: hidden; max-width: 400px; margin: var(--fc-space-4) auto;
+    }
+
+    .catalog__screen-frame iframe {
+      width: 100%; height: 600px; border: none;
+    }
+
+    @media (max-width: 640px) {
+      .catalog__grid { grid-template-columns: 1fr 1fr; }
+      .catalog__title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="catalog">
+    <!-- Header -->
+    <header class="catalog__header">
+      <svg class="catalog__logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+      </svg>
+      <h1 class="catalog__title">Forcecast Mobile Mockups</h1>
+      <p class="catalog__subtitle">Design system component library for community-driven AI rankings</p>
+      <div class="catalog__controls">
+        <button class="fc-btn fc-btn--ghost fc-btn--sm" data-action="toggle-theme">Theme</button>
+        <button class="fc-btn fc-btn--ghost fc-btn--sm" data-action="toggle-lang">EN/ES</button>
+      </div>
+    </header>
+
+    <!-- Foundation -->
+    <section class="catalog__section">
+      <h2 class="catalog__section-title">Foundation</h2>
+      <div class="catalog__grid">
+        <a class="catalog__card" href="theme.css">
+          <div class="catalog__card-preview" style="background: linear-gradient(135deg, #00d4aa 0%, #00a884 100%);">🎨</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">theme.css</div>
+            <div class="catalog__card-desc">Dual themes, CSS variables, reset</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="layout.css">
+          <div class="catalog__card-preview">📐</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">layout.css</div>
+            <div class="catalog__card-desc">Container, grid, spacing, safe areas</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="utils.css">
+          <div class="catalog__card-preview">⚡</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">utils.css</div>
+            <div class="catalog__card-desc">Animations, skeleton, a11y helpers</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="app.js">
+          <div class="catalog__card-preview" style="font-family: var(--fc-font-mono); font-size: 0.9rem;">JS</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">app.js</div>
+            <div class="catalog__card-desc">Template engine, i18n, router, theme</div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Atoms -->
+    <section class="catalog__section">
+      <h2 class="catalog__section-title">Atomic Components</h2>
+      <div class="catalog__grid">
+        <a class="catalog__card" href="components/button.html">
+          <div class="catalog__card-preview">🔘</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Button</div>
+            <div class="catalog__card-desc">Primary, ghost, danger, loading</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="components/input.html">
+          <div class="catalog__card-preview">✏️</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Input</div>
+            <div class="catalog__card-desc">Text, search, textarea, error</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="components/toggle.html">
+          <div class="catalog__card-preview">🔘</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Toggle</div>
+            <div class="catalog__card-desc">Switch, settings, on/off</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="components/badge.html">
+          <div class="catalog__card-preview">🏷️</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Badge</div>
+            <div class="catalog__card-desc">Status, category, modality</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="components/avatar.html">
+          <div class="catalog__card-preview">👤</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Avatar</div>
+            <div class="catalog__card-desc">Sizes, initials, status, group</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="components/chip.html">
+          <div class="catalog__card-preview">💊</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Chip</div>
+            <div class="catalog__card-desc">Filter, category, removable</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="components/rating.html">
+          <div class="catalog__card-preview">⭐</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Rating</div>
+            <div class="catalog__card-desc">Star rating, interactive</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="components/tooltip.html">
+          <div class="catalog__card-preview">💬</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Tooltip</div>
+            <div class="catalog__card-desc">Hover info, 4 positions</div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Layout -->
+    <section class="catalog__section">
+      <h2 class="catalog__section-title">Layout Components</h2>
+      <div class="catalog__grid">
+        <a class="catalog__card" href="components/card.html">
+          <div class="catalog__card-preview">🃏</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Card</div>
+            <div class="catalog__card-desc">Interactive, highlighted, stats</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="components/modal.html">
+          <div class="catalog__card-preview">💬</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Modal</div>
+            <div class="catalog__card-desc">Dialog, bottom sheet</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="components/tabs.html">
+          <div class="catalog__card-preview">📑</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Tabs</div>
+            <div class="catalog__card-desc">Underline, pills, full-width</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="components/dropdown.html">
+          <div class="catalog__card-preview">▼</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Dropdown</div>
+            <div class="catalog__card-desc">Custom select, native fallback</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="components/skeleton.html">
+          <div class="catalog__card-preview">💀</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Skeleton</div>
+            <div class="catalog__card-desc">Loading states, shimmer</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="components/empty-state.html">
+          <div class="catalog__card-preview">📭</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Empty State</div>
+            <div class="catalog__card-desc">No data, first time</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="components/error-state.html">
+          <div class="catalog__card-preview">⚠️</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Error State</div>
+            <div class="catalog__card-desc">500, network, 404</div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Compound -->
+    <section class="catalog__section">
+      <h2 class="catalog__section-title">Forcecast Compounds</h2>
+      <div class="catalog__grid">
+        <a class="catalog__card" href="components/vote-card.html">
+          <div class="catalog__card-preview" style="color: var(--fc-primary);">⚡</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Vote Card</div>
+            <div class="catalog__card-desc">Model vs model comparison</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="components/comparison-card.html">
+          <div class="catalog__card-preview">📊</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Comparison Card</div>
+            <div class="catalog__card-desc">Multi-category bar chart</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="components/elo-badge.html">
+          <div class="catalog__card-preview">🏆</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">ELO Badge</div>
+            <div class="catalog__card-desc">Rating tier indicator</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="components/progress.html">
+          <div class="catalog__card-preview">📈</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Progress</div>
+            <div class="catalog__card-desc">Linear, circle, labeled</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="components/toast.html">
+          <div class="catalog__card-preview">🔔</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Toast</div>
+            <div class="catalog__card-desc">Notifications, auto-dismiss</div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Notifications -->
+    <section class="catalog__section">
+      <h2 class="catalog__section-title">Notifications</h2>
+      <div class="catalog__grid">
+        <a class="catalog__card" href="components/toast.html">
+          <div class="catalog__card-preview">🔔</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Toast</div>
+            <div class="catalog__card-desc">Auto-dismiss notifications</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="components/snackbar.html">
+          <div class="catalog__card-preview">📢</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Snackbar</div>
+            <div class="catalog__card-desc">Persistent, with actions</div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Navigation -->
+    <section class="catalog__section">
+      <h2 class="catalog__section-title">Navigation</h2>
+      <div class="catalog__grid">
+        <a class="catalog__card" href="components/navbar.html">
+          <div class="catalog__card-preview">🔝</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Navbar</div>
+            <div class="catalog__card-desc">Top bar, sticky, blur</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="components/bottom-nav.html">
+          <div class="catalog__card-preview">📱</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Bottom Nav</div>
+            <div class="catalog__card-desc">Mobile tab bar, safe area</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="components/footer.html">
+          <div class="catalog__card-preview">📋</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Footer</div>
+            <div class="catalog__card-desc">Brand, links, copyright</div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Screens -->
+    <section class="catalog__section">
+      <h2 class="catalog__section-title">Screen Mockups</h2>
+      <div class="catalog__grid">
+        <a class="catalog__card" href="screens/vote.html">
+          <div class="catalog__card-preview" style="color: var(--fc-primary); font-size: 1.5rem;">⚡ Vote</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Vote Screen</div>
+            <div class="catalog__card-desc">Model comparison voting</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="screens/rankings.html">
+          <div class="catalog__card-preview" style="font-size: 1.5rem;">📊 Rankings</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Rankings Screen</div>
+            <div class="catalog__card-desc">ELO leaderboard by category</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="screens/models.html">
+          <div class="catalog__card-preview" style="font-size: 1.5rem;">📦 Models</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Models Screen</div>
+            <div class="catalog__card-desc">Browse all AI models</div>
+          </div>
+        </a>
+        <a class="catalog__card" href="screens/profile.html">
+          <div class="catalog__card-preview" style="font-size: 1.5rem;">👤 Profile</div>
+          <div class="catalog__card-body">
+            <div class="catalog__card-name">Profile Screen</div>
+            <div class="catalog__card-desc">User stats and history</div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <footer style="text-align: center; padding: var(--fc-space-10) 0 var(--fc-space-6); color: var(--fc-text-3); font-size: var(--fc-text-xs);">
+      Forcecast Mobile Mockups — Vanilla JS, zero dependencies
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

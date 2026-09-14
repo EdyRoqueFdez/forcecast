@@ -1,0 +1,91 @@
+<!--
+  Forcecast Component: Empty State
+
+  Usage:
+    <div class="fc-empty-state">
+      <div class="fc-empty-state__icon">
+        <svg>...</svg>
+      </div>
+      <h3 class="fc-empty-state__title">No votes yet</h3>
+      <p class="fc-empty-state__description">Start voting to see your history here.</p>
+      <button class="fc-btn fc-btn--primary fc-btn--md">Start Voting</button>
+    </div>
+
+  Use when: no data, first time user, empty list, no search results
+-->
+
+<style>
+  .fc-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--fc-space-12) var(--fc-space-6);
+    min-height: 300px;
+  }
+
+  .fc-empty-state__icon {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--fc-radius-full);
+    background-color: var(--fc-surface-2);
+    margin-bottom: var(--fc-space-5);
+  }
+
+  .fc-empty-state__icon svg {
+    width: 40px;
+    height: 40px;
+    color: var(--fc-text-muted);
+  }
+
+  .fc-empty-state__title {
+    font-size: var(--fc-text-lg);
+    font-weight: 600;
+    color: var(--fc-text);
+    margin: 0 0 var(--fc-space-2) 0;
+  }
+
+  .fc-empty-state__description {
+    font-size: var(--fc-text-sm);
+    color: var(--fc-text-muted);
+    max-width: 280px;
+    margin: 0 0 var(--fc-space-6) 0;
+    line-height: 1.5;
+  }
+
+  .fc-empty-state__action {
+    margin-top: var(--fc-space-2);
+  }
+
+  .fc-empty-state__link {
+    font-size: var(--fc-text-sm);
+    color: var(--fc-primary);
+    text-decoration: none;
+    margin-top: var(--fc-space-3);
+    display: inline-block;
+  }
+
+  .fc-empty-state__link:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<!-- Preview -->
+<div style="padding: 16px;">
+  <div class="fc-empty-state">
+    <div class="fc-empty-state__icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+        <path d="m9 12 2 2 4-4"/>
+      </svg>
+    </div>
+    <h3 class="fc-empty-state__title">No votes yet</h3>
+    <p class="fc-empty-state__description">Start voting on models to help the community discover the best AI for each task.</p>
+    <button class="fc-btn fc-btn--primary fc-btn--md">Start Voting</button>
+    <a href="#" class="fc-empty-state__link">Learn how voting works</a>
+  </div>
+</div>

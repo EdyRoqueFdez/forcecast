@@ -1,0 +1,287 @@
+/**
+ * Forcecast Design System — Theme Variables
+ *
+ * Two theme families, each with dark/light variants:
+ * 1. "emerald" — matches the frontend web (green accent #00d4aa)
+ * 2. "jedi" — Jedi/Force theme (blue #4a9eff + gold #ffd166)
+ *
+ * Toggle via data-theme attribute on <html>:
+ *   "dark"        → emerald dark (default)
+ *   "light"       → emerald light
+ *   "jedi-dark"   → jedi dark
+ *   "jedi-light"  → jedi light
+ *
+ * :root defines dark emerald as the base default.
+ */
+
+/* ─── Reset ─── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ─── Emerald Dark (default) ─── */
+:root,
+[data-theme="dark"] {
+  /* Backgrounds */
+  --fc-bg: #0b0d12;
+  --fc-bg-2: #13161f;
+  --fc-bg-3: #1a1e2a;
+  --fc-surface: #13161f;
+  --fc-surface-2: #1a1e2a;
+  --fc-surface-3: #222738;
+
+  /* Foreground / Text */
+  --fc-text: #e8ebf2;
+  --fc-text-2: #c0c5d4;
+  --fc-text-muted: #8b92a3;
+  --fc-text-inverse: #0b0d12;
+
+  /* Accent — Green Emerald */
+  --fc-accent: #00d4aa;
+  --fc-accent-hover: #00eabb;
+  --fc-accent-dim: rgba(0, 212, 170, 0.15);
+  --fc-accent-glow: rgba(0, 212, 170, 0.3);
+
+  /* Semantic Colors */
+  --fc-primary: #00d4aa;
+  --fc-primary-hover: #00eabb;
+  --fc-primary-dim: rgba(0, 212, 170, 0.15);
+  --fc-secondary: #6366f1;
+  --fc-secondary-dim: rgba(99, 102, 241, 0.15);
+  --fc-success: #22c55e;
+  --fc-success-dim: rgba(34, 197, 94, 0.15);
+  --fc-warning: #f59e0b;
+  --fc-warning-dim: rgba(245, 158, 11, 0.15);
+  --fc-danger: #ef4444;
+  --fc-danger-dim: rgba(239, 68, 68, 0.15);
+  --fc-info: #3b82f6;
+  --fc-info-dim: rgba(59, 130, 246, 0.15);
+
+  /* ELO Colors */
+  --fc-elo-gold: #fbbf24;
+  --fc-elo-silver: #94a3b8;
+  --fc-elo-bronze: #d97706;
+
+  /* Borders & Shadows */
+  --fc-border: #242836;
+  --fc-border-2: #2e3348;
+  --fc-border-focus: #00d4aa;
+  --fc-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --fc-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --fc-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --fc-shadow-glow: 0 0 20px rgba(0, 212, 170, 0.15);
+
+  /* Radius */
+  --fc-radius-xs: 4px;
+  --fc-radius-sm: 6px;
+  --fc-radius-md: 12px;
+  --fc-radius-lg: 16px;
+  --fc-radius-xl: 20px;
+  --fc-radius-full: 9999px;
+
+  /* Spacing (4px base) */
+  --fc-space-1: 4px;
+  --fc-space-2: 8px;
+  --fc-space-3: 12px;
+  --fc-space-4: 16px;
+  --fc-space-5: 20px;
+  --fc-space-6: 24px;
+  --fc-space-8: 32px;
+  --fc-space-10: 40px;
+  --fc-space-12: 48px;
+  --fc-space-16: 64px;
+
+  /* Typography */
+  --fc-font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fc-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --fc-text-xs: 0.75rem;
+  --fc-text-sm: 0.875rem;
+  --fc-text-base: 1rem;
+  --fc-text-lg: 1.125rem;
+  --fc-text-xl: 1.25rem;
+  --fc-text-2xl: 1.5rem;
+  --fc-text-3xl: 1.875rem;
+  --fc-line-height: 1.6;
+
+  /* Transitions */
+  --fc-transition-fast: 150ms ease;
+  --fc-transition-base: 200ms ease;
+  --fc-transition-slow: 300ms ease;
+
+  /* Safe Areas */
+  --fc-safe-top: env(safe-area-inset-top, 0px);
+  --fc-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --fc-safe-left: env(safe-area-inset-left, 0px);
+  --fc-safe-right: env(safe-area-inset-right, 0px);
+
+  /* Z-Index Scale */
+  --fc-z-base: 0;
+  --fc-z-dropdown: 100;
+  --fc-z-sticky: 200;
+  --fc-z-modal-backdrop: 300;
+  --fc-z-modal: 400;
+  --fc-z-toast: 500;
+}
+
+/* ─── Jedi/Force Dark ─── */
+[data-theme="jedi-dark"] {
+  /* Backgrounds — deeper space */
+  --fc-bg: #0a0e1a;
+  --fc-bg-2: #111628;
+  --fc-bg-3: #181e35;
+  --fc-surface: #131826;
+  --fc-surface-2: #1c2333;
+  --fc-surface-3: #252d44;
+
+  /* Foreground / Text */
+  --fc-text: #e6ecff;
+  --fc-text-2: #b8c4e0;
+  --fc-text-muted: #8892b0;
+  --fc-text-inverse: #0a0e1a;
+
+  /* Accent — Blue Force */
+  --fc-accent: #4a9eff;
+  --fc-accent-hover: #6cb2ff;
+  --fc-accent-dim: rgba(74, 158, 255, 0.15);
+  --fc-accent-glow: rgba(74, 158, 255, 0.3);
+
+  /* Semantic Colors */
+  --fc-primary: #4a9eff;
+  --fc-primary-hover: #6cb2ff;
+  --fc-primary-dim: rgba(74, 158, 255, 0.15);
+  --fc-secondary: #ffd166;
+  --fc-secondary-dim: rgba(255, 209, 102, 0.15);
+  --fc-success: #4ade80;
+  --fc-success-dim: rgba(74, 222, 128, 0.15);
+  --fc-warning: #fbbf24;
+  --fc-warning-dim: rgba(251, 191, 36, 0.15);
+  --fc-danger: #f87171;
+  --fc-danger-dim: rgba(248, 113, 113, 0.15);
+  --fc-info: #60a5fa;
+  --fc-info-dim: rgba(96, 165, 250, 0.15);
+
+  /* ELO Colors — gold accent from Jedi theme */
+  --fc-elo-gold: #ffd166;
+  --fc-elo-silver: #c0c5d4;
+  --fc-elo-bronze: #d97706;
+
+  /* Borders & Shadows */
+  --fc-border: #2a3348;
+  --fc-border-2: #354060;
+  --fc-border-focus: #4a9eff;
+  --fc-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --fc-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --fc-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --fc-shadow-glow: 0 0 20px rgba(74, 158, 255, 0.15);
+}
+
+/* ─── Emerald Light ─── */
+[data-theme="light"] {
+  --fc-bg: #f8f9fc;
+  --fc-bg-2: #ffffff;
+  --fc-bg-3: #f0f2f5;
+  --fc-surface: #ffffff;
+  --fc-surface-2: #f5f7fa;
+  --fc-surface-3: #eef1f5;
+
+  --fc-text: #1a1d26;
+  --fc-text-2: #3d4150;
+  --fc-text-muted: #5a6173;
+  --fc-text-inverse: #ffffff;
+
+  --fc-accent: #00a884;
+  --fc-accent-hover: #00c49a;
+  --fc-accent-dim: rgba(0, 168, 132, 0.1);
+  --fc-accent-glow: rgba(0, 168, 132, 0.15);
+
+  --fc-primary: #00a884;
+  --fc-primary-hover: #00c49a;
+  --fc-primary-dim: rgba(0, 168, 132, 0.1);
+  --fc-secondary: #6366f1;
+  --fc-secondary-dim: rgba(99, 102, 241, 0.1);
+  --fc-success: #16a34a;
+  --fc-success-dim: rgba(22, 163, 74, 0.1);
+  --fc-warning: #d97706;
+  --fc-warning-dim: rgba(217, 119, 6, 0.1);
+  --fc-danger: #dc2626;
+  --fc-danger-dim: rgba(220, 38, 38, 0.1);
+  --fc-info: #2563eb;
+  --fc-info-dim: rgba(37, 99, 235, 0.1);
+
+  --fc-border: #e1e4ec;
+  --fc-border-2: #d1d5e0;
+  --fc-border-focus: #00a884;
+
+  --fc-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --fc-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --fc-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --fc-shadow-glow: 0 0 20px rgba(0, 168, 132, 0.1);
+}
+
+/* ─── Jedi Light ─── */
+[data-theme="jedi-light"] {
+  --fc-bg: #f0f4ff;
+  --fc-bg-2: #ffffff;
+  --fc-bg-3: #e8edf5;
+  --fc-surface: #ffffff;
+  --fc-surface-2: #f5f7fc;
+  --fc-surface-3: #ebeef5;
+
+  --fc-text: #1a1d2e;
+  --fc-text-2: #3d4158;
+  --fc-text-muted: #5a6178;
+  --fc-text-inverse: #ffffff;
+
+  --fc-accent: #3b82f6;
+  --fc-accent-hover: #60a5fa;
+  --fc-accent-dim: rgba(59, 130, 246, 0.1);
+  --fc-accent-glow: rgba(59, 130, 246, 0.15);
+
+  --fc-primary: #3b82f6;
+  --fc-primary-hover: #60a5fa;
+  --fc-primary-dim: rgba(59, 130, 246, 0.1);
+  --fc-secondary: #d97706;
+  --fc-secondary-dim: rgba(217, 119, 6, 0.1);
+  --fc-success: #16a34a;
+  --fc-success-dim: rgba(22, 163, 74, 0.1);
+  --fc-warning: #d97706;
+  --fc-warning-dim: rgba(217, 119, 6, 0.1);
+  --fc-danger: #dc2626;
+  --fc-danger-dim: rgba(220, 38, 38, 0.1);
+  --fc-info: #2563eb;
+  --fc-info-dim: rgba(37, 99, 235, 0.1);
+
+  --fc-border: #d1d5e0;
+  --fc-border-2: #c1c5d0;
+  --fc-border-focus: #3b82f6;
+
+  --fc-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --fc-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --fc-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --fc-shadow-glow: 0 0 20px rgba(59, 130, 246, 0.1);
+}
+
+/* ─── Body Defaults ─── */
+body {
+  font-family: var(--fc-font-sans);
+  font-size: var(--fc-text-base);
+  line-height: var(--fc-line-height);
+  color: var(--fc-text);
+  background-color: var(--fc-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Focus Visible ─── */
+:focus-visible {
+  outline: 2px solid var(--fc-border-focus);
+  outline-offset: 2px;
+}
+
+/* ─── Selection ─── */
+::selection {
+  background-color: var(--fc-accent-dim);
+  color: var(--fc-text);
+}
