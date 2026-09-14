@@ -38,26 +38,26 @@
 ## Phase 5: Tests
 
 ### 5.1 Repository Tests
-- [ ] Test `list_approved` returns only approved
-- [ ] Test pagination works correctly
-- [ ] Test sorting works correctly
-- [ ] Test provider fetching works
+- [x] Test `list_approved` returns only approved
+- [x] Test pagination works correctly
+- [x] Test sorting works correctly
+- [x] Test provider fetching works
 
 ### 5.2 Service Tests
-- [ ] Test `list_orchestrators` with locale
-- [ ] Test cache behavior
-- [ ] Test cursor pagination
+- [x] Test `list_orchestrators` with locale
+- [x] Test cache behavior
+- [x] Test cursor pagination
 
 ### 5.3 API Tests
 - [x] Test endpoint returns 200
 - [x] Test pagination works
 - [x] Test i18n works
 - [x] Test 406 for unsupported locale
-- [ ] Test p95 < 200ms
+- [x] Test p95 < 200ms
 
 ## Phase 6: Migration
 
 ### 6.1 Create Migration
 - [x] Create Alembic migration for new tables
 - [x] Add indexes
-- [ ] Test migration up/down
+- [x] Test migration up/down

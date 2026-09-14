@@ -21,7 +21,7 @@ from sqlalchemy import (
     text,
 )
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import JSON
 
 from app.db.session import Base
@@ -251,6 +251,12 @@ class Orchestrator(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=_now)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=_now, onupdate=_now)
 
+    # Relationships
+    translations: Mapped[list[OrchestratorTranslation]] = relationship(
+        "OrchestratorTranslation", back_populates="orchestrator", cascade="all, delete-orphan",
+        lazy="selectin",
+    )
+
 
 class OrchestratorTranslation(Base):
     __tablename__ = "orchestrator_translations"
@@ -264,6 +270,9 @@ class OrchestratorTranslation(Base):
     locale: Mapped[str] = mapped_column(String(10), nullable=False)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    # Relationships
+    orchestrator: Mapped[Orchestrator] = relationship("Orchestrator", back_populates="translations")
 
 
 class OrchestratorProvider(Base):
