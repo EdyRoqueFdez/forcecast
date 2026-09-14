@@ -134,7 +134,7 @@ function AppContent() {
               ) : (
                 <button
                   onClick={() => setShowAuthModal(true)}
-                  className="btn btn-primary gap-2"
+                  className="btn btn-primary gap-2 whitespace-nowrap"
                 >
                   <LogIn className="w-4 h-4" />
                   Sign In
