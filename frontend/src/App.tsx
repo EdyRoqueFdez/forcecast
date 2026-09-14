@@ -134,7 +134,7 @@ function AppContent() {
               ) : (
                 <button
                   onClick={() => setShowAuthModal(true)}
-                  className="btn btn-primary gap-2"
+                  className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
                 >
                   <LogIn className="w-4 h-4" />
                   Sign In
