@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import time
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
 from sqlalchemy import select, func
@@ -10,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.taxonomy.models.entities import AIModel, Category, ModelTranslation, ModelCategory
 from app.voting.models.user_vote import UserVote
+from app.voting.models.vote_event import VoteEvent
 
 
 # Cache (Redis with in-memory fallback) TTL 5 minutes
@@ -37,6 +39,56 @@ class RankingService:
 
     def __init__(self, session: AsyncSession):
         self.session = session
+
+    async def _get_vote_tendency(self, model_id: str, category_id: str) -> dict:
+        """Calculate vote tendency for 7d and 30d.
+
+        Args:
+            model_id: Model ID.
+            category_id: Category ID.
+
+        Returns:
+            Dict with 7d and 30d tendency.
+        """
+        now = datetime.now(UTC)
+        seven_days_ago = now - timedelta(days=7)
+        thirty_days_ago = now - timedelta(days=30)
+
+        # Get votes in last 7 days
+        result_7d = await self.session.execute(
+            select(func.count(VoteEvent.id)).where(
+                VoteEvent.target_id == model_id,
+                VoteEvent.category_id == category_id,
+                VoteEvent.target_type == "model",
+                VoteEvent.created_at >= seven_days_ago,
+            )
+        )
+        votes_7d = result_7d.scalar() or 0
+
+        # Get votes in last 30 days
+        result_30d = await self.session.execute(
+            select(func.count(VoteEvent.id)).where(
+                VoteEvent.target_id == model_id,
+                VoteEvent.category_id == category_id,
+                VoteEvent.target_type == "model",
+                VoteEvent.created_at >= thirty_days_ago,
+            )
+        )
+        votes_30d = result_30d.scalar() or 0
+
+        # Calculate tendency (positive = growing, negative = declining)
+        if votes_30d > 0:
+            # Normalize 7d votes to 30d scale
+            normalized_7d = votes_7d * (30 / 7)
+            tendency = ((normalized_7d - votes_30d) / votes_30d) * 100
+        else:
+            tendency = 0.0
+
+        return {
+            "votes_7d": votes_7d,
+            "votes_30d": votes_30d,
+            "tendency_pct": round(tendency, 2),
+        }
 
     async def get_model_ranking(
         self,
@@ -170,6 +222,9 @@ class RankingService:
             # Calculate confidence (simplified: based on sample size)
             confidence = min(1.0, data["raw_votes"] / 100)
 
+            # Get tendency (7d/30d)
+            tendency = await self._get_vote_tendency(model_id, category.id)
+
             items.append({
                 "model_id": model_id,
                 "slug": model.slug,
@@ -181,6 +236,9 @@ class RankingService:
                 "confidence": round(confidence, 2),
                 "sample_size": data["raw_votes"],
                 "locale_used": locale_used,
+                "votes_7d": tendency["votes_7d"],
+                "votes_30d": tendency["votes_30d"],
+                "tendency_pct": tendency["tendency_pct"],
             })
 
         # Apply cursor pagination
